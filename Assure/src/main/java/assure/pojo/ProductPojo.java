@@ -13,8 +13,8 @@ import static assure.pojo.TableConstants.*;
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"clientSkuId", "clientId"})}, name = "assure_product")
 public class ProductPojo {
     @Id
-    @TableGenerator(name = ASSURE_GENERATOR, initialValue = PRODUCT_INITIAL_VALUE)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = ASSURE_GENERATOR)
+    @TableGenerator(name = PRODUCT_GENERATOR, initialValue = INITIAL_VALUE)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = PRODUCT_GENERATOR)
     private Long globalSkuId;
 
     @Column(nullable = false)

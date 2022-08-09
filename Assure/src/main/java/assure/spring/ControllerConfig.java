@@ -23,7 +23,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class ControllerConfig extends WebMvcConfigurerAdapter {
 
-    public static final String PACKAGE_CONTROLLER = "pos.controller";
+    public static final String PACKAGE_CONTROLLER = "assure.controller";
 
 
     private ApplicationContext applicationContext;
@@ -37,7 +37,6 @@ public class ControllerConfig extends WebMvcConfigurerAdapter {
         return new Docket(DocumentationType.SWAGGER_2)//
                 .useDefaultResponseMessages(false)//
                 .select().apis(RequestHandlerSelectors.basePackage(PACKAGE_CONTROLLER))//
-//                .paths(PathSelectors.regex("/api/.*"))//
                 .paths(PathSelectors.any())//
                 .build();
     }

@@ -5,12 +5,13 @@ import assure.pojo.ClientPojo;
 import assure.spring.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+
 import java.util.List;
 
 @Service
-@Transactional(rollbackOn = ApiException.class)
+@Transactional(rollbackFor = ApiException.class)
 public class ClientServices {
 
     @Autowired
@@ -30,7 +31,4 @@ public class ClientServices {
         return dao.select(pageNumber,pageSize);
     }
 
-    public ClientPojo selectByClientId(Long clientId){
-        return dao.selectByClientId(clientId);
-    }
 }

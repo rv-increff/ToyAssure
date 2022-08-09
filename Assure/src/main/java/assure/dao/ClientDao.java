@@ -1,9 +1,10 @@
 package assure.dao;
 
 import assure.pojo.ClientPojo;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
+@Repository
 public class ClientDao extends AbstractDao {
 
     public ClientPojo selectById(Long id) {
@@ -14,7 +15,4 @@ public class ClientDao extends AbstractDao {
         return select(ClientPojo.class,pageNumber,pageSize);
     }
 
-    public ClientPojo selectById(Long id){
-
-    }
 }

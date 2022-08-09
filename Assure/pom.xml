@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>toyassure.assure</groupId>
     <artifactId>Assure</artifactId>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
     <name>toyAssure-assure</name>
     <version>1.0-SNAPSHOT</version>
@@ -22,7 +22,7 @@
         <swagger.version>2.4.0</swagger.version>
         <jackson.version>2.9.8</jackson.version>
         <thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
-        <hibernate.version>5.4.0.Final</hibernate.version>
+        <hibernate.version>5.2.4.Final</hibernate.version>
         <mysql.version>8.0.17</mysql.version>
         <junit.version>4.12</junit.version>
         <log4j.version>1.2.17</log4j.version>
@@ -34,7 +34,7 @@
         <!--        <jetty.version>9.4.21.v20190926</jetty.version>-->
         <jetty.version>9.4.30.v20200611</jetty.version>
         <jetty.http.port>9000</jetty.http.port>
-        <jetty.context>/pos</jetty.context>
+        <jetty.context>/assure</jetty.context>
         <failOnMissingWebXml>false</failOnMissingWebXml>
 
         <property name="show_sql">true</property>

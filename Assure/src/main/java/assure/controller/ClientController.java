@@ -17,10 +17,11 @@ public class ClientController {
     private ClientDto clientDto;
 
     @ApiOperation(value = "Gives clients data")
-    @RequestMapping(path = "/clients/{pageNumber}", method = RequestMethod.GET)//TODO 3 modules assure, commons, channels
+    @RequestMapping(path = "/clients/pages/{pageNumber}", method = RequestMethod.GET)//TODO 3 modules assure, commons, channels
     public List<ClientData> getClient(@PathVariable Integer pageNumber) {
         return clientDto.select(pageNumber);
     }
+    //TODO check if url correct
 
     @ApiOperation(value = "Gives clients data by id")
     @RequestMapping(path = "/clients/{id}", method = RequestMethod.GET)

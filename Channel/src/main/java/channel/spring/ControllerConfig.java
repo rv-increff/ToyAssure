@@ -23,7 +23,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class ControllerConfig extends WebMvcConfigurerAdapter {
 
-    public static final String PACKAGE_CONTROLLER = "pos.controller";
+    public static final String PACKAGE_CONTROLLER = "channel.controller";
 
 
     private ApplicationContext applicationContext;

@@ -5,8 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-import static assure.pojo.TableConstants.ASSURE_GENERATOR;
-import static assure.pojo.TableConstants.CLIENT_INITIAL_VALUE;
+import static assure.pojo.TableConstants.*;
 
 @Getter
 @Setter
@@ -14,8 +13,8 @@ import static assure.pojo.TableConstants.CLIENT_INITIAL_VALUE;
 @Table(name = "assure_bin_sku")
 public class BinSkuPojo {
     @Id
-    @TableGenerator(name = ASSURE_GENERATOR, initialValue = CLIENT_INITIAL_VALUE)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = ASSURE_GENERATOR)
+    @TableGenerator(name = BIN_SKU_GENERATOR, initialValue = INITIAL_VALUE)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = BIN_SKU_GENERATOR)
     private Long id;
 
     @Column(nullable = false)

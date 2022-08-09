@@ -34,7 +34,7 @@
         <!--        <jetty.version>9.4.21.v20190926</jetty.version>-->
         <jetty.version>9.4.30.v20200611</jetty.version>
         <jetty.http.port>9001</jetty.http.port>
-        <jetty.context>/pos</jetty.context>
+        <jetty.context>/channel</jetty.context>
         <failOnMissingWebXml>false</failOnMissingWebXml>
 
         <property name="show_sql">true</property>

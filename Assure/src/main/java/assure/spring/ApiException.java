@@ -1,23 +1,20 @@
 package assure.spring;
 
 import assure.model.ErrorForm;
+import lombok.Getter;
 
 import java.util.List;
 
+import static assure.util.Helper.transformErrorList;
+@Getter
 public class ApiException extends Exception {
     private static final long serialVersionUID = 1L;
-
+    private List<ErrorForm> errorFormList;
     public ApiException(String string) {
         super(string);
     }
 
     public ApiException(List<ErrorForm> errorFormList){
-        String err = "";
-        for(ErrorForm errorForm : errorFormList){
-            err += errorForm.toString();
-        }
-        new ApiException(err);
+        this.errorFormList = errorFormList;
     }
-
-
 }

@@ -17,6 +17,6 @@ public class ErrorForm {
 
     @Override
     public String toString() {
-        return "Error row " + this.row + " " + this.message + "\n";
+        return "Error row " + this.row + " " + this.message + ".";
     }
 }

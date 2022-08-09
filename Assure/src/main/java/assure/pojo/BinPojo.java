@@ -14,7 +14,7 @@ import static assure.pojo.TableConstants.*;
 public class BinPojo {
 
     @Id
-    @TableGenerator(name = ASSURE_GENERATOR, initialValue = BIN_INITIAL_VALUE)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = ASSURE_GENERATOR)
+    @TableGenerator(name = BIN_GENERATOR, initialValue = INITIAL_VALUE)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = BIN_GENERATOR)
     private Long globalSkuId;
 }
