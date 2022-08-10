@@ -26,6 +26,11 @@ public class ProductDto {
 
     @Transactional(rollbackFor = ApiException.class)
     public Integer add(List<ProductForm> productFormList, Long clientId) throws ApiException {
+        Long maxListSize = 1000L;
+        if(productFormList.size()>maxListSize){
+            throw new ApiException("List size more than limit, limit : " + maxListSize);
+        }
+
         validateList(productFormList);
         checkDuplicateProducts(productFormList);
         if (isNull(clientServices.selectById(clientId))) {
@@ -36,7 +41,8 @@ public class ProductDto {
     }
 
     public List<ProductData> select(Integer pageNumber) {
-        List<ProductPojo> productPojoList = productServices.select(pageNumber);
+        Integer pageSize = 10;
+        List<ProductPojo> productPojoList = productServices.select(pageNumber, pageSize);
         return convertListProductPojoToData(productPojoList);
     }
 

@@ -44,8 +44,7 @@ public class ProductServices {
         }
     }
 
-    public List<ProductPojo> select(Integer pageNumber) {
-        Integer pageSize = 10;
+    public List<ProductPojo> select(Integer pageNumber, Integer pageSize) {
         return productDao.select(pageNumber, pageSize);
     }
 

@@ -2,12 +2,14 @@ package assure.util;
 
 import assure.model.*;
 import assure.pojo.BinPojo;
+import assure.pojo.BinSkuPojo;
 import assure.pojo.ClientPojo;
 import assure.pojo.ProductPojo;
 import assure.spring.ApiException;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -114,8 +116,26 @@ public class Helper {
         }
         throwErrorIfNotEmpty(errorFormList);
     }
+    public static void checkDuplicateProducts(List<BinSkuForm> binSkuFormList) throws ApiException {
+
+        HashSet<String> set = new HashSet<>();
+        List<ErrorForm> errorFormList = new ArrayList<>();
+        Integer row = 1;
+        for (BinSkuForm binSkuForm : binSkuFormList) {
+            if (set.contains(binSkuForm.getClientSkuId())) {
+                errorFormList.add(new ErrorForm(row, "duplicate values of clientSkuId"));
+            }
+            set.add(binSkuForm.getClientSkuId());
+            row++;
+        }
+        throwErrorIfNotEmpty(errorFormList);
+    }
 
     public static void validateList(List<ProductForm> productFormList) throws ApiException {
+        if(CollectionUtils.isEmpty(productFormList)){
+            throw new ApiException("Empty body");
+        }
+
         List<ErrorForm> errorFormList = new ArrayList<>();
         Integer row = 1;
         for (ProductForm productForm : productFormList) {
@@ -124,6 +144,24 @@ public class Helper {
             }
             if (!DataUtil.validateMRP(productForm.getMrp()) && !isNull(productForm.getMrp())) {
                 errorFormList.add(new ErrorForm(row, "MRP should be a positive number"));
+            }
+            row++;
+        }
+        throwErrorIfNotEmpty(errorFormList);
+    }
+    public static void validateList(List<BinSkuForm> binSkuFormList) throws ApiException {
+
+        if(CollectionUtils.isEmpty(binSkuFormList)){
+            throw new ApiException("Empty body");
+        }
+        List<ErrorForm> errorFormList = new ArrayList<>();
+        Integer row = 1;
+        for (BinSkuForm binSkuForm : binSkuFormList) {
+            if (!validateNullCheck(binSkuForm)) {
+                errorFormList.add(new ErrorForm(row, "value cannot be null or empty"));
+            }
+            if (binSkuForm.getQuantity()<0) {
+                errorFormList.add(new ErrorForm(row, "quantity should be a positive number"));
             }
             row++;
         }
@@ -173,4 +211,23 @@ public class Helper {
         return binDataList;
     }
 
+    public static BinSkuPojo convertBinSkuFormToPojo(BinSkuForm binSkuForm, Long globalSkuId){
+
+        BinSkuPojo binSkuPojo = new BinSkuPojo();
+        binSkuPojo.setBinId(binSkuForm.getBinId());
+        binSkuPojo.setGlobalSkuId(globalSkuId);
+        binSkuPojo.setQuantity(binSkuForm.getQuantity());
+
+        return binSkuPojo;
+
+    }
+
+    public static List<BinSkuPojo> convertListBinSkuFormToPojo(List<BinSkuForm> binSkuFormList, HashMap<String,Long> clientToGlobalSkuIdMap){
+        List<BinSkuPojo> binSkuPojoList = new ArrayList<>();
+        for(BinSkuForm binSkuForm : binSkuFormList){
+            binSkuPojoList.add(convertBinSkuFormToPojo(binSkuForm,clientToGlobalSkuIdMap.get(binSkuForm.getClientSkuId())));
+        }
+
+        return binSkuPojoList;
+    }
 }
