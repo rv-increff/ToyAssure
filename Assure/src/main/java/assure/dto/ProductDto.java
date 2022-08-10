@@ -2,6 +2,7 @@ package assure.dto;
 
 import assure.model.ProductData;
 import assure.model.ProductForm;
+import assure.model.ProductUpdateForm;
 import assure.pojo.ProductPojo;
 import assure.services.ClientServices;
 import assure.services.ProductServices;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static assure.util.Helper.validate;
 import static assure.util.Helper.*;
 import static java.util.Objects.isNull;
 
@@ -24,7 +24,7 @@ public class ProductDto {
     private ClientServices clientServices;
 
     public Integer add(List<ProductForm> productFormList, Long clientId) throws ApiException {
-        validate(productFormList);
+        validateList(productFormList);
         checkDuplicateProducts(productFormList);
         if (isNull(clientServices.selectById(clientId))) {
             throw new ApiException("client id does not exist");
@@ -38,8 +38,15 @@ public class ProductDto {
         return convertListProductPojoToData(productPojoList);
     }
 
-    public ProductData selectById(Long id) {
-        ProductPojo productPojo = productServices.selectById(id);
+    public ProductData selectById(Long globalSkuId) throws ApiException {
+        ProductPojo productPojo = productServices.selectById(globalSkuId);
         return convertProductPojoToData(productPojo);
+    }
+
+    public ProductUpdateForm update(ProductUpdateForm productUpdateForm, Long globalSkuId) throws ApiException {
+        validate(productUpdateForm);
+        Long clientId = productServices.selectById(globalSkuId).getClientId();
+        productServices.update(convertProductUpdateFormToPojo(productUpdateForm, globalSkuId, clientId));
+        return productUpdateForm;
     }
 }

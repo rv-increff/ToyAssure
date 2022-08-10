@@ -10,11 +10,13 @@ import static assure.util.Helper.transformErrorList;
 public class ApiException extends Exception {
     private static final long serialVersionUID = 1L;
     private List<ErrorForm> errorFormList;
+    private Integer errorType = 0;
     public ApiException(String string) {
         super(string);
     }
 
     public ApiException(List<ErrorForm> errorFormList){
         this.errorFormList = errorFormList;
+        this.errorType=1;
     }
 }

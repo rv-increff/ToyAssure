@@ -1,5 +1,7 @@
 package assure.dao;
 
+import assure.pojo.ProductPojo;
+import javafx.util.Pair;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -37,7 +39,7 @@ public abstract class AbstractDao {
 		cr.select(root).where(cb.equal(root.get("id"), id));
 
 		TypedQuery<T> query =  em.createQuery(cr);
-		return getSingle(query);
+		return query.getSingleResult();
 
 	}
 	protected <T> T getSingle(TypedQuery<T> query) {
@@ -53,5 +55,20 @@ public abstract class AbstractDao {
 		CriteriaQuery<T> cr = cb.createQuery(pojoClass);
 		return cr;
 	}
+
+	protected <T> TypedQuery<T> select(Class<T> pojoClass, List<Pair> whereList){
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery cr = cr(pojoClass);
+		Root<ProductPojo> root = cr.from(pojoClass);
+		cr  = cr.select(root);
+		for( Pair where : whereList){
+			String fieldName = where.getKey().toString();
+			Object filedValue = where.getValue();
+			cr.where(cb.equal(root.get(fieldName), filedValue));
+		}
+		TypedQuery<T> query =  em.createQuery(cr);
+		return query;
+	}
+
 
 }

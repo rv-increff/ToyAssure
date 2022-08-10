@@ -7,10 +7,10 @@ import assure.spring.ApiException;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import static assure.util.DataUtil.validateNullCheck;
 import static java.util.Objects.isNull;
 
 public class Helper {
@@ -90,9 +90,9 @@ public class Helper {
         return productDataList;
     }
 
-    public static String transformErrorList(List<ErrorForm> errorFormList){
+    public static String transformErrorList(List<ErrorForm> errorFormList) {
         String err = "";
-        for(ErrorForm errorForm : errorFormList){
+        for (ErrorForm errorForm : errorFormList) {
             err += errorForm.toString();
         }
         System.out.println(err);
@@ -101,37 +101,59 @@ public class Helper {
 
     public static void checkDuplicateProducts(List<ProductForm> productFormList) throws ApiException {
 
-        HashSet<String> map = new HashSet<>();
-        List<ErrorForm>errorFormList = new ArrayList<>();
+        HashSet<String> set = new HashSet<>();
+        List<ErrorForm> errorFormList = new ArrayList<>();
         Integer row = 1;
-        for(ProductForm productForm : productFormList){
-            if(map.contains(productForm.getClientSkuId())){
-                errorFormList.add(new ErrorForm(row,"duplicate values"));
+        for (ProductForm productForm : productFormList) {
+            if (set.contains(productForm.getClientSkuId())) {
+                errorFormList.add(new ErrorForm(row, "duplicate values of clientSkuId"));
             }
-            map.add(productForm.getClientSkuId());
+            set.add(productForm.getClientSkuId());
             row++;
         }
         throwErrorIfNotEmpty(errorFormList);
     }
-    public static void validate(List<ProductForm> productFormList) throws ApiException {
-        List<ErrorForm>errorFormList = new ArrayList<>();
+
+    public static void validateList(List<ProductForm> productFormList) throws ApiException {
+        List<ErrorForm> errorFormList = new ArrayList<>();
         Integer row = 1;
-        for(ProductForm productForm : productFormList) {
-            if(!DataUtil.validate(productForm)){
-                errorFormList.add(new ErrorForm(row,"value cannot be null or empty"));
+        for (ProductForm productForm : productFormList) {
+            if (!validateNullCheck(productForm)) {
+                errorFormList.add(new ErrorForm(row, "value cannot be null or empty"));
             }
-            if(!DataUtil.validateMRP(productForm.getMrp()) && !isNull(productForm.getMrp())){
-                errorFormList.add(new ErrorForm(row,"MRP should be a positive number"));
+            if (!DataUtil.validateMRP(productForm.getMrp()) && !isNull(productForm.getMrp())) {
+                errorFormList.add(new ErrorForm(row, "MRP should be a positive number"));
             }
             row++;
         }
         throwErrorIfNotEmpty(errorFormList);
     }
 
-    public static void throwErrorIfNotEmpty(List<ErrorForm>errorFormList) throws ApiException {
+    public static void throwErrorIfNotEmpty(List<ErrorForm> errorFormList) throws ApiException {
         if (!CollectionUtils.isEmpty(errorFormList)) {
             throw new ApiException(errorFormList);
         }
     }
 
+    public static ProductPojo convertProductUpdateFormToPojo(ProductUpdateForm productUpdateForm, Long globalSkuId,Long clientId) {
+        ProductPojo productPojo = new ProductPojo();
+        productPojo.setGlobalSkuId(globalSkuId);
+        productPojo.setClientSkuId(productUpdateForm.getClientSkuId());
+        productPojo.setMrp(productUpdateForm.getMrp());
+        productPojo.setName(productUpdateForm.getName());
+        productPojo.setDescription(productUpdateForm.getDescription());
+        productPojo.setClientId(clientId);
+        productPojo.setBrandId(productUpdateForm.getBrandId());
+
+        return productPojo;
+    }
+    public static void validate(ProductUpdateForm productUpdateForm) throws ApiException {
+        if(!validateNullCheck(productUpdateForm)){
+            throw new ApiException("value cannot be null or empty");
+        }
+
+        if (!DataUtil.validateMRP(productUpdateForm.getMrp()) && !isNull(productUpdateForm.getMrp())) {
+            throw new ApiException("MRP should be a positive number");
+        }
+    }
 }

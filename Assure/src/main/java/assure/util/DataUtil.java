@@ -10,13 +10,13 @@ import java.util.regex.Pattern;
 import static java.util.Objects.isNull;
 
 public class DataUtil {
-    public static <T> boolean validate(T form){
+    public static <T> boolean validateNullCheck(T form){
         try {
 
             Field[] fields = form.getClass().getDeclaredFields();
             for (Field m : fields) {
                 m.setAccessible(true);
-                System.out.println(m.get(form));
+                System.out.println(m.get(form) + "-" + m.getName());
                 if(isNull(m.get(form)))return false;
             }
         } catch (IllegalAccessException err) {

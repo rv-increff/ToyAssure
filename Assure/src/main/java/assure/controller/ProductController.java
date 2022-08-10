@@ -3,6 +3,7 @@ package assure.controller;
 import assure.dto.ProductDto;
 import assure.model.ProductData;
 import assure.model.ProductForm;
+import assure.model.ProductUpdateForm;
 import assure.spring.ApiException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,16 +25,23 @@ public class ProductController {
     }
 
     @ApiOperation(value = "Gives product data by id")
-    @RequestMapping(path = "/products/{id}", method = RequestMethod.GET)
-    public ProductData getProductById(@PathVariable Long id) {
-        return productDto.selectById(id);
+    @RequestMapping(path = "/products/{globalSkuId}", method = RequestMethod.GET)
+    public ProductData getProductById(@PathVariable Long globalSkuId) throws ApiException {
+        return productDto.selectById(globalSkuId);
     }
 
-    @ApiOperation(value = "add products")
+    @ApiOperation(value = "Add products")
     @RequestMapping(path = "/products/{clientId}", method = RequestMethod.POST)
     public Integer addProduct(@RequestBody List<ProductForm> productFormList, @PathVariable Long clientId) throws ApiException {
         return productDto.add(productFormList, clientId);
     }
+
+    @ApiOperation(value = "Update product")
+    @RequestMapping(path = "/products/{globalSkuId}", method = RequestMethod.PUT)
+    public ProductUpdateForm updateProduct(@RequestBody ProductUpdateForm productUpdateForm, @PathVariable Long globalSkuId) throws ApiException {
+        return productDto.update(productUpdateForm, globalSkuId);
+    }
+
 
 
 }
