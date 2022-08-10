@@ -20,7 +20,7 @@ public class ProductController {
 
     @ApiOperation(value = "Gives product data")
     @RequestMapping(path = "/products/pages/{pageNumber}", method = RequestMethod.GET)
-    public List<ProductData> getProduct(@PathVariable Integer pageNumber) {
+    public List<ProductData> getProducts(@PathVariable Integer pageNumber) {
         return productDto.select(pageNumber);
     }
 
@@ -32,7 +32,7 @@ public class ProductController {
 
     @ApiOperation(value = "Add products")
     @RequestMapping(path = "/products/{clientId}", method = RequestMethod.POST)
-    public Integer addProduct(@RequestBody List<ProductForm> productFormList, @PathVariable Long clientId) throws ApiException {
+    public Integer addProducts(@RequestBody List<ProductForm> productFormList, @PathVariable Long clientId) throws ApiException {
         return productDto.add(productFormList, clientId);
     }
 
@@ -41,7 +41,4 @@ public class ProductController {
     public ProductUpdateForm updateProduct(@RequestBody ProductUpdateForm productUpdateForm, @PathVariable Long globalSkuId) throws ApiException {
         return productDto.update(productUpdateForm, globalSkuId);
     }
-
-
-
 }

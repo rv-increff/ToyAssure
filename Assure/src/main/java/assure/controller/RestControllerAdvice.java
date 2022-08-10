@@ -49,9 +49,10 @@ public class RestControllerAdvice {
         System.out.println(Arrays.stream(e.getStackTrace()).findFirst() + "--- main handler " + e.getClass());
         System.out.println(e.getMessage());
         if (e.getClass() == HttpMessageNotReadableException.class || e.getClass() == MethodArgumentTypeMismatchException.class) {
-
+            obj.put("errorType",0);
             obj.put("description", "Invalid data format");
         } else {
+            obj.put("errorType",1);
             obj.put("description", e.getMessage());
         }
 

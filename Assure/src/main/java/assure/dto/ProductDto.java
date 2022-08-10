@@ -9,6 +9,7 @@ import assure.services.ProductServices;
 import assure.spring.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class ProductDto {
     @Autowired
     private ClientServices clientServices;
 
+    @Transactional(rollbackFor = ApiException.class)
     public Integer add(List<ProductForm> productFormList, Long clientId) throws ApiException {
         validateList(productFormList);
         checkDuplicateProducts(productFormList);

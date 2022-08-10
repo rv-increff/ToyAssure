@@ -11,7 +11,7 @@ import static assure.pojo.TableConstants.*;
 @Setter
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"clientSkuId", "clientId"})}, name = "assure_product")
-public class ProductPojo {
+public class ProductPojo extends AbstractPojo{
     @Id
     @TableGenerator(name = PRODUCT_GENERATOR, initialValue = INITIAL_VALUE)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = PRODUCT_GENERATOR)

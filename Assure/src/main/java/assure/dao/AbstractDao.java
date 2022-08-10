@@ -32,16 +32,6 @@ public abstract class AbstractDao {
 		List<T> results = query.getResultList();
 		return results;
 	}
-	public <T> T selectById(Class<T> pojoClass,Long id){
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<T> cr = cr(pojoClass);
-		Root<T> root = cr.from(pojoClass);
-		cr.select(root).where(cb.equal(root.get("id"), id));
-
-		TypedQuery<T> query =  em.createQuery(cr);
-		return query.getSingleResult();
-
-	}
 	protected <T> T getSingle(TypedQuery<T> query) {
 		return query.getResultList().stream().findFirst().orElse(null);
 	}

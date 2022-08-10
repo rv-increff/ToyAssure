@@ -18,8 +18,8 @@ public class AbstractPojo {
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "create_at")
-    private Date createAt;
+    @Column(name = "created_at")
+    private Date createdAt;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)

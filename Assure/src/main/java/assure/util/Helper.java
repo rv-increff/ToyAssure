@@ -1,6 +1,7 @@
 package assure.util;
 
 import assure.model.*;
+import assure.pojo.BinPojo;
 import assure.pojo.ClientPojo;
 import assure.pojo.ProductPojo;
 import assure.spring.ApiException;
@@ -156,4 +157,20 @@ public class Helper {
             throw new ApiException("MRP should be a positive number");
         }
     }
+
+    public static BinData convertBinPojoToData(BinPojo binPojo){
+        BinData binData = new BinData();
+        binData.setId(binPojo.getBinId());
+
+        return binData;
+    }
+
+    public static List<BinData> convertListBinPojoToData(List<BinPojo> binPojoList){
+        List<BinData> binDataList = new ArrayList<>();
+        for(BinPojo binPojo : binPojoList){
+            binDataList.add(convertBinPojoToData(binPojo));
+        }
+        return binDataList;
+    }
+
 }

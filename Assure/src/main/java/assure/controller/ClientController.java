@@ -18,7 +18,7 @@ public class ClientController {
 
     @ApiOperation(value = "Gives clients data")
     @RequestMapping(path = "/clients/pages/{pageNumber}", method = RequestMethod.GET)//TODO 3 modules assure, commons, channels
-    public List<ClientData> getClient(@PathVariable Integer pageNumber) {
+    public List<ClientData> getClients(@PathVariable Integer pageNumber) {
         return clientDto.select(pageNumber);
     }
     //TODO check if url correct
@@ -31,7 +31,7 @@ public class ClientController {
 
     @ApiOperation(value = "add clients")
     @RequestMapping(path = "/clients", method = RequestMethod.POST)
-    public Integer addClient(@RequestBody List<ClientForm> clientForm) {
+    public Integer addClients(@RequestBody List<ClientForm> clientForm) {
         return clientDto.add(clientForm);
     }
 
