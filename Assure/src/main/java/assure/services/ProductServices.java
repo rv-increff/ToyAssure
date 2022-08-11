@@ -83,5 +83,9 @@ public class ProductServices {
         }
         return productPojo;
     }
+
+    public List<ProductPojo> selectByClientSkuIdList(List<String>clientSkuIdList){
+        return productDao.selectByClientSkuIdList(clientSkuIdList);
+    }
 }
 

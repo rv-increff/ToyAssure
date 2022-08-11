@@ -1,7 +1,6 @@
 package assure.dao;
 
 import assure.pojo.BinPojo;
-import assure.pojo.ClientPojo;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
@@ -31,5 +30,8 @@ public class BinDao extends AbstractDao {
 
         List<BinPojo> results = query.getResultList();
         return results;
+    }
+    public List<BinPojo> selectByIdList(List<Long> idList){
+        return selectIn(BinPojo.class, idList, "id").getResultList();
     }
 }

@@ -1,7 +1,6 @@
 package assure.dao;
 
 import assure.pojo.ClientPojo;
-import assure.pojo.ProductPojo;
 import javafx.util.Pair;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +12,7 @@ public class ClientDao extends AbstractDao {
     public ClientPojo selectById(Long id) {
         List<Pair> where = new ArrayList<>();
         where.add(new Pair("id",id));
-        return getSingle(select(ClientPojo.class, where));
+        return getSingle(selectWhere(ClientPojo.class, where));
     }
 
     public List<ClientPojo> select(Integer pageNumber, Integer pageSize) {

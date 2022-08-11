@@ -32,6 +32,14 @@ public abstract class AbstractDao {
 		List<T> results = query.getResultList();
 		return results;
 	}
+	public <T> TypedQuery<T> selectIn(Class<T> pojoClass, List inList, String columnName){
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<T> cr = cr(pojoClass);
+		Root<T> root = cr.from(pojoClass);
+		cr  = cr.select(root).where(root.get(columnName).in(inList));
+		TypedQuery<T> query =  em.createQuery(cr);
+		return query;
+	}
 	protected <T> T getSingle(TypedQuery<T> query) {
 		return query.getResultList().stream().findFirst().orElse(null);
 	}
@@ -46,10 +54,10 @@ public abstract class AbstractDao {
 		return cr;
 	}
 
-	protected <T> TypedQuery<T> select(Class<T> pojoClass, List<Pair> whereList){
+	protected <T> TypedQuery<T> selectWhere(Class<T> pojoClass, List<Pair> whereList){
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery cr = cr(pojoClass);
-		Root<ProductPojo> root = cr.from(pojoClass);
+		Root<T> root = cr.from(pojoClass);
 		cr  = cr.select(root);
 		for( Pair where : whereList){
 			String fieldName = where.getKey().toString();
