@@ -40,6 +40,9 @@ public abstract class AbstractDao {
 		TypedQuery<T> query =  em.createQuery(cr);
 		return query;
 	}
+
+	public void update(){}
+
 	protected <T> T getSingle(TypedQuery<T> query) {
 		return query.getResultList().stream().findFirst().orElse(null);
 	}
@@ -67,6 +70,7 @@ public abstract class AbstractDao {
 		TypedQuery<T> query =  em.createQuery(cr);
 		return query;
 	}
+
 
 
 }

@@ -15,8 +15,8 @@ import java.util.List;
 public class ClientController {
     @Autowired
     private ClientDto clientDto;
-
-    @ApiOperation(value = "Gives clients data")
+//TODO get similar names for client-customer online synonym
+    @ApiOperation(value = "Gives clients data")  //TODO change name swagger api naming convention
     @RequestMapping(path = "/clients/pages/{pageNumber}", method = RequestMethod.GET)//TODO 3 modules assure, commons, channels
     public List<ClientData> getClients(@PathVariable Integer pageNumber) {
         return clientDto.select(pageNumber);

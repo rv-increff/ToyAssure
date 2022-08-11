@@ -33,8 +33,8 @@ public class BinSkuDto {
         if (binSkuFormList.size() > maxListSize) {
             throw new ApiException("List size more than limit, limit : " + maxListSize);
         }
-        validateList(binSkuFormList);
-        checkDuplicateProducts(binSkuFormList);
+        validateBinSkuFormList(binSkuFormList);
+        checkDuplicateProductsBinSkuForm(binSkuFormList);
         HashMap<String, Long> clientToGlobalSkuIdMap = getClientToGlobalSkuIdMap(binSkuFormList);
         checkBinIdExists(binSkuFormList);
         checkClientSkuIdExist(clientToGlobalSkuIdMap, binSkuFormList);

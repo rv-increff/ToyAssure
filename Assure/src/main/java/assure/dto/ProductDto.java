@@ -32,7 +32,7 @@ public class ProductDto {
         }
 
         validateList(productFormList);
-        checkDuplicateProducts(productFormList);
+        checkDuplicateProductsProductForm(productFormList);
         if (isNull(clientServices.selectById(clientId))) {
             throw new ApiException("client id does not exist");
         }

@@ -102,7 +102,7 @@ public class Helper {
         return err;
     }
 
-    public static void checkDuplicateProducts(List<ProductForm> productFormList) throws ApiException {
+    public static <T> void checkDuplicateProductsProductForm(List<ProductForm> productFormList) throws ApiException {
 
         HashSet<String> set = new HashSet<>();
         List<ErrorForm> errorFormList = new ArrayList<>();
@@ -116,7 +116,7 @@ public class Helper {
         }
         throwErrorIfNotEmpty(errorFormList);
     }
-    public static void checkDuplicateProducts(List<BinSkuForm> binSkuFormList) throws ApiException {
+    public static void checkDuplicateProductsBinSkuForm(List<BinSkuForm> binSkuFormList) throws ApiException {
 
         HashSet<String> set = new HashSet<>();
         List<ErrorForm> errorFormList = new ArrayList<>();
@@ -149,7 +149,7 @@ public class Helper {
         }
         throwErrorIfNotEmpty(errorFormList);
     }
-    public static void validateList(List<BinSkuForm> binSkuFormList) throws ApiException {
+    public static void validateBinSkuFormList(List<BinSkuForm> binSkuFormList) throws ApiException {
 
         if(CollectionUtils.isEmpty(binSkuFormList)){
             throw new ApiException("Empty body");
