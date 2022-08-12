@@ -13,16 +13,20 @@ import java.util.List;
 @Repository
 public class BinSkuDao extends AbstractDao {
 
-    protected final static String SELECT_BY_BIND_ID_GLOBAL_SKU_ID_LIST =
-            "select p from binSkuPojo p where (binId,globalBinSkuId) in :binIdGlobalBinSkuIdList";
+    protected final static String SELECT_BY_BIND_ID_GLOBAL_SKU_ID_LIST_BUILDER =
+            "select p from BinSkuPojo p where (binId,globalSkuId) in ";
 
     public List<BinSkuPojo> select(Integer pageNumber, Integer pageSize) {
         return select(BinSkuPojo.class, pageNumber, pageSize);
     }
 
     public List<BinSkuPojo> selectByListBinIdGlobalSkuId(List<Pair> binIdGlobalSkuIdList) {
-        TypedQuery<BinSkuPojo> query = em().createQuery(SELECT_BY_BIND_ID_GLOBAL_SKU_ID_LIST, BinSkuPojo.class);
-        query.setParameter("binIdGlobalBinSkuIdList",binIdGlobalSkuIdList);
+        String queryString = SELECT_BY_BIND_ID_GLOBAL_SKU_ID_LIST_BUILDER + "(";
+        for (Pair pair : binIdGlobalSkuIdList) {
+            queryString += "(" + "'" + pair.getKey()+ "'" + "," + "'" + pair.getValue() + "'"+  ")";
+        }
+        queryString += ")";
+        TypedQuery<BinSkuPojo> query = em().createQuery(queryString, BinSkuPojo.class);
         return query.getResultList();
     }
 }

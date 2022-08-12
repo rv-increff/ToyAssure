@@ -25,7 +25,7 @@ public class ProductDto {
     private ClientServices clientServices;
 
     @Transactional(rollbackFor = ApiException.class)
-    public Integer add(List<ProductForm> productFormList, Long clientId) throws ApiException {
+    public Integer add(List<ProductForm> productFormList, Long consumerId) throws ApiException {
         Long maxListSize = 1000L;
         if(productFormList.size()>maxListSize){
             throw new ApiException("List size more than limit, limit : " + maxListSize);
@@ -33,10 +33,10 @@ public class ProductDto {
 
         validateList(productFormList);
         checkDuplicateProductsProductForm(productFormList);
-        if (isNull(clientServices.selectById(clientId))) {
+        if (isNull(clientServices.selectById(consumerId))) {
             throw new ApiException("client id does not exist");
         }
-        productServices.add(convertListProductFormToPojo(productFormList, clientId));
+        productServices.add(convertListProductFormToPojo(productFormList, consumerId));
         return productFormList.size();
     }
 

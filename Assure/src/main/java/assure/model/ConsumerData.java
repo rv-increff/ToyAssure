@@ -2,15 +2,13 @@ package assure.model;
 
 import assure.util.Types;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class ClientForm {
+public class ConsumerData {
 
-    @NonNull
+    private Long id;
     private String name;
-    @NonNull
-    private Types types;
+    private Types type;
 }

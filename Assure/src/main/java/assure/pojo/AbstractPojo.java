@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-@MappedSuperclass
+@MappedSuperclass //TODO get reason-> without this it would consider it as a pojo and create a table
 public class AbstractPojo {
 
     @Version
@@ -18,7 +18,7 @@ public class AbstractPojo {
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_at")
+    @Column(name = "created_at") //TODO naming strategy
     private Date createdAt;
 
     @UpdateTimestamp

@@ -32,6 +32,6 @@ public class BinDao extends AbstractDao {
         return results;
     }
     public List<BinPojo> selectByIdList(List<Long> idList){
-        return selectIn(BinPojo.class, idList, "id").getResultList();
+        return selectIn(BinPojo.class, idList, "binId").getResultList();
     }
 }

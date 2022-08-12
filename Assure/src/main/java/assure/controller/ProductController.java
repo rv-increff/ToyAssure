@@ -18,22 +18,22 @@ public class ProductController {
     @Autowired
     private ProductDto productDto;
 
-    @ApiOperation(value = "Gives product data")
-    @RequestMapping(path = "/products/pages/{pageNumber}", method = RequestMethod.GET)
-    public List<ProductData> getProducts(@PathVariable Integer pageNumber) {
+    @ApiOperation(value = "Get products")
+    @RequestMapping(path = "/products", method = RequestMethod.GET)
+    public List<ProductData> getProducts(@RequestParam(name = "pageNumber") Integer pageNumber) {
         return productDto.select(pageNumber);
     }
 
-    @ApiOperation(value = "Gives product data by id")
+    @ApiOperation(value = "Get product by id")
     @RequestMapping(path = "/products/{globalSkuId}", method = RequestMethod.GET)
     public ProductData getProductById(@PathVariable Long globalSkuId) throws ApiException {
         return productDto.selectById(globalSkuId);
     }
 
     @ApiOperation(value = "Add products")
-    @RequestMapping(path = "/products/{clientId}", method = RequestMethod.POST)
-    public Integer addProducts(@RequestBody List<ProductForm> productFormList, @PathVariable Long clientId) throws ApiException {
-        return productDto.add(productFormList, clientId);
+    @RequestMapping(path = "/products/{consumerId}", method = RequestMethod.POST)
+    public Integer addProducts(@RequestBody List<ProductForm> productFormList, @PathVariable Long consumerId) throws ApiException {
+        return productDto.add(productFormList, consumerId);
     }
 
     @ApiOperation(value = "Update product")

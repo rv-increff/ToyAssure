@@ -18,36 +18,36 @@ import static java.util.Objects.isNull;
 
 public class Helper {
 
-    public static ClientPojo convertClientFormToPojo(ClientForm clientForm) {
+    public static ClientPojo convertClientFormToPojo(ConsumerForm consumerForm) {
         ClientPojo clientPojo = new ClientPojo();
-        clientPojo.setName(clientForm.getName());
-        clientPojo.setType(clientForm.getTypes());
+        clientPojo.setName(consumerForm.getName());
+        clientPojo.setType(consumerForm.getTypes());
 
         return clientPojo;
     }
 
 
-    public static ClientData convertClientPojoToData(ClientPojo clientPojo) {
-        ClientData clientData = new ClientData();
-        clientData.setName(clientPojo.getName());
-        clientData.setType(clientPojo.getType());
-        clientData.setId(clientPojo.getId());
-        return clientData;
+    public static ConsumerData convertClientPojoToData(ClientPojo clientPojo) {
+        ConsumerData consumerData = new ConsumerData();
+        consumerData.setName(clientPojo.getName());
+        consumerData.setType(clientPojo.getType());
+        consumerData.setId(clientPojo.getId());
+        return consumerData;
     }
 
-    public static List<ClientData> convertListClientPojoToData(List<ClientPojo> clientPojoList) {
-        List<ClientData> clientDataList = new ArrayList<>();
+    public static List<ConsumerData> convertListClientPojoToData(List<ClientPojo> clientPojoList) {
+        List<ConsumerData> consumerDataList = new ArrayList<>();
         for (ClientPojo clientPojo : clientPojoList) {
-            clientDataList.add(convertClientPojoToData(clientPojo));
+            consumerDataList.add(convertClientPojoToData(clientPojo));
         }
 
-        return clientDataList;
+        return consumerDataList;
     }
 
-    public static List<ClientPojo> convertListClientFormToPojo(List<ClientForm> clientFormList) {
+    public static List<ClientPojo> convertListClientFormToPojo(List<ConsumerForm> consumerFormList) {
         List<ClientPojo> clientPojoList = new ArrayList<>();
-        for (ClientForm clientForm : clientFormList) {
-            clientPojoList.add(convertClientFormToPojo(clientForm));
+        for (ConsumerForm consumerForm : consumerFormList) {
+            clientPojoList.add(convertClientFormToPojo(consumerForm));
         }
 
         return clientPojoList;
@@ -64,10 +64,10 @@ public class Helper {
         return productPojo;
     }
 
-    public static List<ProductPojo> convertListProductFormToPojo(List<ProductForm> productFormList, Long clientId) {
+    public static List<ProductPojo> convertListProductFormToPojo(List<ProductForm> productFormList, Long consumerId) {
         List<ProductPojo> productPojoList = new ArrayList<>();
         for (ProductForm productForm : productFormList) {
-            productPojoList.add(convertProductFormToPojo(productForm, clientId));
+            productPojoList.add(convertProductFormToPojo(productForm, consumerId));
         }
         return productPojoList;
     }
@@ -190,7 +190,6 @@ public class Helper {
         if(!validateNullCheck(productUpdateForm)){
             throw new ApiException("value cannot be null or empty");
         }
-
         if (!DataUtil.validateMRP(productUpdateForm.getMrp()) && !isNull(productUpdateForm.getMrp())) {
             throw new ApiException("MRP should be a positive number");
         }
@@ -229,5 +228,22 @@ public class Helper {
         }
 
         return binSkuPojoList;
+    }
+
+    public static BinSkuData convertBinSkuPojoToData(BinSkuPojo binSkuPojo){
+        BinSkuData binSkuData = new BinSkuData();
+        binSkuData.setBinId(binSkuPojo.getBinId());
+        binSkuData.setGlobalSkuId(binSkuPojo.getGlobalSkuId());
+        binSkuData.setQuantity(binSkuPojo.getQuantity());
+        binSkuData.setId(binSkuPojo.getId());
+        return binSkuData;
+    }
+
+    public static List<BinSkuData> convertListBinSkuPojoToData(List<BinSkuPojo> binSkuPojoList){
+        List<BinSkuData> binSkuDataList = new ArrayList<>();
+        for (BinSkuPojo binSkuPojo : binSkuPojoList) {
+            binSkuDataList.add(convertBinSkuPojoToData(binSkuPojo));
+        }
+        return binSkuDataList;
     }
 }

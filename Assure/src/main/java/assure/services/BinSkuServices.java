@@ -3,7 +3,7 @@ package assure.services;
 import assure.dao.BinSkuDao;
 import assure.pojo.BinSkuPojo;
 import assure.spring.ApiException;
-import com.google.common.collect.Iterables;
+import assure.util.DataUtil;
 import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,20 +40,22 @@ public class BinSkuServices {
         }
     }
 
+    public List<BinSkuPojo> select(Integer pageNumber, Integer pageSize) {
+        return dao.select(pageNumber, pageSize);
+    }
+
     private Pair<Set<Pair>, List<BinSkuPojo>> getExistingBinIdSkuIdSet(List<BinSkuPojo> binSkuPojoList) {
         Integer batchSize = 5;
 
-        Set<Pair> binIdGlobalSkuIdSet = binSkuPojoList.stream().map(i -> new Pair(i.getBinId(), i.getGlobalSkuId()))
-                .collect(Collectors.toSet());
+        List<Pair> binIdGlobalSkuIdSet = binSkuPojoList.stream().map(i -> new Pair(i.getBinId(), i.getGlobalSkuId()))
+                .collect(Collectors.toList());
         Set<Pair> existingBinIdGlobalSkuIdSet = new HashSet<>();
         List<BinSkuPojo> existingPojoList = new ArrayList<>();
 
-        Iterator<List<Pair>> itr = Iterables.partition(binIdGlobalSkuIdSet, (binIdGlobalSkuIdSet.size()) / batchSize)
-                .iterator();
+        List<List<Pair>> subLists = DataUtil.partition(binIdGlobalSkuIdSet, (int) Math.ceil(((double) binIdGlobalSkuIdSet.size()) / batchSize));
 
-        while (itr.hasNext()) {
-            List<Pair> binIdGlobalSkuIdBatch = new ArrayList<>(itr.next());
-            List<BinSkuPojo> binSkuPojoFiltered = dao.selectByListBinIdGlobalSkuId(binIdGlobalSkuIdBatch);
+        for (List<Pair> subList : subLists) {
+            List<BinSkuPojo> binSkuPojoFiltered = dao.selectByListBinIdGlobalSkuId(subList);
             Set<Pair> filteredPojoSet = binSkuPojoFiltered.stream().map(i -> new Pair(i.getBinId(), i.getGlobalSkuId()))
                     .collect(Collectors.toSet());
 

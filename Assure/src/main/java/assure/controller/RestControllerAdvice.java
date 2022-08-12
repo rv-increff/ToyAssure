@@ -29,9 +29,11 @@ public class RestControllerAdvice {
         System.out.println(Arrays.stream(e.getStackTrace()).findFirst() + "--- main handler " + e.getClass());
         System.out.println(e.getErrorFormList());
         if(e.getErrorType()==1 && !CollectionUtils.isEmpty(e.getErrorFormList())) {
+            obj.put("errorType",1);
             obj.put("description", e.getErrorFormList());
         }
         else {
+            obj.put("errorType",0);
             obj.put("description", e.getLocalizedMessage());
         }
         obj.put("code", 400);
@@ -52,7 +54,7 @@ public class RestControllerAdvice {
             obj.put("errorType",0);
             obj.put("description", "Invalid data format");
         } else {
-            obj.put("errorType",1);
+            obj.put("errorType",0);
             obj.put("description", e.getMessage());
         }
 

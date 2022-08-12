@@ -1,14 +1,13 @@
 package assure.model;
 
-import assure.util.Types;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class ClientData {
-
+public class BinSkuData {
     private Long id;
-    private String name;
-    private Types type;
+    private Long binId;
+    private Long quantity;
+    private Long globalSkuId;
 }

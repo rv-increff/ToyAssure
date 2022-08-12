@@ -1,8 +1,6 @@
 package assure.dto;
 
 import assure.model.BinData;
-import assure.model.ClientData;
-import assure.model.ClientForm;
 import assure.services.BinServices;
 import assure.spring.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
