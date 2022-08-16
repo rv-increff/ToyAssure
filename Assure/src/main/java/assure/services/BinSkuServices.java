@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
+
 @Service
 @Transactional(rollbackFor = ApiException.class)
 public class BinSkuServices {
@@ -21,8 +23,8 @@ public class BinSkuServices {
 
     public void add(List<BinSkuPojo> binSkuPojoList) {
         //TODO get the set from below decide if it exist and the update or create;
-        Pair<Set<Pair>, List<BinSkuPojo>> dataPair = getExistingBinIdSkuIdSet(binSkuPojoList);
-        Set<Pair> existingBinIdGlobalSkuIdSet = dataPair.getKey();
+        Pair<Set<Pair<Long, Long>>, List<BinSkuPojo>> dataPair = getExistingBinIdGlobalSkuIdSet(binSkuPojoList);
+        Set<Pair<Long, Long>> existingBinIdGlobalSkuIdSet = dataPair.getKey();
         HashMap<Pair<Long, Long>, Long> incomingDataPairToQtyMap = getIncomingPojoQtyMap(binSkuPojoList);
         List<BinSkuPojo> binSkuPojoListExisting = dataPair.getValue();
 
@@ -40,23 +42,31 @@ public class BinSkuServices {
         }
     }
 
+    public void update(BinSkuPojo binSkuPojo) throws ApiException {
+        BinSkuPojo exists = dao.selectById(binSkuPojo.getId());
+        if(isNull(exists)){
+            throw new ApiException("id doesn't exist, id : " + binSkuPojo.getId());
+        }
+        exists.setQuantity(binSkuPojo.getQuantity());
+    }
+
     public List<BinSkuPojo> select(Integer pageNumber, Integer pageSize) {
         return dao.select(pageNumber, pageSize);
     }
 
-    private Pair<Set<Pair>, List<BinSkuPojo>> getExistingBinIdSkuIdSet(List<BinSkuPojo> binSkuPojoList) {
+    private Pair<Set<Pair<Long, Long>>, List<BinSkuPojo>> getExistingBinIdGlobalSkuIdSet(List<BinSkuPojo> binSkuPojoList) {
         Integer batchSize = 5;
 
-        List<Pair> binIdGlobalSkuIdSet = binSkuPojoList.stream().map(i -> new Pair(i.getBinId(), i.getGlobalSkuId()))
+        List binIdGlobalSkuIdSet = binSkuPojoList.stream().map(i -> new Pair(i.getBinId(), i.getGlobalSkuId()))
                 .collect(Collectors.toList());
-        Set<Pair> existingBinIdGlobalSkuIdSet = new HashSet<>();
+        Set<Pair<Long, Long>> existingBinIdGlobalSkuIdSet = new HashSet<>();
         List<BinSkuPojo> existingPojoList = new ArrayList<>();
 
-        List<List<Pair>> subLists = DataUtil.partition(binIdGlobalSkuIdSet, (int) Math.ceil(((double) binIdGlobalSkuIdSet.size()) / batchSize));
+        List<List<Pair<Long, Long>>> subLists = DataUtil.partition(binIdGlobalSkuIdSet, (int) Math.ceil(((double) binIdGlobalSkuIdSet.size()) / batchSize));
 
-        for (List<Pair> subList : subLists) {
+        for (List<Pair<Long, Long>> subList : subLists) {
             List<BinSkuPojo> binSkuPojoFiltered = dao.selectByListBinIdGlobalSkuId(subList);
-            Set<Pair> filteredPojoSet = binSkuPojoFiltered.stream().map(i -> new Pair(i.getBinId(), i.getGlobalSkuId()))
+            Set filteredPojoSet = binSkuPojoFiltered.stream().map(i -> new Pair(i.getBinId(), i.getGlobalSkuId()))
                     .collect(Collectors.toSet());
 
             existingBinIdGlobalSkuIdSet.addAll(filteredPojoSet);

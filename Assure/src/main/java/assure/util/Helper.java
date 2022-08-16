@@ -246,4 +246,12 @@ public class Helper {
         }
         return binSkuDataList;
     }
+
+    public static BinSkuPojo convertBinSkuUpdateFormToPojo(BinSkuUpdateForm binSkuUpdateForm, Long id){
+        BinSkuPojo binSkuPojo = new BinSkuPojo();
+        binSkuPojo.setQuantity(binSkuUpdateForm.getQuantity());
+        binSkuPojo.setId(id);
+
+        return binSkuPojo;
+    }
 }

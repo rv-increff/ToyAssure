@@ -2,6 +2,7 @@ package assure.dto;
 
 import assure.model.BinSkuData;
 import assure.model.BinSkuForm;
+import assure.model.BinSkuUpdateForm;
 import assure.model.ErrorForm;
 import assure.pojo.BinPojo;
 import assure.pojo.ProductPojo;
@@ -52,6 +53,10 @@ public class BinSkuDto {
         return convertListBinSkuPojoToData(binSkuServices.select(pageNumber, pageSize));
     }
 
+    public BinSkuUpdateForm update(BinSkuUpdateForm binSkuUpdateForm, Long id) throws ApiException {
+        binSkuServices.update(convertBinSkuUpdateFormToPojo(binSkuUpdateForm,id));
+        return binSkuUpdateForm;
+    }
     private HashMap<String, Long> getClientToGlobalSkuIdMap(List<BinSkuForm> binSkuFormList) {
 
         Integer batchSize = 5;

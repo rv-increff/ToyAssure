@@ -3,6 +3,7 @@ package assure.controller;
 import assure.dto.BinSkuDto;
 import assure.model.BinSkuData;
 import assure.model.BinSkuForm;
+import assure.model.BinSkuUpdateForm;
 import assure.model.ProductData;
 import assure.spring.ApiException;
 import io.swagger.annotations.Api;
@@ -32,6 +33,11 @@ public class BinSkuController {
         return binSkuDto.select(pageNumber);
     }
 
+    @ApiOperation(value = "Update binSkus")
+    @RequestMapping(path = "/bin-skus/{id}", method = RequestMethod.PUT)
+    public BinSkuUpdateForm updateBinSku(@PathVariable Long id, @RequestBody BinSkuUpdateForm binSkuUpdateForm) throws ApiException {
+        return binSkuDto.update(binSkuUpdateForm,id);
+    }
 
 
 }

@@ -5,9 +5,7 @@ import javafx.util.Pair;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -20,7 +18,7 @@ public class BinSkuDao extends AbstractDao {
         return select(BinSkuPojo.class, pageNumber, pageSize);
     }
 
-    public List<BinSkuPojo> selectByListBinIdGlobalSkuId(List<Pair> binIdGlobalSkuIdList) {
+    public List<BinSkuPojo> selectByListBinIdGlobalSkuId(List<Pair<Long, Long>> binIdGlobalSkuIdList) {
         String queryString = SELECT_BY_BIND_ID_GLOBAL_SKU_ID_LIST_BUILDER + "(";
         for (Pair pair : binIdGlobalSkuIdList) {
             queryString += "(" + "'" + pair.getKey()+ "'" + "," + "'" + pair.getValue() + "'"+  ")";
@@ -28,5 +26,11 @@ public class BinSkuDao extends AbstractDao {
         queryString += ")";
         TypedQuery<BinSkuPojo> query = em().createQuery(queryString, BinSkuPojo.class);
         return query.getResultList();
+    }
+
+    public BinSkuPojo selectById(Long id){
+        List<Pair> where = new ArrayList<>();
+        where.add(new Pair("id",id));
+        return getSingle(selectWhere(BinSkuPojo.class,where));
     }
 }
