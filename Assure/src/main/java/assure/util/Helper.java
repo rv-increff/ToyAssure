@@ -5,15 +5,18 @@ import assure.pojo.*;
 import assure.spring.ApiException;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import java.util.*;
 
 import static assure.util.ValidationUtils.checkNotNull;
 import static java.util.Objects.isNull;
 
 public class Helper {
+    private static ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    private static Validator validator = factory.getValidator();;
 
     public static PartyPojo convertClientFormToPojo(PartyForm partyForm) {
         PartyPojo clientPojo = new PartyPojo();
@@ -130,37 +133,36 @@ public class Helper {
 
     public static void validateList(List<ProductForm> productFormList) throws ApiException {
         if(CollectionUtils.isEmpty(productFormList)){
-            throw new ApiException("Empty body");
+            throw new ApiException("Product List cannot be empty");
         }
 
         List<ErrorData> errorFormList = new ArrayList<>();
         Integer row = 1;
         for (ProductForm productForm : productFormList) {
-            if (!checkNotNull(productForm)) {
-                errorFormList.add(new ErrorData(row, "value cannot be null or empty"));
+            Set<ConstraintViolation<ProductForm>> constraintViolations =
+                    validator.validate( productForm );
+
+            for (ConstraintViolation<ProductForm> constraintViolation : constraintViolations) {
+                errorFormList.add(new ErrorData(row,constraintViolation.getPropertyPath().toString() + " " + constraintViolation.getMessage()));
             }
-            if (!ValidationUtils.validateMRP(productForm.getMrp()) && !isNull(productForm.getMrp())) {
-                errorFormList.add(new ErrorData(row, "MRP should be a positive number"));
-            }
-            row++;
+            row ++;
         }
         throwErrorIfNotEmpty(errorFormList);
     }
     public static void validateBinSkuFormList(List<BinSkuForm> binSkuFormList) throws ApiException {
-
+        List<ErrorData> errorFormList = new ArrayList<>();
         if(CollectionUtils.isEmpty(binSkuFormList)){
             throw new ApiException("BinSku List cannot be empty");
         }
-        List<ErrorData> errorFormList = new ArrayList<>();
         Integer row = 1;
         for (BinSkuForm binSkuForm : binSkuFormList) {
-            if (!checkNotNull(binSkuForm)) {
-                errorFormList.add(new ErrorData(row, "value cannot be null or empty"));
+            Set<ConstraintViolation<BinSkuForm>> constraintViolations =
+                    validator.validate( binSkuForm );
+
+            for (ConstraintViolation<BinSkuForm> constraintViolation : constraintViolations) {
+                errorFormList.add(new ErrorData(row,constraintViolation.getPropertyPath().toString() + " " + constraintViolation.getMessage()));
             }
-            if (binSkuForm.getQuantity()<0) {
-                errorFormList.add(new ErrorData(row, "quantity should be a positive number"));
-            }
-            row++;
+            row ++;
         }
         throwErrorIfNotEmpty(errorFormList);
     }
@@ -184,11 +186,12 @@ public class Helper {
         return productPojo;
     }
     public static void validate(ProductUpdateForm productUpdateForm) throws ApiException {
-        if(!checkNotNull(productUpdateForm)){
-            throw new ApiException("value cannot be null or empty");
-        }
-        if (!ValidationUtils.validateMRP(productUpdateForm.getMrp()) && !isNull(productUpdateForm.getMrp())) {
-            throw new ApiException("MRP should be a positive number");
+
+        Set<ConstraintViolation<ProductUpdateForm>> constraintViolations =
+                validator.validate( productUpdateForm );
+
+        for (ConstraintViolation<ProductUpdateForm> constraintViolation : constraintViolations) {
+            throw new ApiException(constraintViolation.getPropertyPath().toString() + " " + constraintViolation.getMessage());
         }
     }
 

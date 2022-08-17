@@ -28,7 +28,6 @@ public class BinSkuDao extends AbstractDao<BinSkuPojo> {
         TypedQuery<BinSkuPojo> query =  em.createQuery(cr);
         return getSingle(query);
     }
-//TODO for in list and by for single in name
     public BinSkuPojo selectById(Long id){
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery cr = cr();

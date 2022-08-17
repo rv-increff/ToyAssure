@@ -18,10 +18,8 @@ public class AbstractPojo {
     private Integer version;
 
     @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime createdAt;
 
     @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime updatedAt;
 }

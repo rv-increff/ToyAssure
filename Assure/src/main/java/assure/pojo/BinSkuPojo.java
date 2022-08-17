@@ -5,12 +5,12 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-import static assure.pojo.TableConstants.SEQ_BIN_SKU;
-import static assure.pojo.TableConstants.SEQ_INITIAL_VALUE;
+import static assure.pojo.TableConstants.*;
 
 @Getter
 @Setter
 @Entity
+@Table(indexes = {@Index(name = INDEX_BIN_ID_GLOBAL_SKU_ID ,columnList = "binId, globalSkuId")})
 public class BinSkuPojo extends AbstractPojo {
     @Id
     @TableGenerator(name = SEQ_BIN_SKU, initialValue = SEQ_INITIAL_VALUE)

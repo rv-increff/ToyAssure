@@ -29,13 +29,4 @@ public class BinDao extends AbstractDao<BinPojo> {
         List<BinPojo> results = query.getResultList();
         return results;
     }
-    public List<BinPojo> selectForIds(List<Long> idList){
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery cr = cr();
-        Root<BinPojo> root = cr.from(this.clazz);
-        cr  = cr.select(root);
-        cr.where(root.get("id").in(idList));
-        TypedQuery<BinPojo> query =  em.createQuery(cr);
-        return query.getResultList();
-    }
 }
