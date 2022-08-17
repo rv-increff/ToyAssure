@@ -1,6 +1,6 @@
 package assure.pojo;
 
-import assure.util.ConsumerTypes;
+import assure.util.PartyTypes;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,16 +12,16 @@ import static assure.pojo.TableConstants.*;
 @Setter
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "type"})})
-public class ConsumerPojo extends AbstractPojo {
+public class PartyPojo extends AbstractPojo {
     @Id
-    @TableGenerator(name = SEQ_CLIENT, initialValue = SEQ_INITIAL_VALUE)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = SEQ_CLIENT)
+    @TableGenerator(name = SEQ_PARTY, initialValue = SEQ_INITIAL_VALUE)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = SEQ_PARTY)
     private Long id;
 
     @Column(nullable = false)
     private String name;
 
-    private ConsumerTypes type; //TODO change to party types
+    private PartyTypes type; //TODO change to party types
 
 
 }

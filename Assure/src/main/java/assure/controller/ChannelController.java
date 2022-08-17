@@ -1,9 +1,7 @@
 package assure.controller;
 
-import assure.dto.BinSkuDto;
 import assure.dto.ChannelDto;
 import assure.model.ChannelData;
-import assure.model.ConsumerData;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

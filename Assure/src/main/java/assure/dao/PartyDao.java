@@ -1,7 +1,7 @@
 package assure.dao;
 
-import assure.pojo.ConsumerPojo;
-import assure.util.ConsumerTypes;
+import assure.pojo.PartyPojo;
+import assure.util.PartyTypes;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
@@ -10,25 +10,25 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 @Repository
-public class ConsumerDao extends AbstractDao<ConsumerPojo> {
-    public ConsumerPojo selectById(Long id) {
+public class PartyDao extends AbstractDao<PartyPojo> {
+    public PartyPojo selectById(Long id) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery cr = cr();
-        Root<ConsumerPojo> root = cr.from(this.clazz);
+        Root<PartyPojo> root = cr.from(this.clazz);
         cr  = cr.select(root);
         cr.where(cb.equal(root.get("id"), id));
-        TypedQuery<ConsumerPojo> query =  em.createQuery(cr);
+        TypedQuery<PartyPojo> query =  em.createQuery(cr);
         return getSingle(query);
     }
 
-    public ConsumerPojo selectByNameAndConsumerType(String name, ConsumerTypes type){
+    public PartyPojo selectByNameAndPartyType(String name, PartyTypes type){
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery cr = cr();
-        Root<ConsumerPojo> root = cr.from(this.clazz);
+        Root<PartyPojo> root = cr.from(this.clazz);
         cr  = cr.select(root);
         cr.where(cb.equal(root.get("name"), name));
-        cr.where(cb.equal(root.get("ConsumerTypes"), type));
-        TypedQuery<ConsumerPojo> query =  em.createQuery(cr);
+        cr.where(cb.equal(root.get("type"), type));
+        TypedQuery<PartyPojo> query =  em.createQuery(cr);
         return getSingle(query);
     }
 }

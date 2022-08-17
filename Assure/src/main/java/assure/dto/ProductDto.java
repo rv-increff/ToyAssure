@@ -4,7 +4,7 @@ import assure.model.ProductData;
 import assure.model.ProductForm;
 import assure.model.ProductUpdateForm;
 import assure.pojo.ProductPojo;
-import assure.service.ConsumerService;
+import assure.service.PartyService;
 import assure.service.ProductService;
 import assure.spring.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class ProductDto {
     @Autowired
     private ProductService productService;
     @Autowired
-    private ConsumerService consumerService;
+    private PartyService partyService;
 
     @Transactional(rollbackFor = ApiException.class)
     public Integer add(List<ProductForm> productFormList, Long consumerId) throws ApiException {
@@ -33,7 +33,7 @@ public class ProductDto {
 
         validateList(productFormList);
         checkDuplicateProductsProductForm(productFormList);
-        if (isNull(consumerService.selectById(consumerId))) {
+        if (isNull(partyService.selectById(consumerId))) {
             throw new ApiException("client id does not exist");
         }
         productService.add(convertListProductFormToPojo(productFormList, consumerId));

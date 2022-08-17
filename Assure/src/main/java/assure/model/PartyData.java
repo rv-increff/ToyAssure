@@ -1,13 +1,14 @@
 package assure.model;
 
-import assure.util.ConsumerTypes;
+import assure.util.PartyTypes;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class ConsumerForm {
+public class PartyData {
 
+    private Long id;
     private String name;
-    private ConsumerTypes types;
+    private PartyTypes type;
 }

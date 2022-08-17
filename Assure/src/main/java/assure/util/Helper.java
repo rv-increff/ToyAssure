@@ -15,36 +15,36 @@ import static java.util.Objects.isNull;
 
 public class Helper {
 
-    public static ConsumerPojo convertClientFormToPojo(ConsumerForm consumerForm) {
-        ConsumerPojo clientPojo = new ConsumerPojo();
-        clientPojo.setName(consumerForm.getName());
-        clientPojo.setType(consumerForm.getTypes());
+    public static PartyPojo convertClientFormToPojo(PartyForm partyForm) {
+        PartyPojo clientPojo = new PartyPojo();
+        clientPojo.setName(partyForm.getName());
+        clientPojo.setType(partyForm.getTypes());
 
         return clientPojo;
     }
 
 
-    public static ConsumerData convertClientPojoToData(ConsumerPojo clientPojo) {
-        ConsumerData consumerData = new ConsumerData();
-        consumerData.setName(clientPojo.getName());
-        consumerData.setType(clientPojo.getType());
-        consumerData.setId(clientPojo.getId());
-        return consumerData;
+    public static PartyData convertPartyPojoToData(PartyPojo clientPojo) {
+        PartyData partyData = new PartyData();
+        partyData.setName(clientPojo.getName());
+        partyData.setType(clientPojo.getType());
+        partyData.setId(clientPojo.getId());
+        return partyData;
     }
 
-    public static List<ConsumerData> convertListClientPojoToData(List<ConsumerPojo> clientPojoList) {
-        List<ConsumerData> consumerDataList = new ArrayList<>();
-        for (ConsumerPojo clientPojo : clientPojoList) {
-            consumerDataList.add(convertClientPojoToData(clientPojo));
+    public static List<PartyData> convertListPartyPojoToData(List<PartyPojo> clientPojoList) {
+        List<PartyData> partyDataList = new ArrayList<>();
+        for (PartyPojo clientPojo : clientPojoList) {
+            partyDataList.add(convertPartyPojoToData(clientPojo));
         }
 
-        return consumerDataList;
+        return partyDataList;
     }
 
-    public static List<ConsumerPojo> convertListClientFormToPojo(List<ConsumerForm> consumerFormList) {
-        List<ConsumerPojo> clientPojoList = new ArrayList<>();
-        for (ConsumerForm consumerForm : consumerFormList) {
-            clientPojoList.add(convertClientFormToPojo(consumerForm));
+    public static List<PartyPojo> convertListPartyFormToPojo(List<PartyForm> partyFormList) {
+        List<PartyPojo> clientPojoList = new ArrayList<>();
+        for (PartyForm partyForm : partyFormList) {
+            clientPojoList.add(convertClientFormToPojo(partyForm));
         }
 
         return clientPojoList;

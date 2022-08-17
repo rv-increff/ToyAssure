@@ -1,6 +1,6 @@
 package assure.util;
 
-public enum ConsumerTypes {
+public enum PartyTypes {
 
         CLIENT,
         CUSTOMER;

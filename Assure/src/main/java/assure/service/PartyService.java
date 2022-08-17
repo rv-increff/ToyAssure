@@ -1,8 +1,8 @@
 package assure.service;
 
-import assure.dao.ConsumerDao;
+import assure.dao.PartyDao;
 import assure.model.ErrorData;
-import assure.pojo.ConsumerPojo;
+import assure.pojo.PartyPojo;
 import assure.spring.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,32 +16,32 @@ import static java.util.Objects.isNull;
 
 @Service
 @Transactional(rollbackFor = ApiException.class)
-public class ConsumerService {
+public class PartyService {
 
     @Autowired
-    private ConsumerDao dao;
+    private PartyDao dao;
 
-    public void add(List<ConsumerPojo> clientPojoList) throws ApiException {
+    public void add(List<PartyPojo> partyPojoList) throws ApiException {
         Integer row = 1;
         List<ErrorData> errorFormList = new ArrayList<>();
-        for (ConsumerPojo clientPojo : clientPojoList) {
-            if (!isNull(dao.selectByNameAndConsumerType(clientPojo.getName(), clientPojo.getType()))) {
+        for (PartyPojo partyPojo : partyPojoList) {
+            if (!isNull(dao.selectByNameAndPartyType(partyPojo.getName(), partyPojo.getType()))) {
                 errorFormList.add(new ErrorData(row, "name - Type pair exists"));
             }
             row++;
         }
         throwErrorIfNotEmpty(errorFormList);
 
-        for (ConsumerPojo clientPojo : clientPojoList) {
+        for (PartyPojo clientPojo : partyPojoList) {
             dao.add(clientPojo);
         }
     }
 
-    public ConsumerPojo selectById(Long id) {
+    public PartyPojo selectById(Long id) {
         return dao.selectById(id);
     }
 
-    public List<ConsumerPojo> select(Integer pageNumber, Integer pageSize) {
+    public List<PartyPojo> select(Integer pageNumber, Integer pageSize) {
         return dao.select(pageNumber, pageSize);
     }
 
