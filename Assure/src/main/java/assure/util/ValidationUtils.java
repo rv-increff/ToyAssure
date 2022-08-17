@@ -23,21 +23,4 @@ public class ValidationUtils {
         }
         return true;
     }
-
-    public static Boolean validateMRP(Double MRP) throws ApiException {
-        Pattern numP = Pattern.compile("^[0-9]+$|^[0-9]+\\.[0-9]*$");
-        Matcher matcher = numP.matcher(MRP.toString());
-        return matcher.find();
-    }
-    public static <T> List<List<T>> partition(List<T> list,Integer parts){ //TODO use apace utils collection 4
-        Integer size = list.size();
-        List<List<T>> subLists = new ArrayList<>();
-
-        Integer row = 1;
-        while(row<=parts){
-            subLists.add(list.subList((row-1)*size/parts, (row)*size/parts));
-            row++;
-        }
-        return subLists;
-    }
 }

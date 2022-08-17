@@ -31,7 +31,7 @@ public class ProductDto {
             throw new ApiException("List size more than limit, limit : " + maxListSize);
         }
 
-        validateList(productFormList);
+        validateList("Product Form",productFormList);
         checkDuplicateProductsProductForm(productFormList);
         if (isNull(partyService.selectById(consumerId))) {
             throw new ApiException("client id does not exist");

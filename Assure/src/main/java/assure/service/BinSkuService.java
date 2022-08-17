@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static assure.util.Helper.validateList;
 import static java.util.Objects.isNull;
 
 @Service
@@ -18,7 +19,8 @@ public class BinSkuService {
     @Autowired
     private BinSkuDao dao;
 
-    public void add(List<BinSkuPojo> binSkuPojoList) {
+    public void add(List<BinSkuPojo> binSkuPojoList) throws ApiException {
+        validateList("Bin sku",binSkuPojoList);
         //TODO get the set from below decide if it exists and the update or create;
         //TODO remove pair
         for (BinSkuPojo binSkuPojo : binSkuPojoList) {

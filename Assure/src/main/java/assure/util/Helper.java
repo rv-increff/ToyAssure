@@ -131,35 +131,18 @@ public class Helper {
         throwErrorIfNotEmpty(errorFormList);
     }
 
-    public static void validateList(List<ProductForm> productFormList) throws ApiException {
-        if(CollectionUtils.isEmpty(productFormList)){
-            throw new ApiException("Product List cannot be empty");
+    public static <T> void  validateList(String name,List<T> formList) throws ApiException {
+        if(CollectionUtils.isEmpty(formList)){
+            throw new ApiException(  name + " List cannot be empty");
         }
 
         List<ErrorData> errorFormList = new ArrayList<>();
         Integer row = 1;
-        for (ProductForm productForm : productFormList) {
-            Set<ConstraintViolation<ProductForm>> constraintViolations =
-                    validator.validate( productForm );
+        for (T form : formList) {
+            Set<ConstraintViolation<T>> constraintViolations =
+                    validator.validate( form );
 
-            for (ConstraintViolation<ProductForm> constraintViolation : constraintViolations) {
-                errorFormList.add(new ErrorData(row,constraintViolation.getPropertyPath().toString() + " " + constraintViolation.getMessage()));
-            }
-            row ++;
-        }
-        throwErrorIfNotEmpty(errorFormList);
-    }
-    public static void validateBinSkuFormList(List<BinSkuForm> binSkuFormList) throws ApiException {
-        List<ErrorData> errorFormList = new ArrayList<>();
-        if(CollectionUtils.isEmpty(binSkuFormList)){
-            throw new ApiException("BinSku List cannot be empty");
-        }
-        Integer row = 1;
-        for (BinSkuForm binSkuForm : binSkuFormList) {
-            Set<ConstraintViolation<BinSkuForm>> constraintViolations =
-                    validator.validate( binSkuForm );
-
-            for (ConstraintViolation<BinSkuForm> constraintViolation : constraintViolations) {
+            for (ConstraintViolation<T> constraintViolation : constraintViolations) {
                 errorFormList.add(new ErrorData(row,constraintViolation.getPropertyPath().toString() + " " + constraintViolation.getMessage()));
             }
             row ++;
@@ -185,14 +168,16 @@ public class Helper {
 
         return productPojo;
     }
-    public static void validate(ProductUpdateForm productUpdateForm) throws ApiException {
-
-        Set<ConstraintViolation<ProductUpdateForm>> constraintViolations =
-                validator.validate( productUpdateForm );
-
-        for (ConstraintViolation<ProductUpdateForm> constraintViolation : constraintViolations) {
-            throw new ApiException(constraintViolation.getPropertyPath().toString() + " " + constraintViolation.getMessage());
+    public static <T> void  validate(T form) throws ApiException {
+        List<ErrorData> errorFormList = new ArrayList<>();
+        Integer row = 1;
+        Set<ConstraintViolation<T>> constraintViolations = validator.validate( form );
+        for (ConstraintViolation<T> constraintViolation : constraintViolations) {
+            errorFormList.add(new ErrorData(row,constraintViolation.getPropertyPath().toString()
+                    + " " + constraintViolation.getMessage()));
         }
+        row ++;
+        throwErrorIfNotEmpty(errorFormList);
     }
 
     public static BinData convertBinPojoToData(BinPojo binPojo){

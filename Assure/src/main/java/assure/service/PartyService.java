@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static assure.util.Helper.throwErrorIfNotEmpty;
+import static assure.util.Helper.validateList;
 import static java.util.Objects.isNull;
 
 @Service
@@ -22,6 +23,7 @@ public class PartyService {
     private PartyDao dao;
 
     public void add(List<PartyPojo> partyPojoList) throws ApiException {
+        validateList("Party", partyPojoList);
         Integer row = 1;
         List<ErrorData> errorFormList = new ArrayList<>();
         for (PartyPojo partyPojo : partyPojoList) {

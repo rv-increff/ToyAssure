@@ -31,9 +31,9 @@ public class ProductController {
     }
 
     @ApiOperation(value = "Add products")
-    @RequestMapping(path = "/products/{consumerId}", method = RequestMethod.POST)
-    public Integer addProducts(@RequestBody List<ProductForm> productFormList, @PathVariable Long consumerId) throws ApiException {
-        return productDto.add(productFormList, consumerId);
+    @RequestMapping(path = "/products/{partyId}", method = RequestMethod.POST)
+    public Integer addProducts(@RequestBody List<ProductForm> productFormList, @PathVariable Long partyId) throws ApiException {
+        return productDto.add(productFormList, partyId);
     }
 
     @ApiOperation(value = "Update product")

@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static assure.util.Helper.throwErrorIfNotEmpty;
+import static assure.util.Helper.*;
 import static java.util.Objects.isNull;
 
 @Service
@@ -24,7 +24,7 @@ public class ProductService {
     private ProductDao productDao;
 
     public void add(List<ProductPojo> productPojoList) throws ApiException {
-
+        validateList("Product",productPojoList);
         Long clientId = productPojoList.get(0).getClientId();
         List<ErrorData> errorFormList = new ArrayList<>();
         List<ProductPojo> productPojoByClientList = selectByClientId(clientId);
@@ -57,6 +57,7 @@ public class ProductService {
     }
 
     public void update(ProductPojo productPojo) throws ApiException {
+        validate(productPojo);
         ProductPojo exists = getCheck(productPojo.getGlobalSkuId());
 
         if (!Objects.equals(exists.getClientSkuId(), productPojo.getClientSkuId())) {
