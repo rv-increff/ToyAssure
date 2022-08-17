@@ -19,6 +19,8 @@ import static java.util.Objects.isNull;
 @Service
 public class ProductDto {
 
+    private static final Long MAX_BIN_LIMIT = 1000L;
+    private static final Integer PAGE_SIZE = 10;
     @Autowired
     private ProductService productService;
     @Autowired
@@ -26,12 +28,11 @@ public class ProductDto {
 
     @Transactional(rollbackFor = ApiException.class)
     public Integer add(List<ProductForm> productFormList, Long consumerId) throws ApiException {
-        Long maxListSize = 1000L;
-        if(productFormList.size()>maxListSize){
-            throw new ApiException("List size more than limit, limit : " + maxListSize);
+        if (productFormList.size() > MAX_BIN_LIMIT) {
+            throw new ApiException("List size more than limit, limit : " + MAX_BIN_LIMIT);
         }
 
-        validateList("Product Form",productFormList);
+        validateList("Product Form", productFormList);
         checkDuplicateProductsProductForm(productFormList);
         if (isNull(partyService.selectById(consumerId))) {
             throw new ApiException("client id does not exist");
@@ -41,8 +42,7 @@ public class ProductDto {
     }
 
     public List<ProductData> select(Integer pageNumber) {
-        Integer pageSize = 10;
-        List<ProductPojo> productPojoList = productService.select(pageNumber, pageSize);
+        List<ProductPojo> productPojoList = productService.select(pageNumber, PAGE_SIZE);
         return convertListProductPojoToData(productPojoList);
     }
 

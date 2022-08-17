@@ -14,20 +14,21 @@ import static assure.util.Helper.*;
 @Service
 public class PartyDto {
 
+    private static final Integer PAGE_SIZE = 10;
     @Autowired
     private PartyService partyService;
+
     public Integer add(List<PartyForm> partyFormList) throws ApiException {
         partyService.add(convertListPartyFormToPojo(partyFormList));
         return partyFormList.size();
     }
-    public List<PartyData> select(Integer pageNumber){
-        Integer pageSize = 10;
-        return convertListPartyPojoToData(partyService.select(pageNumber,pageSize));
+
+    public List<PartyData> select(Integer pageNumber) {
+        return convertListPartyPojoToData(partyService.select(pageNumber, PAGE_SIZE));
     }
 
-    public PartyData selectById(Long id){
+    public PartyData selectById(Long id) {
         return convertPartyPojoToData(partyService.selectById(id));
     }
-
 
 }

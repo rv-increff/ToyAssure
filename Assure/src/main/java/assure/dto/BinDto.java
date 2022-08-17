@@ -8,24 +8,24 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static assure.util.Helper.*;
+import static assure.util.Helper.convertListBinPojoToData;
 
 @Service
 public class BinDto {
+    private static final Long MAX_BIN_LIMIT = 100L;
+    private static final Integer PAGE_SIZE = 10;
     @Autowired
     private BinService binService;
 
     public List<BinData> add(Integer numberOfBins) throws ApiException {
-        Long maxBinLimit = 100L;
-        if(numberOfBins>maxBinLimit){
-            throw new ApiException("number of bins greater than limit , limit : "  + maxBinLimit);
+        if (numberOfBins > MAX_BIN_LIMIT) {
+            throw new ApiException("number of bins greater than limit , limit : " + MAX_BIN_LIMIT);
         }
         return convertListBinPojoToData(binService.add(numberOfBins));
     }
 
-    public List<BinData> select(Integer pageNumber){
-        Integer pageSize = 10;
-        return convertListBinPojoToData(binService.select(pageNumber,pageSize));
+    public List<BinData> select(Integer pageNumber) {
+        return convertListBinPojoToData(binService.select(pageNumber, PAGE_SIZE));
     }
 
 }

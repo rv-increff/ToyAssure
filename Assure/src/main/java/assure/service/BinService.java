@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 @Transactional(rollbackFor = ApiException.class)
-public class BinService { //TODO no s
+public class BinService {
 
     @Autowired
     private BinDao binDao;
@@ -30,7 +30,7 @@ public class BinService { //TODO no s
         return binDao.select(pageNumber, pageSize);
     }
 
-    public BinPojo selectById(Long id){
+    public BinPojo selectById(Long id) {
         return selectById(id);
     }
 }

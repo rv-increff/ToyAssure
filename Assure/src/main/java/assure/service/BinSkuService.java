@@ -20,9 +20,7 @@ public class BinSkuService {
     private BinSkuDao dao;
 
     public void add(List<BinSkuPojo> binSkuPojoList) throws ApiException {
-        validateList("Bin sku",binSkuPojoList);
-        //TODO get the set from below decide if it exists and the update or create;
-        //TODO remove pair
+        validateList("Bin sku", binSkuPojoList);
         for (BinSkuPojo binSkuPojo : binSkuPojoList) {
             BinSkuPojo exists = dao.selectByBinIdAndGlobalSkuId(binSkuPojo.getBinId(), binSkuPojo.getGlobalSkuId());
             if (isNull(exists)) {

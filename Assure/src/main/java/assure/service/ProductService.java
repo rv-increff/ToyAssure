@@ -24,7 +24,7 @@ public class ProductService {
     private ProductDao productDao;
 
     public void add(List<ProductPojo> productPojoList) throws ApiException {
-        validateList("Product",productPojoList);
+        validateList("Product", productPojoList);
         Long clientId = productPojoList.get(0).getClientId();
         List<ErrorData> errorFormList = new ArrayList<>();
         List<ProductPojo> productPojoByClientList = selectByClientId(clientId);

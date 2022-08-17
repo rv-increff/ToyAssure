@@ -12,11 +12,11 @@ import static assure.util.Helper.convertChannelPojoListToData;
 @Service
 public class ChannelDto {
 
+    private static final Integer PAGE_SIZE = 10;
     @Autowired
     private ChannelService channelService;
 
-    public List<ChannelData> select(Integer pageNumber){
-        Integer pageSize = 10;
-        return convertChannelPojoListToData(channelService.select(pageNumber,pageSize));
+    public List<ChannelData> select(Integer pageNumber) {
+        return convertChannelPojoListToData(channelService.select(pageNumber, PAGE_SIZE));
     }
 }

@@ -11,6 +11,7 @@ import assure.service.ProductService;
 import assure.spring.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,21 +24,22 @@ import static java.util.Objects.isNull;
 @Service
 public class BinSkuDto {
 
+    private static final Long MAX_BIN_LIMIT = 100L;
+    private static final Integer PAGE_SIZE = 10;
     @Autowired
     private BinSkuService binSkuService;
     @Autowired
     private ProductService productService;
-
     @Autowired
     private BinService binService;
 
+    @Transactional(rollbackFor = ApiException.class)
     public Integer add(List<BinSkuForm> binSkuFormList) throws ApiException {
-        Long maxListSize = 1000L;//TODO private top class
-        if (binSkuFormList.size() > maxListSize) {
-            throw new ApiException("List size more than limit, limit : " + maxListSize);
+        if (binSkuFormList.size() > MAX_BIN_LIMIT) {
+            throw new ApiException("List size more than limit, limit : " + MAX_BIN_LIMIT);
         }
 
-        validateList("BinSku",binSkuFormList);
+        validateList("BinSku", binSkuFormList);
         checkDuplicateProductsBinSkuForm(binSkuFormList);
         HashMap<String, Long> clientToGlobalSkuIdMap = getClientToGlobalSkuIdMap(binSkuFormList);
         checkBinIdExists(binSkuFormList);
@@ -49,8 +51,7 @@ public class BinSkuDto {
     }
 
     public List<BinSkuData> select(Integer pageNumber) {
-        Integer pageSize = 10; //TODO private static final
-        return convertListBinSkuPojoToData(binSkuService.select(pageNumber, pageSize));
+        return convertListBinSkuPojoToData(binSkuService.select(pageNumber, PAGE_SIZE));
     }
 
     public BinSkuUpdateForm update(BinSkuUpdateForm binSkuUpdateForm, Long id) throws ApiException {
