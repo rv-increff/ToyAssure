@@ -17,7 +17,7 @@ public class ConsumerController {
     @Autowired
     private ConsumerDto consumerDto;
 //TODO get similar names for client-customer online synonym
-    @ApiOperation(value = "Get Consumer")  //TODO change name swagger api naming convention
+    @ApiOperation(value = "Get Consumers")  //TODO change name swagger api naming convention
     @RequestMapping(path = "/consumers", method = RequestMethod.GET) //TODO 3 modules assure, commons, channels
     public List<ConsumerData> getConsumers(@RequestParam(name = "pageNumber") Integer pageNumber) {
         return consumerDto.select(pageNumber);

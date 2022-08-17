@@ -11,18 +11,15 @@ import java.util.regex.Pattern;
 
 import static java.util.Objects.isNull;
 
-public class DataUtil {
-    public static <T> boolean validateNullCheck(T form){
+public class ValidationUtils {
+    public static <T> boolean checkNotNull(T form){ //TODO use annotation and its validations
         try {
-
             Field[] fields = form.getClass().getDeclaredFields();
             for (Field m : fields) {
                 m.setAccessible(true);
-                System.out.println(m.get(form) + "-" + m.getName());
                 if(isNull(m.get(form)))return false;
             }
         } catch (IllegalAccessException err) {
-            System.out.println(err);
         }
         return true;
     }
@@ -32,7 +29,7 @@ public class DataUtil {
         Matcher matcher = numP.matcher(MRP.toString());
         return matcher.find();
     }
-    public static <T> List<List<T>> partition(List<T> list,Integer parts){
+    public static <T> List<List<T>> partition(List<T> list,Integer parts){ //TODO use apace utils collection 4
         Integer size = list.size();
         List<List<T>> subLists = new ArrayList<>();
 

@@ -1,10 +1,7 @@
 package assure.util;
 
 import assure.model.*;
-import assure.pojo.BinPojo;
-import assure.pojo.BinSkuPojo;
-import assure.pojo.ClientPojo;
-import assure.pojo.ProductPojo;
+import assure.pojo.*;
 import assure.spring.ApiException;
 import org.springframework.util.CollectionUtils;
 
@@ -13,13 +10,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import static assure.util.DataUtil.validateNullCheck;
+import static assure.util.ValidationUtils.checkNotNull;
 import static java.util.Objects.isNull;
 
 public class Helper {
 
-    public static ClientPojo convertClientFormToPojo(ConsumerForm consumerForm) {
-        ClientPojo clientPojo = new ClientPojo();
+    public static ConsumerPojo convertClientFormToPojo(ConsumerForm consumerForm) {
+        ConsumerPojo clientPojo = new ConsumerPojo();
         clientPojo.setName(consumerForm.getName());
         clientPojo.setType(consumerForm.getTypes());
 
@@ -27,7 +24,7 @@ public class Helper {
     }
 
 
-    public static ConsumerData convertClientPojoToData(ClientPojo clientPojo) {
+    public static ConsumerData convertClientPojoToData(ConsumerPojo clientPojo) {
         ConsumerData consumerData = new ConsumerData();
         consumerData.setName(clientPojo.getName());
         consumerData.setType(clientPojo.getType());
@@ -35,17 +32,17 @@ public class Helper {
         return consumerData;
     }
 
-    public static List<ConsumerData> convertListClientPojoToData(List<ClientPojo> clientPojoList) {
+    public static List<ConsumerData> convertListClientPojoToData(List<ConsumerPojo> clientPojoList) {
         List<ConsumerData> consumerDataList = new ArrayList<>();
-        for (ClientPojo clientPojo : clientPojoList) {
+        for (ConsumerPojo clientPojo : clientPojoList) {
             consumerDataList.add(convertClientPojoToData(clientPojo));
         }
 
         return consumerDataList;
     }
 
-    public static List<ClientPojo> convertListClientFormToPojo(List<ConsumerForm> consumerFormList) {
-        List<ClientPojo> clientPojoList = new ArrayList<>();
+    public static List<ConsumerPojo> convertListClientFormToPojo(List<ConsumerForm> consumerFormList) {
+        List<ConsumerPojo> clientPojoList = new ArrayList<>();
         for (ConsumerForm consumerForm : consumerFormList) {
             clientPojoList.add(convertClientFormToPojo(consumerForm));
         }
@@ -93,9 +90,9 @@ public class Helper {
         return productDataList;
     }
 
-    public static String transformErrorList(List<ErrorForm> errorFormList) {
+    public static String transformErrorList(List<ErrorData> errorFormList) {
         String err = "";
-        for (ErrorForm errorForm : errorFormList) {
+        for (ErrorData errorForm : errorFormList) {
             err += errorForm.toString();
         }
         System.out.println(err);
@@ -105,11 +102,11 @@ public class Helper {
     public static <T> void checkDuplicateProductsProductForm(List<ProductForm> productFormList) throws ApiException {
 
         HashSet<String> set = new HashSet<>();
-        List<ErrorForm> errorFormList = new ArrayList<>();
+        List<ErrorData> errorFormList = new ArrayList<>();
         Integer row = 1;
         for (ProductForm productForm : productFormList) {
             if (set.contains(productForm.getClientSkuId())) {
-                errorFormList.add(new ErrorForm(row, "duplicate values of clientSkuId"));
+                errorFormList.add(new ErrorData(row, "duplicate values of clientSkuId"));
             }
             set.add(productForm.getClientSkuId());
             row++;
@@ -119,11 +116,11 @@ public class Helper {
     public static void checkDuplicateProductsBinSkuForm(List<BinSkuForm> binSkuFormList) throws ApiException {
 
         HashSet<String> set = new HashSet<>();
-        List<ErrorForm> errorFormList = new ArrayList<>();
+        List<ErrorData> errorFormList = new ArrayList<>();
         Integer row = 1;
         for (BinSkuForm binSkuForm : binSkuFormList) {
             if (set.contains(binSkuForm.getClientSkuId())) {
-                errorFormList.add(new ErrorForm(row, "duplicate values of clientSkuId"));
+                errorFormList.add(new ErrorData(row, "duplicate values of clientSkuId"));
             }
             set.add(binSkuForm.getClientSkuId());
             row++;
@@ -136,14 +133,14 @@ public class Helper {
             throw new ApiException("Empty body");
         }
 
-        List<ErrorForm> errorFormList = new ArrayList<>();
+        List<ErrorData> errorFormList = new ArrayList<>();
         Integer row = 1;
         for (ProductForm productForm : productFormList) {
-            if (!validateNullCheck(productForm)) {
-                errorFormList.add(new ErrorForm(row, "value cannot be null or empty"));
+            if (!checkNotNull(productForm)) {
+                errorFormList.add(new ErrorData(row, "value cannot be null or empty"));
             }
-            if (!DataUtil.validateMRP(productForm.getMrp()) && !isNull(productForm.getMrp())) {
-                errorFormList.add(new ErrorForm(row, "MRP should be a positive number"));
+            if (!ValidationUtils.validateMRP(productForm.getMrp()) && !isNull(productForm.getMrp())) {
+                errorFormList.add(new ErrorData(row, "MRP should be a positive number"));
             }
             row++;
         }
@@ -152,23 +149,23 @@ public class Helper {
     public static void validateBinSkuFormList(List<BinSkuForm> binSkuFormList) throws ApiException {
 
         if(CollectionUtils.isEmpty(binSkuFormList)){
-            throw new ApiException("Empty body");
+            throw new ApiException("BinSku List cannot be empty");
         }
-        List<ErrorForm> errorFormList = new ArrayList<>();
+        List<ErrorData> errorFormList = new ArrayList<>();
         Integer row = 1;
         for (BinSkuForm binSkuForm : binSkuFormList) {
-            if (!validateNullCheck(binSkuForm)) {
-                errorFormList.add(new ErrorForm(row, "value cannot be null or empty"));
+            if (!checkNotNull(binSkuForm)) {
+                errorFormList.add(new ErrorData(row, "value cannot be null or empty"));
             }
             if (binSkuForm.getQuantity()<0) {
-                errorFormList.add(new ErrorForm(row, "quantity should be a positive number"));
+                errorFormList.add(new ErrorData(row, "quantity should be a positive number"));
             }
             row++;
         }
         throwErrorIfNotEmpty(errorFormList);
     }
 
-    public static void throwErrorIfNotEmpty(List<ErrorForm> errorFormList) throws ApiException {
+    public static void throwErrorIfNotEmpty(List<ErrorData> errorFormList) throws ApiException {
         if (!CollectionUtils.isEmpty(errorFormList)) {
             throw new ApiException(errorFormList);
         }
@@ -187,10 +184,10 @@ public class Helper {
         return productPojo;
     }
     public static void validate(ProductUpdateForm productUpdateForm) throws ApiException {
-        if(!validateNullCheck(productUpdateForm)){
+        if(!checkNotNull(productUpdateForm)){
             throw new ApiException("value cannot be null or empty");
         }
-        if (!DataUtil.validateMRP(productUpdateForm.getMrp()) && !isNull(productUpdateForm.getMrp())) {
+        if (!ValidationUtils.validateMRP(productUpdateForm.getMrp()) && !isNull(productUpdateForm.getMrp())) {
             throw new ApiException("MRP should be a positive number");
         }
     }
@@ -253,5 +250,20 @@ public class Helper {
         binSkuPojo.setId(id);
 
         return binSkuPojo;
+    }
+    public static ChannelData convertChannelPojoToData(ChannelPojo channelPojo){
+        ChannelData channelData = new ChannelData();
+        channelData.setName(channelPojo.getName());
+        channelData.setInvoiceTypes(channelPojo.getInvoiceType());
+
+        return channelData;
+    }
+    public static List<ChannelData> convertChannelPojoListToData(List<ChannelPojo> channelPojoList){
+        List<ChannelData> channelDataList = new ArrayList<>();
+        for (ChannelPojo channelPojo : channelPojoList) {
+            channelDataList.add(convertChannelPojoToData(channelPojo));
+        }
+
+        return channelDataList;
     }
 }

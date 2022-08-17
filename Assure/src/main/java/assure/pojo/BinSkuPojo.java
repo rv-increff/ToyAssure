@@ -5,16 +5,16 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-import static assure.pojo.TableConstants.*;
+import static assure.pojo.TableConstants.SEQ_BIN_SKU;
+import static assure.pojo.TableConstants.SEQ_INITIAL_VALUE;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "assure_bin_sku")
-public class BinSkuPojo extends AbstractPojo{
+public class BinSkuPojo extends AbstractPojo {
     @Id
-    @TableGenerator(name = BIN_SKU_GENERATOR, initialValue = INITIAL_VALUE)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = BIN_SKU_GENERATOR)
+    @TableGenerator(name = SEQ_BIN_SKU, initialValue = SEQ_INITIAL_VALUE)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = SEQ_BIN_SKU)
     private Long id;
 
     @Column(nullable = false)

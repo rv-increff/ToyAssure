@@ -1,19 +1,17 @@
-package assure.services;
+package assure.service;
 
 import assure.dao.BinDao;
 import assure.pojo.BinPojo;
 import assure.spring.ApiException;
-import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @Transactional(rollbackFor = ApiException.class)
-public class BinServices {
+public class BinService { //TODO no s
 
     @Autowired
     private BinDao binDao;
@@ -32,7 +30,7 @@ public class BinServices {
         return binDao.select(pageNumber, pageSize);
     }
 
-    public List<BinPojo> selectByIdList(List<Long> idList){
-        return binDao.selectByIdList(idList);
+    public BinPojo selectById(Long id){
+        return selectById(id);
     }
 }

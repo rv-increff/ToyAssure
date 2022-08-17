@@ -1,6 +1,6 @@
 package assure.model;
 
-import assure.util.Types;
+import assure.util.ConsumerTypes;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,5 +10,5 @@ public class ConsumerData {
 
     private Long id;
     private String name;
-    private Types type;
+    private ConsumerTypes type;
 }

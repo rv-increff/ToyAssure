@@ -4,8 +4,8 @@ import assure.model.ProductData;
 import assure.model.ProductForm;
 import assure.model.ProductUpdateForm;
 import assure.pojo.ProductPojo;
-import assure.services.ClientServices;
-import assure.services.ProductServices;
+import assure.service.ConsumerService;
+import assure.service.ProductService;
 import assure.spring.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,9 +20,9 @@ import static java.util.Objects.isNull;
 public class ProductDto {
 
     @Autowired
-    private ProductServices productServices;
+    private ProductService productService;
     @Autowired
-    private ClientServices clientServices;
+    private ConsumerService consumerService;
 
     @Transactional(rollbackFor = ApiException.class)
     public Integer add(List<ProductForm> productFormList, Long consumerId) throws ApiException {
@@ -33,28 +33,28 @@ public class ProductDto {
 
         validateList(productFormList);
         checkDuplicateProductsProductForm(productFormList);
-        if (isNull(clientServices.selectById(consumerId))) {
+        if (isNull(consumerService.selectById(consumerId))) {
             throw new ApiException("client id does not exist");
         }
-        productServices.add(convertListProductFormToPojo(productFormList, consumerId));
+        productService.add(convertListProductFormToPojo(productFormList, consumerId));
         return productFormList.size();
     }
 
     public List<ProductData> select(Integer pageNumber) {
         Integer pageSize = 10;
-        List<ProductPojo> productPojoList = productServices.select(pageNumber, pageSize);
+        List<ProductPojo> productPojoList = productService.select(pageNumber, pageSize);
         return convertListProductPojoToData(productPojoList);
     }
 
     public ProductData selectById(Long globalSkuId) throws ApiException {
-        ProductPojo productPojo = productServices.selectById(globalSkuId);
+        ProductPojo productPojo = productService.selectById(globalSkuId);
         return convertProductPojoToData(productPojo);
     }
 
     public ProductUpdateForm update(ProductUpdateForm productUpdateForm, Long globalSkuId) throws ApiException {
         validate(productUpdateForm);
-        Long clientId = productServices.selectById(globalSkuId).getClientId();
-        productServices.update(convertProductUpdateFormToPojo(productUpdateForm, globalSkuId, clientId));
+        Long clientId = productService.selectById(globalSkuId).getClientId();
+        productService.update(convertProductUpdateFormToPojo(productUpdateForm, globalSkuId, clientId));
         return productUpdateForm;
     }
 }

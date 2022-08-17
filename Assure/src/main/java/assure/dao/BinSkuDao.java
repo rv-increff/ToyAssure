@@ -1,36 +1,41 @@
 package assure.dao;
 
 import assure.pojo.BinSkuPojo;
+import assure.pojo.ProductPojo;
 import javafx.util.Pair;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class BinSkuDao extends AbstractDao {
+public class BinSkuDao extends AbstractDao<BinSkuPojo> {
 
-    protected final static String SELECT_BY_BIND_ID_GLOBAL_SKU_ID_LIST_BUILDER =
-            "select p from BinSkuPojo p where (binId,globalSkuId) in ";
+     //TODO check the number of calls in where
 
-    public List<BinSkuPojo> select(Integer pageNumber, Integer pageSize) {
-        return select(BinSkuPojo.class, pageNumber, pageSize);
+
+    public BinSkuPojo selectByBinIdAndGlobalSkuId(Long binId, Long globalSkuIdList) { //Add index
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery cr = cr();
+        Root<BinSkuPojo> root = cr.from(this.clazz);
+        cr  = cr.select(root);
+        cr.where(cb.equal(root.get("binId"), binId));
+        cr.where(cb.equal(root.get("globalSkuIdList"), globalSkuIdList));
+        TypedQuery<BinSkuPojo> query =  em.createQuery(cr);
+        return getSingle(query);
     }
-
-    public List<BinSkuPojo> selectByListBinIdGlobalSkuId(List<Pair<Long, Long>> binIdGlobalSkuIdList) {
-        String queryString = SELECT_BY_BIND_ID_GLOBAL_SKU_ID_LIST_BUILDER + "(";
-        for (Pair pair : binIdGlobalSkuIdList) {
-            queryString += "(" + "'" + pair.getKey()+ "'" + "," + "'" + pair.getValue() + "'"+  ")";
-        }
-        queryString += ")";
-        TypedQuery<BinSkuPojo> query = em().createQuery(queryString, BinSkuPojo.class);
-        return query.getResultList();
-    }
-
+//TODO for in list and by for single in name
     public BinSkuPojo selectById(Long id){
-        List<Pair> where = new ArrayList<>();
-        where.add(new Pair("id",id));
-        return getSingle(selectWhere(BinSkuPojo.class,where));
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery cr = cr();
+        Root<BinSkuPojo> root = cr.from(this.clazz);
+        cr  = cr.select(root);
+        cr.where(cb.equal(root.get("id"), id));
+        TypedQuery<BinSkuPojo> query =  em.createQuery(cr);
+        return getSingle(query);
     }
 }

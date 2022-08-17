@@ -33,7 +33,7 @@ public class BinSkuController {
         return binSkuDto.select(pageNumber);
     }
 
-    @ApiOperation(value = "Update binSkus")
+    @ApiOperation(value = "Update binSku")
     @RequestMapping(path = "/bin-skus/{id}", method = RequestMethod.PUT)
     public BinSkuUpdateForm updateBinSku(@PathVariable Long id, @RequestBody BinSkuUpdateForm binSkuUpdateForm) throws ApiException {
         return binSkuDto.update(binSkuUpdateForm,id);

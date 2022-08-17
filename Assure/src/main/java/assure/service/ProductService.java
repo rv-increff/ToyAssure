@@ -1,7 +1,7 @@
-package assure.services;
+package assure.service;
 
 import assure.dao.ProductDao;
-import assure.model.ErrorForm;
+import assure.model.ErrorData;
 import assure.pojo.ProductPojo;
 import assure.spring.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,21 +19,21 @@ import static java.util.Objects.isNull;
 
 @Service
 @Transactional(rollbackFor = ApiException.class)
-public class ProductServices {
+public class ProductService {
     @Autowired
     private ProductDao productDao;
 
     public void add(List<ProductPojo> productPojoList) throws ApiException {
 
         Long clientId = productPojoList.get(0).getClientId();
-        List<ErrorForm> errorFormList = new ArrayList<>();
+        List<ErrorData> errorFormList = new ArrayList<>();
         List<ProductPojo> productPojoByClientList = selectByClientId(clientId);
         Set<String> clientSkuIdSet = productPojoByClientList.stream().map(ProductPojo::getClientSkuId)
                 .collect(Collectors.toSet());
         Integer row = 1;
         for (ProductPojo productPojo : productPojoList) {
             if (clientSkuIdSet.contains(productPojo.getClientSkuId())) {
-                errorFormList.add(new ErrorForm(row, "clientSkuId - clientId pair exists"));
+                errorFormList.add(new ErrorData(row, "clientSkuId - clientId pair exists"));
             }
             row++;
         }
@@ -60,7 +60,7 @@ public class ProductServices {
         ProductPojo exists = getCheck(productPojo.getGlobalSkuId());
 
         if (!Objects.equals(exists.getClientSkuId(), productPojo.getClientSkuId())) {
-            if (!isNull(productDao.selectByClientSkuIdClientId(productPojo.getClientSkuId(), productPojo.getClientId()))) {
+            if (!isNull(productDao.selectByClientSkuIdAndClientId(productPojo.getClientSkuId(), productPojo.getClientId()))) {
                 throw new ApiException("clientSkuId - clientId pair exists");
             }
         }
@@ -84,8 +84,8 @@ public class ProductServices {
         return productPojo;
     }
 
-    public List<ProductPojo> selectByClientSkuIdList(List<String>clientSkuIdList){
-        return productDao.selectByClientSkuIdList(clientSkuIdList);
+    public ProductPojo selectByClientSkuId(String clientSkuId) {
+        return productDao.selectByClientSkuId(clientSkuId);
     }
 }
 

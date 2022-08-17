@@ -1,6 +1,7 @@
 package assure.dao;
 
 import assure.pojo.BinPojo;
+import assure.pojo.BinSkuPojo;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
@@ -11,14 +12,11 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 @Repository
-public class BinDao extends AbstractDao {
+public class BinDao extends AbstractDao<BinPojo> {
 
-    public List<BinPojo> select(Integer pageNumber, Integer pageSize) {
-        return select(BinPojo.class, pageNumber, pageSize);
-    }
 
     public List<BinPojo> selectLatestCreatedBins(Integer numberOfBins){
-        CriteriaQuery<BinPojo> cr = cr(BinPojo.class);
+        CriteriaQuery<BinPojo> cr = cr();
         Root<BinPojo> root = cr.from(BinPojo.class);
         List<Order> orderList = new ArrayList();
         CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -31,7 +29,13 @@ public class BinDao extends AbstractDao {
         List<BinPojo> results = query.getResultList();
         return results;
     }
-    public List<BinPojo> selectByIdList(List<Long> idList){
-        return selectIn(BinPojo.class, idList, "binId").getResultList();
+    public List<BinPojo> selectForIds(List<Long> idList){
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery cr = cr();
+        Root<BinPojo> root = cr.from(this.clazz);
+        cr  = cr.select(root);
+        cr.where(root.get("id").in(idList));
+        TypedQuery<BinPojo> query =  em.createQuery(cr);
+        return query.getResultList();
     }
 }

@@ -1,13 +1,13 @@
 package assure.model;
 
-import assure.util.ConsumerTypes;
+import assure.util.InvoiceType;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class ConsumerForm {
+public class ChannelData {
 
     private String name;
-    private ConsumerTypes types;
+    private InvoiceType invoiceTypes;
 }

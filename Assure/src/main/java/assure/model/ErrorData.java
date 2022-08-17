@@ -5,12 +5,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ErrorForm {
+public class ErrorData {
 
     private Integer row;
     private String message;
 
-    public ErrorForm(Integer row, String message){
+    public ErrorData(Integer row, String message){
         this.row = row;
         this.message = message;
     }
