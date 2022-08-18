@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static assure.util.Helper.*;
@@ -20,16 +17,20 @@ import static java.util.Objects.isNull;
 @Service
 @Transactional(rollbackFor = ApiException.class)
 public class ProductService {
+
+    private static final Long MAX_LIST_SIZE = 1000L;
     @Autowired
     private ProductDao productDao;
 
     public void add(List<ProductPojo> productPojoList) throws ApiException {
-        validateList("Product", productPojoList);
+        validateAddPojoList(productPojoList, Arrays.asList("globalSkuId"), MAX_LIST_SIZE);
+
         Long clientId = productPojoList.get(0).getClientId();
         List<ErrorData> errorFormList = new ArrayList<>();
         List<ProductPojo> productPojoByClientList = selectByClientId(clientId);
         Set<String> clientSkuIdSet = productPojoByClientList.stream().map(ProductPojo::getClientSkuId)
                 .collect(Collectors.toSet());
+
         Integer row = 1;
         for (ProductPojo productPojo : productPojoList) {
             if (clientSkuIdSet.contains(productPojo.getClientSkuId())) {
@@ -61,7 +62,7 @@ public class ProductService {
         ProductPojo exists = getCheck(productPojo.getGlobalSkuId());
 
         if (!Objects.equals(exists.getClientSkuId(), productPojo.getClientSkuId())) {
-            if (!isNull(productDao.selectByClientSkuIdAndClientId(productPojo.getClientSkuId(), productPojo.getClientId()))) {
+            if (!isNull(productDao.selectByClientIdAndClientSkuId(productPojo.getClientSkuId(), productPojo.getClientId()))) {
                 throw new ApiException("clientSkuId - clientId pair exists");
             }
         }

@@ -1,14 +1,12 @@
 package assure.dao;
 
 import assure.pojo.ProductPojo;
-import javafx.util.Pair;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -34,13 +32,13 @@ public class ProductDao extends AbstractDao<ProductPojo> {
         return query.getResultList();
     }
 
-    public ProductPojo selectByClientSkuIdAndClientId(String clientSkuId, Long clientId){
+    public ProductPojo selectByClientIdAndClientSkuId(String clientSkuId, Long clientId){
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery cr = cr();
         Root<ProductPojo> root = cr.from(this.clazz);
         cr  = cr.select(root);
-        cr.where(cb.equal(root.get("clientSkuId"), clientSkuId));
         cr.where(cb.equal(root.get("clientId"), clientId));
+        cr.where(cb.equal(root.get("clientSkuId"), clientSkuId));
         TypedQuery<ProductPojo> query =  em.createQuery(cr);
         return getSingle(query);
     }

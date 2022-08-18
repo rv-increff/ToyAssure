@@ -1,9 +1,7 @@
 package assure.util;
 
 
-public enum InvoiceType { //TODO will go in commons , change format
-
+public enum InvoiceType { //TODO will go in commons
     SELF,
     CHANNEL
-
 }

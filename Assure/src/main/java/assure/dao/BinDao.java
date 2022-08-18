@@ -15,18 +15,13 @@ import java.util.List;
 public class BinDao extends AbstractDao<BinPojo> {
 
 
-    public List<BinPojo> selectLatestCreatedBins(Integer numberOfBins){
-        CriteriaQuery<BinPojo> cr = cr();
-        Root<BinPojo> root = cr.from(BinPojo.class);
-        List<Order> orderList = new ArrayList();
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        orderList.add(builder.desc(root.get("createdAt")));
-        cr.select(root).orderBy(orderList);
+    public BinPojo selectById(Long id){
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery cr = cr();
+        Root<BinPojo> root = cr.from(this.clazz);
+        cr  = cr.select(root);
+        cr.where(cb.equal(root.get("id"), id));
         TypedQuery<BinPojo> query =  em.createQuery(cr);
-        query.setFirstResult(0);
-        query.setMaxResults(numberOfBins);
-
-        List<BinPojo> results = query.getResultList();
-        return results;
+        return getSingle(query);
     }
 }

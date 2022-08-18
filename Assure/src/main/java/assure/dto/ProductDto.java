@@ -19,7 +19,7 @@ import static java.util.Objects.isNull;
 @Service
 public class ProductDto {
 
-    private static final Long MAX_BIN_LIMIT = 1000L;
+    private static final Long MAX_LIST_SIZE = 1000L;
     private static final Integer PAGE_SIZE = 10;
     @Autowired
     private ProductService productService;
@@ -28,8 +28,8 @@ public class ProductDto {
 
     @Transactional(rollbackFor = ApiException.class)
     public Integer add(List<ProductForm> productFormList, Long consumerId) throws ApiException {
-        if (productFormList.size() > MAX_BIN_LIMIT) {
-            throw new ApiException("List size more than limit, limit : " + MAX_BIN_LIMIT);
+        if (productFormList.size() > MAX_LIST_SIZE) {
+            throw new ApiException("List size more than limit, limit : " + MAX_LIST_SIZE);
         }
 
         validateList("Product Form", productFormList);

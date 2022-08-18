@@ -1,6 +1,6 @@
 package assure.pojo;
 
-import assure.util.PartyTypes;
+import assure.util.PartyType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +21,9 @@ public class PartyPojo extends AbstractPojo {
     @Column(nullable = false)
     private String name;
 
-    private PartyTypes type; //TODO change to party types
+    @Enumerated(value = EnumType.STRING)
+    @Column(nullable = false)
+    private PartyType type; //TODO change to party types
 
 
 }

@@ -1,0 +1,28 @@
+package assure.controller;
+
+import assure.dto.ChannelListingDto;
+import assure.model.ChannelData;
+import assure.model.ChannelListingForm;
+import assure.spring.ApiException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@Api
+@RestController
+public class ChannelListingController {
+
+    @Autowired
+    private ChannelListingDto channelListingDto;
+
+    @ApiOperation(value = "Add ChannelListings")  //TODO create default internal channel
+    @RequestMapping(path = "/channelListings", method = RequestMethod.POST)
+    public Integer addChannelListings(@RequestParam(name = "clientName") String clientName,
+                                                 @RequestParam(name = "channelName") String channelName,
+                                                 @RequestBody List<ChannelListingForm>channelListingFormList) throws ApiException {
+        return channelListingDto.add(clientName, channelName, channelListingFormList);
+    }
+}

@@ -1,6 +1,6 @@
 package assure.model;
 
-import assure.util.PartyTypes;
+import assure.util.PartyType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,5 +10,5 @@ public class PartyData {
 
     private Long id;
     private String name;
-    private PartyTypes type;
+    private PartyType type;
 }

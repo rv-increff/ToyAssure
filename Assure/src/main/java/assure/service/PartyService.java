@@ -4,6 +4,7 @@ import assure.dao.PartyDao;
 import assure.model.ErrorData;
 import assure.pojo.PartyPojo;
 import assure.spring.ApiException;
+import assure.util.PartyType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,10 @@ public class PartyService {
 
     public PartyPojo selectById(Long id) {
         return dao.selectById(id);
+    }
+
+    public PartyPojo selectByNameAndPartyType(String name, PartyType partyType){
+        return dao.selectByNameAndPartyType(name, partyType);
     }
 
     public List<PartyPojo> select(Integer pageNumber, Integer pageSize) {

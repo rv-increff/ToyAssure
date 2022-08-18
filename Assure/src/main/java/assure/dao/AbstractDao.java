@@ -22,9 +22,9 @@ public abstract class AbstractDao <T> {
 	public AbstractDao(){
 		this.clazz = (Class)((ParameterizedType)this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 	}
-//TODO add common variable to store class while extends
-	public <T> void add(T pojoObject){
+	public <T> T add(T pojoObject){
 		em.persist(pojoObject);
+		return pojoObject;
 	}
 	public <T> List<T> select(Integer pageNumber, Integer pageSize){
 		CriteriaQuery<T> cr = cr();

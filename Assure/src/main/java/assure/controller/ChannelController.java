@@ -2,6 +2,8 @@ package assure.controller;
 
 import assure.dto.ChannelDto;
 import assure.model.ChannelData;
+import assure.model.ChannelForm;
+import assure.spring.ApiException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +24,10 @@ public class ChannelController {
         return channelDto.select(pageNumber);
     }
 
-//    @ApiOperation(value = "Add Channel")
-//    @RequestMapping(path = "/channels", method = RequestMethod.POST)
-//    public ChannelData getChannels(@RequestBody ChannelForm channelForm) {
-//        return consumerDto.select(pageNumber);
-//    }
-
-
-
+    @ApiOperation(value = "Add Channel")
+    @RequestMapping(path = "/channels", method = RequestMethod.POST)
+    public ChannelForm addChannel(@RequestBody ChannelForm channelForm) throws ApiException {
+        return channelDto.add(channelForm);
+    }
 
 }

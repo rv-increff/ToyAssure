@@ -7,22 +7,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
-import static assure.util.Helper.validateList;
+import static assure.util.Helper.validateAddPojoList;
 import static java.util.Objects.isNull;
 
 @Service
 @Transactional(rollbackFor = ApiException.class)
 public class BinSkuService {
-
+    private static final Long MAX_LIST_SIZE = 1000L;
     @Autowired
     private BinSkuDao dao;
 
     public void add(List<BinSkuPojo> binSkuPojoList) throws ApiException {
-        validateList("Bin sku", binSkuPojoList);
+        validateAddPojoList(binSkuPojoList, Arrays.asList("id"), MAX_LIST_SIZE);
+
         for (BinSkuPojo binSkuPojo : binSkuPojoList) {
-            BinSkuPojo exists = dao.selectByBinIdAndGlobalSkuId(binSkuPojo.getBinId(), binSkuPojo.getGlobalSkuId());
+            BinSkuPojo exists = dao.selectByGlobalSkuIdAndBinId(binSkuPojo.getBinId(), binSkuPojo.getGlobalSkuId());
             if (isNull(exists)) {
                 dao.add(binSkuPojo);
             } else {

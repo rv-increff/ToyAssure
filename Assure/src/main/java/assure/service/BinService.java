@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,12 +19,13 @@ public class BinService {
 
     public List<BinPojo> add(Integer numberOfBins) {
         Integer num = numberOfBins;
+        List<BinPojo> binPojoList = new ArrayList<>();
         while (num > 0) {
             BinPojo binPojo = new BinPojo();
-            binDao.add(binPojo);
+            binPojoList.add(binDao.add(binPojo));
             num--;
         }
-        return binDao.selectLatestCreatedBins(numberOfBins);
+        return binPojoList;
     }
 
     public List<BinPojo> select(Integer pageNumber, Integer pageSize) {
@@ -31,6 +33,6 @@ public class BinService {
     }
 
     public BinPojo selectById(Long id) {
-        return selectById(id);
+        return binDao.selectById(id);
     }
 }

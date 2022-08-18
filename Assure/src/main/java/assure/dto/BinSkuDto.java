@@ -41,9 +41,10 @@ public class BinSkuDto {
 
         validateList("BinSku", binSkuFormList);
         checkDuplicateProductsBinSkuForm(binSkuFormList);
-        HashMap<String, Long> clientToGlobalSkuIdMap = getClientToGlobalSkuIdMap(binSkuFormList);
         checkBinIdExists(binSkuFormList);
-        checkClientSkuIdExist(clientToGlobalSkuIdMap, binSkuFormList);
+
+        HashMap<String, Long> clientToGlobalSkuIdMap = getClientToGlobalSkuIdMap(binSkuFormList);
+        checkClientSkuIdExist(clientToGlobalSkuIdMap, binSkuFormList); //TODO make it return map validateAnd
 
         binSkuService.add(convertListBinSkuFormToPojo(binSkuFormList, clientToGlobalSkuIdMap));
 

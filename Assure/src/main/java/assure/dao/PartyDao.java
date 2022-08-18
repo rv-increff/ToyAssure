@@ -1,7 +1,7 @@
 package assure.dao;
 
 import assure.pojo.PartyPojo;
-import assure.util.PartyTypes;
+import assure.util.PartyType;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
@@ -21,7 +21,7 @@ public class PartyDao extends AbstractDao<PartyPojo> {
         return getSingle(query);
     }
 
-    public PartyPojo selectByNameAndPartyType(String name, PartyTypes type){
+    public PartyPojo selectByNameAndPartyType(String name, PartyType type){
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery cr = cr();
         Root<PartyPojo> root = cr.from(this.clazz);
