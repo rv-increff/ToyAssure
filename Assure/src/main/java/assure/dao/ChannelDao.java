@@ -11,6 +11,7 @@ import javax.persistence.criteria.Root;
 
 @Repository
 public class ChannelDao extends AbstractDao<ChannelPojo>{
+    //TODO constructor for adding internal channel;
     public ChannelPojo selectByInvoiceType(InvoiceType invoiceType){
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery cr = cr();

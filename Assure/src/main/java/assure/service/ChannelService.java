@@ -39,7 +39,7 @@ public class ChannelService {
     }
 
     public ChannelPojo selectByName(String name){
-        return channelDao.selectByName(name);
+        return channelDao.selectByName(name.toUpperCase());
     }
 
     private void checkAndCreateSelf() {

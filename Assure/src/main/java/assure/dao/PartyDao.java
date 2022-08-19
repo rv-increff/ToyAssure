@@ -26,8 +26,7 @@ public class PartyDao extends AbstractDao<PartyPojo> {
         CriteriaQuery cr = cr();
         Root<PartyPojo> root = cr.from(this.clazz);
         cr  = cr.select(root);
-        cr.where(cb.equal(root.get("name"), name));
-        cr.where(cb.equal(root.get("type"), type));
+        cr.where(cb.and((cb.equal(root.get("name"), name)),(cb.equal(root.get("type"), type))));
         TypedQuery<PartyPojo> query =  em.createQuery(cr);
         return getSingle(query);
     }

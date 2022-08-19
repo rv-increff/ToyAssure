@@ -35,25 +35,33 @@ public class ChannelListingDto {
     private ChannelService channelService;
 
     @Transactional(rollbackFor = ApiException.class)
-    public Integer add(String clientName, String channelName, List<ChannelListingForm> channelListingFormList) throws ApiException {
+    public Integer add(String clientName, String channelName, List<ChannelListingForm> channelListingFormList)
+            throws ApiException {
+
         validateList("Channel Listing", channelListingFormList);
         checkDuplicateChannelListingFormList(channelListingFormList);
 
+
         PartyPojo partyPojo = partyService.selectByNameAndPartyType(clientName, PartyType.CLIENT);
-        if(isNull(partyPojo)){
+        if (isNull(partyPojo)) {
             throw new ApiException("client name does not exist");
         }
         ChannelPojo channelPojo = channelService.selectByName(channelName);
-        if(isNull(channelPojo)){
+        if (isNull(channelPojo)) {
             throw new ApiException("channel name does not exist");
         }
 
-        channelListingService.add(transformAndConvertChannelListingFormToPojo(partyPojo.getId(),channelPojo.getId(),channelListingFormList));
+        channelListingService.add(transformAndConvertChannelListingFormToPojo(partyPojo.getId(), channelPojo.getId(), channelListingFormList));
         return channelListingFormList.size();
     }
+
+
+
     private List<ChannelListingPojo> transformAndConvertChannelListingFormToPojo(Long clientId, Long channelId,
-            List<ChannelListingForm> channelListingFormList) throws ApiException {
-            List<ChannelListingPojo> channelListingPojoList = new ArrayList<>();
+                                                                                 List<ChannelListingForm> channelListingFormList)
+            throws ApiException {
+
+        List<ChannelListingPojo> channelListingPojoList = new ArrayList<>();
 
         List<ErrorData> errorFormList = new ArrayList<>();
         Integer row = 1;
@@ -61,15 +69,15 @@ public class ChannelListingDto {
             ChannelListingPojo channelListingPojo = new ChannelListingPojo();
 
             ProductPojo productPojo = productService.selectByClientSkuId(channelListingForm.getClientSkuId());
-            if(isNull(productPojo)){
+            if (isNull(productPojo)) {
                 errorFormList.add(new ErrorData(row, "client skuId does not exists"));
                 continue;
             }
-
+            channelListingPojo.setGlobalSkuId(productPojo.getGlobalSkuId());
             channelListingPojo.setChannelId(channelId);
             channelListingPojo.setClientId(clientId);
             channelListingPojo.setChannelSkuId(channelListingForm.getChannelSkuId());
-
+            channelListingPojoList.add(channelListingPojo);
             row++;
         }
 

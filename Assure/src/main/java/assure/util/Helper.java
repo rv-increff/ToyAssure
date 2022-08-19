@@ -1,6 +1,5 @@
 package assure.util;
 
-import assure.controller.ChannelListingController;
 import assure.model.*;
 import assure.pojo.*;
 import assure.spring.ApiException;
@@ -12,6 +11,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
@@ -270,6 +270,9 @@ public class Helper {
         return channelPojo;
     }
     public static <T> void validateAddPojo(T pojo, List<String>excludeList) throws ApiException {
+        if(isNull(pojo)){
+            throw new ApiException(" Pojo object can not be null");
+        }
         try {
 
             Field[] fields = pojo.getClass().getDeclaredFields();
@@ -315,4 +318,42 @@ public class Helper {
         }
         throwErrorIfNotEmpty(errorFormList);
     }
+
+    public static void checkDuplicatesOrderItemFormList(List<OrderItemForm> orderItemFormList) throws ApiException {
+        Set<String>clientSkuIdSet = orderItemFormList.stream().map(OrderItemForm::getClientSkuId).collect(Collectors.toSet());
+        List<ErrorData> errorFormList = new ArrayList<>();
+        Integer row = 1;
+
+        for (OrderItemForm orderItemForm : orderItemFormList) {
+            if(clientSkuIdSet.contains(orderItemForm.getClientSkuId())){
+                errorFormList.add(new ErrorData(row, "Duplicate client sku id"));
+            }
+            row++;
+        }
+        throwErrorIfNotEmpty(errorFormList);
+    }
+    public static OrderPojo createOrderPojo(Long clientId, Long customerId,Long channelId, String channelOrderId){
+        OrderPojo orderPojo = new OrderPojo();
+        orderPojo.setChannelOrderId(channelOrderId);
+        orderPojo.setClientId(clientId);
+        orderPojo.setChannelId(channelId);
+        orderPojo.setCustomerId(customerId);
+        orderPojo.setStatus(OrderStatus.CREATED);
+
+        return orderPojo;
+    }
+    public static List<OrderItemPojo> transformAndConvertOrderItemFormToPojo(Long orderId,
+                                                                             List<OrderItemForm> orderItemFormList,
+                                                                             Map<String, Long> clientSkuIdToGlobalSkuIdMap){
+        List<OrderItemPojo> orderItemPojoList = new ArrayList<>();
+        for (OrderItemForm orderItemForm : orderItemFormList) {
+            OrderItemPojo orderItemPojo = new OrderItemPojo();
+            orderItemPojo.setOrderId(orderId);
+            orderItemPojo.setOrderedQuantity(orderItemForm.getQuantity());
+            orderItemPojo.setGlobalSkuId(clientSkuIdToGlobalSkuIdMap.get(orderItemForm.getClientSkuId()));
+            orderItemPojo.setSellingPricePerUnit(orderItemForm.getSellingPricePerUnit());
+            orderItemPojoList.add(orderItemPojo);
+        }
+        return orderItemPojoList;
+     }
 }

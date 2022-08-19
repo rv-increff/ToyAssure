@@ -19,8 +19,8 @@ public class BinSkuDao extends AbstractDao<BinSkuPojo> {
         CriteriaQuery cr = cr();
         Root<BinSkuPojo> root = cr.from(this.clazz);
         cr  = cr.select(root);
-        cr.where(cb.equal(root.get("globalSkuIdList"), globalSkuIdList));
-        cr.where(cb.equal(root.get("binId"), binId));
+        cr.where(cb.and(cb.equal(root.get("globalSkuIdList"), globalSkuIdList),cb.equal(root.get("binId"), binId)));
+        cr.where();
         TypedQuery<BinSkuPojo> query =  em.createQuery(cr);
         return getSingle(query);
     }
