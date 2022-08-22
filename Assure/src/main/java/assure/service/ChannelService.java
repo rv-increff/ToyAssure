@@ -29,6 +29,7 @@ public class ChannelService {
         if (!isNull(channelDao.selectByName(channelPojo.getName()))) {
             throw new ApiException("Channel already exists");
         }
+
         channelDao.add(channelPojo);
     }
 
@@ -41,4 +42,5 @@ public class ChannelService {
             throw new ApiException("channel does not exist");
         }
     }
+
 }
