@@ -7,6 +7,7 @@ import assure.model.ErrorData;
 import assure.pojo.ProductPojo;
 import assure.service.BinService;
 import assure.service.BinSkuService;
+import assure.service.InventoryService;
 import assure.service.ProductService;
 import assure.spring.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static assure.util.ConversionUtil.*;
+import static assure.util.ConversionUtil.convertListBinSkuFormToPojo;
 import static assure.util.ValidationUtil.*;
 import static java.util.Objects.isNull;
 
@@ -33,6 +35,8 @@ public class BinSkuDto {
     private ProductService productService;
     @Autowired
     private BinService binService;
+    @Autowired
+    private InventoryService inventoryService;
 
     @Transactional(rollbackFor = ApiException.class)
     public Integer add(List<BinSkuForm> binSkuFormList) throws ApiException {
@@ -45,7 +49,7 @@ public class BinSkuDto {
         checkClientSkuIdExist(clientToGlobalSkuIdMap, binSkuFormList); //TODO make it return map validateAnd
 
         binSkuService.add(convertListBinSkuFormToPojo(binSkuFormList, clientToGlobalSkuIdMap));
-
+        inventoryService.add(convertListBinSkuFormToInventoryPojo(binSkuFormList, clientToGlobalSkuIdMap));
         return binSkuFormList.size();
     }
 
@@ -77,7 +81,7 @@ public class BinSkuDto {
         Integer row = 0;
         List<ErrorData> errorFormList = new ArrayList<>();
         for (BinSkuForm binSkuForm : binSkuFormList) {
-            if (clientToGlobalSkuIdMap.containsKey(binSkuForm.getClientSkuId())) {
+            if (!clientToGlobalSkuIdMap.containsKey(binSkuForm.getClientSkuId())) {
                 errorFormList.add(new ErrorData(row, "clientSkuId does not exist, clientSkuId : "
                         + binSkuForm.getClientSkuId()));
             }

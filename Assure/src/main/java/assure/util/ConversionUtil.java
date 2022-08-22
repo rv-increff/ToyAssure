@@ -7,6 +7,8 @@ import assure.spring.ApiException;
 import java.util.*;
 
 import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.summingLong;
 
 public class ConversionUtil {
     public static PartyPojo convertClientFormToPojo(PartyForm partyForm) {
@@ -258,7 +260,7 @@ public class ConversionUtil {
     }
 
     public static List<OrderItemPojo> convertOrderFormToOrderItemPojo(List<OrderItemForm> orderItemFormList,
-                                                                      Map<String, Long> clientSkuIdToGlobalSkuIdMap){
+                                                                      Map<String, Long> clientSkuIdToGlobalSkuIdMap) {
         List<OrderItemPojo> orderItemPojoList = new ArrayList<>();
         for (OrderItemForm orderItemForm : orderItemFormList) {
             OrderItemPojo orderItemPojo = new OrderItemPojo();
@@ -269,6 +271,21 @@ public class ConversionUtil {
             orderItemPojoList.add(orderItemPojo);
         }
         return orderItemPojoList;
+    }
+
+    public static List<InventoryPojo> convertListBinSkuFormToInventoryPojo(List<BinSkuForm> binSkuFormList,
+                                                                           HashMap<String, Long> clientToGlobalSkuIdMap) {
+        List<InventoryPojo> inventoryPojoList = new ArrayList<>();
+        Map<String, Long> clientSkuIdToQuantityMap = binSkuFormList.stream()
+                .collect(groupingBy(BinSkuForm::getClientSkuId, summingLong(BinSkuForm::getQuantity)));
+        for (String clientSkuId : clientSkuIdToQuantityMap.keySet()) {
+            InventoryPojo inventoryPojo = new InventoryPojo();
+            inventoryPojo.setAvailableQuantity(clientSkuIdToQuantityMap.get(clientSkuId));
+            inventoryPojo.setGlobalSkuId(clientToGlobalSkuIdMap.get(clientSkuId));
+
+            inventoryPojoList.add(inventoryPojo);
+        }
+        return inventoryPojoList;
     }
 
 }

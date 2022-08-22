@@ -17,7 +17,7 @@ public class BinController {
     private BinDto binDto;
 
     @ApiOperation(value = "Create N bins")  //TODO RequestParam add check description standard
-    @RequestMapping(path = "/bins", method = RequestMethod.POST)
+    @RequestMapping(path = "/bins", method = RequestMethod.POST) //TODO check if request params allowed
     public List<BinData> addBins(@RequestParam(name = "numberOfBins") Integer numberOfBins) throws ApiException {
         return binDto.add(numberOfBins);
     }

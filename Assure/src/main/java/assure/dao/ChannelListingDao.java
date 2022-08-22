@@ -1,6 +1,5 @@
 package assure.dao;
 
-import assure.pojo.BinPojo;
 import assure.pojo.ChannelListingPojo;
 import org.springframework.stereotype.Repository;
 

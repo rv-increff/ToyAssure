@@ -36,4 +36,6 @@ public class OrderPojo extends AbstractPojo {
     @Column(nullable = false)
     private OrderStatus status;
 
+    private String invoiceUrl;
+
 }

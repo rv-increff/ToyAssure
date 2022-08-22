@@ -15,20 +15,20 @@ public class PartyDao extends AbstractDao<PartyPojo> {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery cr = cr();
         Root<PartyPojo> root = cr.from(this.clazz);
-        cr  = cr.select(root);
+        cr = cr.select(root);
         cr.where(cb.equal(root.get("id"), id));
-        TypedQuery<PartyPojo> query =  em.createQuery(cr);
+        TypedQuery<PartyPojo> query = em.createQuery(cr);
         return getSingle(query);
     }
 
 
-    public PartyPojo selectByNameAndPartyType(String name, PartyType type){
+    public PartyPojo selectByNameAndPartyType(String name, PartyType type) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery cr = cr();
         Root<PartyPojo> root = cr.from(this.clazz);
-        cr  = cr.select(root);
-        cr.where(cb.and((cb.equal(root.get("name"), name)),(cb.equal(root.get("type"), type))));
-        TypedQuery<PartyPojo> query =  em.createQuery(cr);
+        cr = cr.select(root);
+        cr.where(cb.and((cb.equal(root.get("name"), name)), (cb.equal(root.get("type"), type))));
+        TypedQuery<PartyPojo> query = em.createQuery(cr);
         return getSingle(query);
     }
 }

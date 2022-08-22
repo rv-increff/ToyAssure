@@ -23,7 +23,6 @@ public class ProductController {
     public List<ProductData> getProducts(@RequestParam(name = "pageNumber") Integer pageNumber) {
         return productDto.select(pageNumber);
     }
-
     @ApiOperation(value = "Get product by id")
     @RequestMapping(path = "/products/{globalSkuId}", method = RequestMethod.GET)
     public ProductData getProductById(@PathVariable Long globalSkuId) throws ApiException {

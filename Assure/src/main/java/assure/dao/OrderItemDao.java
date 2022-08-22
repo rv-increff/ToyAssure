@@ -1,6 +1,5 @@
 package assure.dao;
 
-import assure.pojo.ChannelListingPojo;
 import assure.pojo.OrderItemPojo;
 import org.springframework.stereotype.Repository;
 
@@ -10,9 +9,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 @Repository
-public class OrderItemDao extends AbstractDao<OrderItemPojo>{
+public class OrderItemDao extends AbstractDao<OrderItemPojo> {
 
-    public OrderItemPojo selectByOrderIdAndGlobalSkuID(Long orderId, Long globalSkuId){
+    public OrderItemPojo selectByOrderIdAndGlobalSkuID(Long orderId, Long globalSkuId) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery cr = cr();
         Root<OrderItemPojo> root = cr.from(this.clazz);

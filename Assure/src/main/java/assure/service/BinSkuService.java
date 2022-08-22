@@ -23,7 +23,7 @@ public class BinSkuService {
             if (isNull(exists)) {
                 dao.add(binSkuPojo);
             } else {
-                exists.setQuantity(binSkuPojo.getQuantity() + binSkuPojo.getQuantity());
+                exists.setQuantity(exists.getQuantity() + binSkuPojo.getQuantity());
                 dao.update();
             }
         }

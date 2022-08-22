@@ -13,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static assure.util.Helper.*;
+import static assure.util.ConversionUtil.*;
+import static assure.util.ValidationUtil.*;
 import static java.util.Objects.isNull;
 
 @Service
@@ -29,7 +30,7 @@ public class ProductDto {
     @Transactional(rollbackFor = ApiException.class)
     public Integer add(List<ProductForm> productFormList, Long consumerId) throws ApiException {
 
-        validateList("Product Form", productFormList,MAX_LIST_SIZE);
+        validateList("Product Form", productFormList, MAX_LIST_SIZE);
         checkDuplicateProductsProductForm(productFormList);
         if (isNull(partyService.selectById(consumerId))) {
             throw new ApiException("client id does not exist");
