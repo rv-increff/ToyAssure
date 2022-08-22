@@ -7,10 +7,7 @@ import assure.spring.ApiException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,14 +16,14 @@ import java.util.List;
 public class OrderController {
 
     @Autowired
-    OrderDto orderDto;
+    private OrderDto orderDto;
 
     @ApiOperation(value = "Create order")
-    @RequestMapping(path = "/orders", method = RequestMethod.POST)
-    public Integer addOrder(@RequestParam(name = "clientName") String clientName,
-                                 @RequestParam(name = "channelName") String channelName,
+    @RequestMapping(path = "/orders", method = RequestMethod.POST) //TODO /orders   /order/upload-order
+    public Integer addOrder(@RequestParam(name = "clientName") String clientName, //TODO take ids not name
+                                 @RequestParam(name = "channelOrderId") String channelOrderId, //TODO make it as whole object
                                  @RequestParam(name = "customerName") String customerName,
-                                 List<OrderItemForm> orderItemFormList) throws ApiException {
-        return orderDto.add(clientName,channelName,customerName,orderItemFormList);
+                                 @RequestBody List<OrderItemForm> orderItemFormList) throws ApiException {
+        return orderDto.add(clientName,channelOrderId,customerName,orderItemFormList);
     }
 }

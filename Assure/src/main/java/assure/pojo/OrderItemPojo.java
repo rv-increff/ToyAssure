@@ -19,7 +19,7 @@ public class OrderItemPojo extends AbstractPojo{
     private Long id;
 
     @Column(nullable = false)
-    private Long OrderId;
+    private Long orderId;
 
     @Column(nullable = false)
     private Long globalSkuId;

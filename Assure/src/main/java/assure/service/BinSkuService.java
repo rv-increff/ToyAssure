@@ -7,10 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
-import static assure.util.Helper.validateAddPojoList;
 import static java.util.Objects.isNull;
 
 @Service
@@ -21,8 +19,6 @@ public class BinSkuService {
     private BinSkuDao dao;
 
     public void add(List<BinSkuPojo> binSkuPojoList) throws ApiException {
-        validateAddPojoList(binSkuPojoList, Arrays.asList("id"), MAX_LIST_SIZE);
-
         for (BinSkuPojo binSkuPojo : binSkuPojoList) {
             BinSkuPojo exists = dao.selectByGlobalSkuIdAndBinId(binSkuPojo.getBinId(), binSkuPojo.getGlobalSkuId());
             if (isNull(exists)) {

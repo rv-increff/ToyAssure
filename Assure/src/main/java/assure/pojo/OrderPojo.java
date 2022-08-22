@@ -12,6 +12,7 @@ import static assure.pojo.TableConstants.SEQ_ORDER;
 @Getter
 @Setter
 @Entity
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"channelId","channelOrderId"})})
 public class OrderPojo extends AbstractPojo {
 
     @Id

@@ -12,8 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static assure.util.Helper.throwErrorIfNotEmpty;
-import static assure.util.Helper.validateList;
+import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
 import static java.util.Objects.isNull;
 
 @Service
@@ -24,7 +23,6 @@ public class PartyService {
     private PartyDao dao;
 
     public void add(List<PartyPojo> partyPojoList) throws ApiException {
-        validateList("Party", partyPojoList);
         Integer row = 1;
         List<ErrorData> errorFormList = new ArrayList<>();
         for (PartyPojo partyPojo : partyPojoList) {
@@ -44,8 +42,14 @@ public class PartyService {
         return dao.selectById(id);
     }
 
-    public PartyPojo selectByNameAndPartyType(String name, PartyType partyType){
+    public PartyPojo selectByNameAndPartyType(String name, PartyType partyType) {
         return dao.selectByNameAndPartyType(name, partyType);
+    }
+
+    public void getCheck(Long id) throws ApiException {
+        if (isNull(dao.selectById(id))) {
+            throw new ApiException("Party does not exist");
+        }
     }
 
     public List<PartyPojo> select(Integer pageNumber, Integer pageSize) {

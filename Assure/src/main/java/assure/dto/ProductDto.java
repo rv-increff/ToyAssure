@@ -28,11 +28,8 @@ public class ProductDto {
 
     @Transactional(rollbackFor = ApiException.class)
     public Integer add(List<ProductForm> productFormList, Long consumerId) throws ApiException {
-        if (productFormList.size() > MAX_LIST_SIZE) {
-            throw new ApiException("List size more than limit, limit : " + MAX_LIST_SIZE);
-        }
 
-        validateList("Product Form", productFormList);
+        validateList("Product Form", productFormList,MAX_LIST_SIZE);
         checkDuplicateProductsProductForm(productFormList);
         if (isNull(partyService.selectById(consumerId))) {
             throw new ApiException("client id does not exist");

@@ -1,17 +1,15 @@
 package assure.dto;
 
 import assure.model.ChannelListingForm;
+import assure.model.ChannelListingUploadForm;
 import assure.model.ErrorData;
 import assure.pojo.ChannelListingPojo;
-import assure.pojo.ChannelPojo;
-import assure.pojo.PartyPojo;
 import assure.pojo.ProductPojo;
 import assure.service.ChannelListingService;
 import assure.service.ChannelService;
 import assure.service.PartyService;
 import assure.service.ProductService;
 import assure.spring.ApiException;
-import assure.util.PartyType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static assure.util.Helper.*;
+import static assure.util.ConversionUtil.checkDuplicateChannelListingFormList;
+import static assure.util.ValidationUtil.*;
 import static java.util.Objects.isNull;
 
 @Service
 public class ChannelListingDto {
-
+    private static final Long MAX_LIST_SIZE = 1000L;
     @Autowired
     private ChannelListingService channelListingService;
     @Autowired
@@ -35,26 +34,22 @@ public class ChannelListingDto {
     private ChannelService channelService;
 
     @Transactional(rollbackFor = ApiException.class)
-    public Integer add(String clientName, String channelName, List<ChannelListingForm> channelListingFormList)
-            throws ApiException {
+    public Integer add(ChannelListingUploadForm channelListingUploadForm) throws ApiException {
 
-        validateList("Channel Listing", channelListingFormList);
-        checkDuplicateChannelListingFormList(channelListingFormList);
+        validate(channelListingUploadForm);
+        validateListSize(channelListingUploadForm.getChannelListingFormList(), MAX_LIST_SIZE);
+        checkDuplicateChannelListingFormList(channelListingUploadForm.getChannelListingFormList());
 
+        Long clientId = channelListingUploadForm.getClientId();
+        Long channelId = channelListingUploadForm.getChannelId();
+        partyService.getCheck(clientId);
+        channelService.getCheck(channelId);
 
-        PartyPojo partyPojo = partyService.selectByNameAndPartyType(clientName, PartyType.CLIENT);
-        if (isNull(partyPojo)) {
-            throw new ApiException("client name does not exist");
-        }
-        ChannelPojo channelPojo = channelService.selectByName(channelName);
-        if (isNull(channelPojo)) {
-            throw new ApiException("channel name does not exist");
-        }
+        channelListingService.add(transformAndConvertChannelListingFormToPojo(clientId, channelId,
+                channelListingUploadForm.getChannelListingFormList()));
 
-        channelListingService.add(transformAndConvertChannelListingFormToPojo(partyPojo.getId(), channelPojo.getId(), channelListingFormList));
-        return channelListingFormList.size();
+        return channelListingUploadForm.getChannelListingFormList().size();
     }
-
 
 
     private List<ChannelListingPojo> transformAndConvertChannelListingFormToPojo(Long clientId, Long channelId,

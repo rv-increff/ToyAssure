@@ -18,7 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static assure.util.Helper.*;
+import static assure.util.ConversionUtil.*;
+import static assure.util.ValidationUtil.*;
 import static java.util.Objects.isNull;
 
 @Service
@@ -35,11 +36,8 @@ public class BinSkuDto {
 
     @Transactional(rollbackFor = ApiException.class)
     public Integer add(List<BinSkuForm> binSkuFormList) throws ApiException {
-        if (binSkuFormList.size() > MAX_BIN_LIMIT) {
-            throw new ApiException("List size more than limit, limit : " + MAX_BIN_LIMIT);
-        }
 
-        validateList("BinSku", binSkuFormList);
+        validateList("BinSku", binSkuFormList, MAX_BIN_LIMIT);
         checkDuplicateProductsBinSkuForm(binSkuFormList);
         checkBinIdExists(binSkuFormList);
 
@@ -70,7 +68,6 @@ public class BinSkuDto {
             if (!isNull(productPojo)) {
                 clientToGlobalSkuIdMap.put(productPojo.getClientSkuId(), productPojo.getGlobalSkuId());
             }
-
         }
         return clientToGlobalSkuIdMap;
     }

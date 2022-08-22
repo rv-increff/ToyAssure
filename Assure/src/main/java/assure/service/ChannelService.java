@@ -3,16 +3,13 @@ package assure.service;
 import assure.dao.ChannelDao;
 import assure.pojo.ChannelPojo;
 import assure.spring.ApiException;
-import assure.util.InvoiceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
-import static assure.util.Helper.normalizeChannelPojo;
-import static assure.util.Helper.validateAddPojo;
+import static assure.util.NormalizeUtil.normalizeChannelPojo;
 import static java.util.Objects.isNull;
 
 @Service
@@ -23,32 +20,25 @@ public class ChannelService {
 
 
     public List<ChannelPojo> select(Integer pageNumber, Integer pageSize) {
-        checkAndCreateSelf();
+        //TODO post construct not this now manual now cretate post construc class
         return channelDao.select(pageNumber, pageSize);
     }
 
     public void add(ChannelPojo channelPojo) throws ApiException {
-        validateAddPojo(channelPojo, Arrays.asList("id"));
         normalizeChannelPojo(channelPojo);
         if (!isNull(channelDao.selectByName(channelPojo.getName()))) {
             throw new ApiException("Channel already exists");
         }
-        checkAndCreateSelf();
-
         channelDao.add(channelPojo);
     }
 
-    public ChannelPojo selectByName(String name){
+    public ChannelPojo selectByName(String name) {
         return channelDao.selectByName(name.toUpperCase());
     }
 
-    private void checkAndCreateSelf() {
-        ChannelPojo channelPojo = channelDao.selectByInvoiceType(InvoiceType.SELF);
-        if (isNull(channelPojo)) {
-            channelPojo = new ChannelPojo();
-            channelPojo.setName("INTERNAL");
-            channelPojo.setInvoiceType(InvoiceType.SELF);
-            channelDao.add(channelPojo);
+    public void getCheck(Long id) throws ApiException {
+        if (isNull(channelDao.selectById(id))) {
+            throw new ApiException("channel does not exist");
         }
     }
 }

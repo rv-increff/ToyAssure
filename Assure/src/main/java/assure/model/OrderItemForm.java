@@ -3,6 +3,7 @@ package assure.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
@@ -16,7 +17,7 @@ public class OrderItemForm {
     @Min(value = 0)
     private Long quantity;
 
-    @Min(value = 0)
+    @DecimalMin(value = "0")
     private Double sellingPricePerUnit;
 
 }

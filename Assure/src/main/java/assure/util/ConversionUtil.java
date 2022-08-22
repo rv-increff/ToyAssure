@@ -3,22 +3,12 @@ package assure.util;
 import assure.model.*;
 import assure.pojo.*;
 import assure.spring.ApiException;
-import org.springframework.util.CollectionUtils;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static java.util.Objects.isNull;
+import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
 
-public class Helper {
-    private static final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-    private static final Validator validator = factory.getValidator();
-
+public class ConversionUtil {
     public static PartyPojo convertClientFormToPojo(PartyForm partyForm) {
         PartyPojo clientPojo = new PartyPojo();
         clientPojo.setName(partyForm.getName());
@@ -26,8 +16,6 @@ public class Helper {
 
         return clientPojo;
     }
-
-
     public static PartyData convertPartyPojoToData(PartyPojo clientPojo) {
         PartyData partyData = new PartyData();
         partyData.setName(clientPojo.getName());
@@ -35,7 +23,6 @@ public class Helper {
         partyData.setId(clientPojo.getId());
         return partyData;
     }
-
     public static List<PartyData> convertListPartyPojoToData(List<PartyPojo> clientPojoList) {
         List<PartyData> partyDataList = new ArrayList<>();
         for (PartyPojo clientPojo : clientPojoList) {
@@ -44,7 +31,6 @@ public class Helper {
 
         return partyDataList;
     }
-
     public static List<PartyPojo> convertListPartyFormToPojo(List<PartyForm> partyFormList) {
         List<PartyPojo> clientPojoList = new ArrayList<>();
         for (PartyForm partyForm : partyFormList) {
@@ -53,18 +39,6 @@ public class Helper {
 
         return clientPojoList;
     }
-
-    public static ProductPojo convertProductFormToPojo(ProductForm productForm, Long clientId) {
-        ProductPojo productPojo = new ProductPojo();
-        productPojo.setClientId(clientId);
-        productPojo.setBrandId(productForm.getBrandId());
-        productPojo.setDescription(productForm.getDescription());
-        productPojo.setMrp(productForm.getMrp());
-        productPojo.setName(productForm.getName());
-        productPojo.setClientSkuId(productForm.getClientSkuId());
-        return productPojo;
-    }
-
     public static List<ProductPojo> convertListProductFormToPojo(List<ProductForm> productFormList, Long consumerId) {
         List<ProductPojo> productPojoList = new ArrayList<>();
         for (ProductForm productForm : productFormList) {
@@ -93,70 +67,19 @@ public class Helper {
         }
         return productDataList;
     }
-
-    public static String transformErrorList(List<ErrorData> errorFormList) {
-        String err = "";
-        for (ErrorData errorForm : errorFormList) {
-            err += errorForm.toString();
-        }
-        System.out.println(err);
-        return err;
+    public static ProductPojo convertProductFormToPojo(ProductForm productForm, Long clientId) {
+        ProductPojo productPojo = new ProductPojo();
+        productPojo.setClientId(clientId);
+        productPojo.setBrandId(productForm.getBrandId());
+        productPojo.setDescription(productForm.getDescription());
+        productPojo.setMrp(productForm.getMrp());
+        productPojo.setName(productForm.getName());
+        productPojo.setClientSkuId(productForm.getClientSkuId());
+        return productPojo;
     }
 
-    public static void checkDuplicateProductsProductForm(List<ProductForm> productFormList) throws ApiException {
 
-        HashSet<String> set = new HashSet<>();
-        List<ErrorData> errorFormList = new ArrayList<>();
-        Integer row = 1;
-        for (ProductForm productForm : productFormList) {
-            if (set.contains(productForm.getClientSkuId())) {
-                errorFormList.add(new ErrorData(row, "duplicate values of clientSkuId"));
-            }
-            set.add(productForm.getClientSkuId());
-            row++;
-        }
-        throwErrorIfNotEmpty(errorFormList);
-    }
 
-    public static void checkDuplicateProductsBinSkuForm(List<BinSkuForm> binSkuFormList) throws ApiException {
-
-        HashSet<String> set = new HashSet<>();
-        List<ErrorData> errorFormList = new ArrayList<>();
-        Integer row = 1;
-        for (BinSkuForm binSkuForm : binSkuFormList) {
-            if (set.contains(binSkuForm.getClientSkuId())) {
-                errorFormList.add(new ErrorData(row, "duplicate values of clientSkuId"));
-            }
-            set.add(binSkuForm.getClientSkuId());
-            row++;
-        }
-        throwErrorIfNotEmpty(errorFormList);
-    }
-
-    public static <T> void validateList(String name, List<T> formList) throws ApiException {
-        if (CollectionUtils.isEmpty(formList)) {
-            throw new ApiException(name + " List cannot be empty");
-        }
-
-        List<ErrorData> errorFormList = new ArrayList<>();
-        Integer row = 1;
-        for (T form : formList) {
-            Set<ConstraintViolation<T>> constraintViolations =
-                    validator.validate(form);
-
-            for (ConstraintViolation<T> constraintViolation : constraintViolations) {
-                errorFormList.add(new ErrorData(row, constraintViolation.getPropertyPath().toString() + " " + constraintViolation.getMessage()));
-            }
-            row++;
-        }
-        throwErrorIfNotEmpty(errorFormList);
-    }
-
-    public static void throwErrorIfNotEmpty(List<ErrorData> errorFormList) throws ApiException {
-        if (!CollectionUtils.isEmpty(errorFormList)) {
-            throw new ApiException(errorFormList);
-        }
-    }
 
     public static ProductPojo convertProductUpdateFormToPojo(ProductUpdateForm productUpdateForm, Long globalSkuId, Long clientId) {
         ProductPojo productPojo = new ProductPojo();
@@ -170,19 +93,6 @@ public class Helper {
 
         return productPojo;
     }
-
-    public static <T> void validate(T form) throws ApiException {
-        List<ErrorData> errorFormList = new ArrayList<>();
-        Integer row = 1;
-        Set<ConstraintViolation<T>> constraintViolations = validator.validate(form);
-        for (ConstraintViolation<T> constraintViolation : constraintViolations) {
-            errorFormList.add(new ErrorData(row, constraintViolation.getPropertyPath().toString()
-                    + " " + constraintViolation.getMessage()));
-        }
-        row++;
-        throwErrorIfNotEmpty(errorFormList);
-    }
-
     public static BinData convertBinPojoToData(BinPojo binPojo) {
         BinData binData = new BinData();
         binData.setId(binPojo.getBinId());
@@ -259,46 +169,12 @@ public class Helper {
 
         return channelDataList;
     }
-    public static void normalizeChannelPojo(ChannelPojo channelPojo){
-        channelPojo.setName(channelPojo.getName().toUpperCase());
-    }
     public static ChannelPojo convertChannelFormToPojo(ChannelForm channelForm) {
         ChannelPojo channelPojo = new ChannelPojo();
         channelPojo.setName(channelForm.getName());
         channelPojo.setInvoiceType(channelForm.getInvoiceType());
 
         return channelPojo;
-    }
-    public static <T> void validateAddPojo(T pojo, List<String>excludeList) throws ApiException {
-        if(isNull(pojo)){
-            throw new ApiException(" Pojo object can not be null");
-        }
-        try {
-
-            Field[] fields = pojo.getClass().getDeclaredFields();
-            for (Field m : fields) {
-                m.setAccessible(true);
-                System.out.println(m.get(pojo));
-                if(isNull(m.get(pojo)) && !excludeList.contains(m.getName())){
-                    throw new ApiException(m.getName() + " cannot be null in Pojo object");
-                }
-            }
-        } catch (IllegalAccessException err) {
-            System.out.println(err);
-        }
-    }
-    public static <T> void validateAddPojoList(List<T> pojoList, List<String>excludeList, Long maxListSize) throws ApiException {
-        if(CollectionUtils.isEmpty(pojoList)){
-            throw new ApiException("List cannot be empty or null");
-        }
-
-        if(pojoList.size()>maxListSize){
-            throw new ApiException("list size more than max limit, limit : " + maxListSize);
-        }
-
-        for (T pojo : pojoList) {
-            validateAddPojo(pojo,excludeList);
-        }
     }
     public static void checkDuplicateChannelListingFormList(List<ChannelListingForm> channelListingFormList) throws ApiException {
         HashSet<String> setChannelSkuId = new HashSet<>();
@@ -319,20 +195,22 @@ public class Helper {
         throwErrorIfNotEmpty(errorFormList);
     }
 
-    public static void checkDuplicatesOrderItemFormList(List<OrderItemForm> orderItemFormList) throws ApiException {
-        Set<String>clientSkuIdSet = orderItemFormList.stream().map(OrderItemForm::getClientSkuId).collect(Collectors.toSet());
+    public static void checkDuplicateClientSkuIds(List<OrderItemForm> orderItemFormList) throws ApiException {
+        Set<String> clientSkuIdSet = new HashSet<>();
         List<ErrorData> errorFormList = new ArrayList<>();
         Integer row = 1;
 
         for (OrderItemForm orderItemForm : orderItemFormList) {
-            if(clientSkuIdSet.contains(orderItemForm.getClientSkuId())){
+            if (clientSkuIdSet.contains(orderItemForm.getClientSkuId())) {
                 errorFormList.add(new ErrorData(row, "Duplicate client sku id"));
             }
+            clientSkuIdSet.add(orderItemForm.getClientSkuId());
             row++;
         }
         throwErrorIfNotEmpty(errorFormList);
     }
-    public static OrderPojo createOrderPojo(Long clientId, Long customerId,Long channelId, String channelOrderId){
+
+    public static OrderPojo createOrderPojo(Long clientId, Long customerId, Long channelId, String channelOrderId) {
         OrderPojo orderPojo = new OrderPojo();
         orderPojo.setChannelOrderId(channelOrderId);
         orderPojo.setClientId(clientId);
@@ -342,18 +220,25 @@ public class Helper {
 
         return orderPojo;
     }
+
     public static List<OrderItemPojo> transformAndConvertOrderItemFormToPojo(Long orderId,
                                                                              List<OrderItemForm> orderItemFormList,
-                                                                             Map<String, Long> clientSkuIdToGlobalSkuIdMap){
+                                                                             Map<String, Long> clientSkuIdToGlobalSkuIdMap) {
         List<OrderItemPojo> orderItemPojoList = new ArrayList<>();
         for (OrderItemForm orderItemForm : orderItemFormList) {
             OrderItemPojo orderItemPojo = new OrderItemPojo();
+
             orderItemPojo.setOrderId(orderId);
             orderItemPojo.setOrderedQuantity(orderItemForm.getQuantity());
             orderItemPojo.setGlobalSkuId(clientSkuIdToGlobalSkuIdMap.get(orderItemForm.getClientSkuId()));
             orderItemPojo.setSellingPricePerUnit(orderItemForm.getSellingPricePerUnit());
+            orderItemPojo.setAllocatedQuantity(0L); //TODO move to service
+            orderItemPojo.setFulfilledQuantity(0L);
+
             orderItemPojoList.add(orderItemPojo);
         }
         return orderItemPojoList;
-     }
+    }
+
 }
+

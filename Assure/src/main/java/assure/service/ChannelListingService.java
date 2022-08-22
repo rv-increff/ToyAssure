@@ -1,7 +1,6 @@
 package assure.service;
 
 import assure.dao.ChannelListingDao;
-import assure.model.ChannelListingForm;
 import assure.model.ErrorData;
 import assure.pojo.ChannelListingPojo;
 import assure.spring.ApiException;
@@ -10,31 +9,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import static assure.util.Helper.throwErrorIfNotEmpty;
-import static assure.util.Helper.validateAddPojoList;
+import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
 import static java.util.Objects.isNull;
 
 @Service
 @Transactional(rollbackFor = ApiException.class)
 public class ChannelListingService {
-    private static final Long MAX_LIST_SIZE = 1000L;
+
 
     @Autowired
     private ChannelListingDao channelListingDao;
 
     public void add(List<ChannelListingPojo> channelListingPojoList) throws ApiException {
-        validateAddPojoList(channelListingPojoList, Arrays.asList("id"), MAX_LIST_SIZE);
         checkDataNotExist(channelListingPojoList);
         for (ChannelListingPojo channelListingPojo : channelListingPojoList) {
             channelListingDao.add(channelListingPojo);
         }
 
     }
-    public ChannelListingPojo selectByAllFields(Long clientId, Long channelId,String channelSkuId,Long globalSkuId){
-        return channelListingDao.selectByAllFields(clientId,channelId,channelSkuId,globalSkuId);
+
+    public ChannelListingPojo selectByAllFields(Long clientId, Long channelId, String channelSkuId, Long globalSkuId) {
+        return channelListingDao.selectByAllFields(clientId, channelId, channelSkuId, globalSkuId);
     }
 
     private void checkDataNotExist(List<ChannelListingPojo> channelListingPojoList) throws ApiException {
@@ -42,9 +39,9 @@ public class ChannelListingService {
         Integer row = 1;
         for (ChannelListingPojo channelListing : channelListingPojoList) {
             ChannelListingPojo channelListingPojo = channelListingDao.selectByAllFields(
-                    channelListing.getClientId(),channelListing.getChannelId(),
-                    channelListing.getChannelSkuId(),channelListing.getGlobalSkuId());
-            if(!isNull(channelListingPojo)){
+                    channelListing.getClientId(), channelListing.getChannelId(),
+                    channelListing.getChannelSkuId(), channelListing.getGlobalSkuId());
+            if (!isNull(channelListingPojo)) {
                 errorFormList.add(new ErrorData(row, "Channel Listing data already exists"));
             }
             row++;

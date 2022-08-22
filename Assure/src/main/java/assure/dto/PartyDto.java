@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static assure.util.Helper.*;
+import static assure.util.ConversionUtil.*;
 
 @Service
 public class PartyDto {

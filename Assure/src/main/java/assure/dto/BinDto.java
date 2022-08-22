@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static assure.util.Helper.convertListBinPojoToData;
+import static assure.util.ConversionUtil.convertListBinPojoToData;
 
 @Service
 public class BinDto {
