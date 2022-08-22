@@ -14,7 +14,6 @@ import static java.util.Objects.isNull;
 @Service
 @Transactional(rollbackFor = ApiException.class)
 public class BinSkuService {
-    private static final Long MAX_LIST_SIZE = 1000L;
     @Autowired
     private BinSkuDao dao;
 

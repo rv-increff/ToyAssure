@@ -21,6 +21,7 @@ public class PartyDao extends AbstractDao<PartyPojo> {
         return getSingle(query);
     }
 
+
     public PartyPojo selectByNameAndPartyType(String name, PartyType type){
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery cr = cr();

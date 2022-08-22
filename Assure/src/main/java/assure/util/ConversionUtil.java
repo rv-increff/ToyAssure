@@ -16,6 +16,7 @@ public class ConversionUtil {
 
         return clientPojo;
     }
+
     public static PartyData convertPartyPojoToData(PartyPojo clientPojo) {
         PartyData partyData = new PartyData();
         partyData.setName(clientPojo.getName());
@@ -23,6 +24,7 @@ public class ConversionUtil {
         partyData.setId(clientPojo.getId());
         return partyData;
     }
+
     public static List<PartyData> convertListPartyPojoToData(List<PartyPojo> clientPojoList) {
         List<PartyData> partyDataList = new ArrayList<>();
         for (PartyPojo clientPojo : clientPojoList) {
@@ -31,6 +33,7 @@ public class ConversionUtil {
 
         return partyDataList;
     }
+
     public static List<PartyPojo> convertListPartyFormToPojo(List<PartyForm> partyFormList) {
         List<PartyPojo> clientPojoList = new ArrayList<>();
         for (PartyForm partyForm : partyFormList) {
@@ -39,6 +42,7 @@ public class ConversionUtil {
 
         return clientPojoList;
     }
+
     public static List<ProductPojo> convertListProductFormToPojo(List<ProductForm> productFormList, Long consumerId) {
         List<ProductPojo> productPojoList = new ArrayList<>();
         for (ProductForm productForm : productFormList) {
@@ -67,6 +71,7 @@ public class ConversionUtil {
         }
         return productDataList;
     }
+
     public static ProductPojo convertProductFormToPojo(ProductForm productForm, Long clientId) {
         ProductPojo productPojo = new ProductPojo();
         productPojo.setClientId(clientId);
@@ -77,8 +82,6 @@ public class ConversionUtil {
         productPojo.setClientSkuId(productForm.getClientSkuId());
         return productPojo;
     }
-
-
 
 
     public static ProductPojo convertProductUpdateFormToPojo(ProductUpdateForm productUpdateForm, Long globalSkuId, Long clientId) {
@@ -93,6 +96,7 @@ public class ConversionUtil {
 
         return productPojo;
     }
+
     public static BinData convertBinPojoToData(BinPojo binPojo) {
         BinData binData = new BinData();
         binData.setId(binPojo.getBinId());
@@ -169,6 +173,7 @@ public class ConversionUtil {
 
         return channelDataList;
     }
+
     public static ChannelPojo convertChannelFormToPojo(ChannelForm channelForm) {
         ChannelPojo channelPojo = new ChannelPojo();
         channelPojo.setName(channelForm.getName());
@@ -176,6 +181,7 @@ public class ConversionUtil {
 
         return channelPojo;
     }
+
     public static void checkDuplicateChannelListingFormList(List<ChannelListingForm> channelListingFormList) throws ApiException {
         HashSet<String> setChannelSkuId = new HashSet<>();
         HashSet<String> setClientSkuId = new HashSet<>();
@@ -234,6 +240,31 @@ public class ConversionUtil {
             orderItemPojo.setSellingPricePerUnit(orderItemForm.getSellingPricePerUnit());
             orderItemPojo.setAllocatedQuantity(0L); //TODO move to service
             orderItemPojo.setFulfilledQuantity(0L);
+
+            orderItemPojoList.add(orderItemPojo);
+        }
+        return orderItemPojoList;
+    }
+
+    public static OrderPojo convertOrderFormToOrderPojo(OrderForm orderForm) {
+        OrderPojo orderPojo = new OrderPojo();
+
+        orderPojo.setChannelOrderId(orderForm.getChannelOrderId());
+        orderPojo.setCustomerId(orderForm.getCustomerId());
+        orderPojo.setClientId(orderForm.getClientId());
+        orderPojo.setChannelId(orderForm.getChannelId());
+
+        return orderPojo;
+    }
+
+    public static List<OrderItemPojo> convertOrderFormToOrderItemPojo(List<OrderItemForm> orderItemFormList,
+                                                                      Map<String, Long> clientSkuIdToGlobalSkuIdMap){
+        List<OrderItemPojo> orderItemPojoList = new ArrayList<>();
+        for (OrderItemForm orderItemForm : orderItemFormList) {
+            OrderItemPojo orderItemPojo = new OrderItemPojo();
+            orderItemPojo.setGlobalSkuId(clientSkuIdToGlobalSkuIdMap.get(orderItemForm.getClientSkuId()));
+            orderItemPojo.setOrderedQuantity(orderItemForm.getQuantity());
+            orderItemPojo.setSellingPricePerUnit(orderItemForm.getSellingPricePerUnit());
 
             orderItemPojoList.add(orderItemPojo);
         }

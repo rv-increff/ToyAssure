@@ -1,13 +1,15 @@
 package assure.dto;
 
 import assure.model.ErrorData;
+import assure.model.OrderForm;
 import assure.model.OrderItemForm;
 import assure.pojo.ChannelPojo;
+import assure.pojo.OrderItemPojo;
 import assure.pojo.OrderPojo;
-import assure.pojo.PartyPojo;
 import assure.pojo.ProductPojo;
 import assure.service.*;
 import assure.spring.ApiException;
+import assure.util.ConversionUtil;
 import assure.util.PartyType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,38 +38,31 @@ public class OrderDto {
     private ChannelService channelService;
     @Autowired
     private ProductService productService;
-    @Autowired
-    private OrderItemService orderItemService;
 
     @Transactional//TODO remove if not nessecesary
-    public Integer add(String clientName, String channelOrderId, String customerName, List<OrderItemForm> orderItemFormList)
-            throws ApiException {
-
+    public Integer add(OrderForm orderForm) throws ApiException {
+        List<OrderItemForm> orderItemFormList = orderForm.getOrderItemFormList();
         validateList("order Item List", orderItemFormList, MAX_LIST_SIZE);
         checkDuplicateClientSkuIds(orderItemFormList);
         //TODO club it one as function big should be done in a scroll
-        PartyPojo partyPojo = partyService.selectByNameAndPartyType(clientName, PartyType.CLIENT); //TODO getcheck in service;
-        if (isNull(partyPojo)) {
-            throw new ApiException("client does not exist");
-        }
-        Long clientId = partyPojo.getId();
-        partyPojo = partyService.selectByNameAndPartyType(customerName, PartyType.CUSTOMER);
-        if (isNull(partyPojo)) {
-            throw new ApiException("customer does not exist");
-        }
-        Long customerId = partyPojo.getId();
+        Long clientId = partyService.getCheckByIdAndType(orderForm.getClientId(), PartyType.CLIENT);
+        Long customerId = partyService.getCheckByIdAndType(orderForm.getClientId(), PartyType.CUSTOMER);
+
         ChannelPojo channelPojo = channelService.selectByName(INTERNAL_CHANNEL);
         if (isNull(channelPojo)) {
             throw new ApiException(INTERNAL_CHANNEL + " channel does not exists");
         }
         Long channelId = channelPojo.getId();
-        checkChannelIdAndChannelOrderIdPairNotExist(channelId, channelOrderId); //create different
+        String channelOrderId = orderForm.getChannelOrderId();
+        checkChannelIdAndChannelOrderIdPairNotExist(channelId, channelOrderId);
+        //TODO create different
         // normalize and set there will different names no general is null check no hard coding or passing variable names
 
         Map<String, Long> clientSkuIdToGlobalSkuIdMap = getCheckClientSkuId(orderItemFormList);
-        OrderPojo orderPojo = orderService.add(createOrderPojo(clientId, customerId, channelId, channelOrderId));
-        orderItemService.add(transformAndConvertOrderItemFormToPojo(orderPojo.getId(), orderItemFormList,
-                clientSkuIdToGlobalSkuIdMap)); //TODO remove orderiTem service
+        OrderPojo orderPojo= convertOrderFormToOrderPojo(orderForm);
+        List<OrderItemPojo>  orderItemPojoList = convertOrderFormToOrderItemPojo(orderForm.getOrderItemFormList(),clientSkuIdToGlobalSkuIdMap);
+        orderService.add(orderPojo,orderItemPojoList);
+        //TODO remove orderiTem service
 
         return orderItemFormList.size();
     }

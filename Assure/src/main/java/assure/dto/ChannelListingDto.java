@@ -42,7 +42,7 @@ public class ChannelListingDto {
 
         Long clientId = channelListingUploadForm.getClientId();
         Long channelId = channelListingUploadForm.getChannelId();
-        partyService.getCheck(clientId);
+        partyService.checkById(clientId);
         channelService.getCheck(channelId);
 
         channelListingService.add(transformAndConvertChannelListingFormToPojo(clientId, channelId,

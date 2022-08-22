@@ -20,7 +20,6 @@ public class ChannelService {
 
 
     public List<ChannelPojo> select(Integer pageNumber, Integer pageSize) {
-        //TODO post construct not this now manual now cretate post construc class
         return channelDao.select(pageNumber, pageSize);
     }
 
