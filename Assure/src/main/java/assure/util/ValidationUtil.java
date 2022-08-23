@@ -11,10 +11,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 
@@ -38,16 +35,20 @@ public class ValidationUtil {
         throwErrorIfNotEmpty(errorFormList);
     }
 
-    public static void checkDuplicateProductsBinSkuForm(List<BinSkuForm> binSkuFormList) throws ApiException {
+    public static void checkDuplicateBinSkuAndBinIdPairBinSkuForm(List<BinSkuForm> binSkuFormList) throws ApiException {
 
-        HashSet<String> set = new HashSet<>();
+        HashMap<String,Long> clientSkuIdToBinIdMap = new HashMap<>();
         List<ErrorData> errorFormList = new ArrayList<>();
         Integer row = 1;
+
         for (BinSkuForm binSkuForm : binSkuFormList) {
-            if (set.contains(binSkuForm.getClientSkuId())) {
-                errorFormList.add(new ErrorData(row, "duplicate values of clientSkuId"));
-            }
-            set.add(binSkuForm.getClientSkuId());
+            if(clientSkuIdToBinIdMap.containsKey(binSkuForm.getClientSkuId())) {
+                if (clientSkuIdToBinIdMap.get(binSkuForm.getClientSkuId()) == binSkuForm.getBinId()) {
+                    errorFormList.add(new ErrorData(row, "duplicate values of clientSkuId-binId pair"));
+                }
+            }else
+                clientSkuIdToBinIdMap.put(binSkuForm.getClientSkuId(), binSkuForm.getBinId());
+
             row++;
         }
         throwErrorIfNotEmpty(errorFormList);

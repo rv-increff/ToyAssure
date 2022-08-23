@@ -7,6 +7,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.List;
 
 @Repository
 public class BinSkuDao extends AbstractDao<BinSkuPojo> {
@@ -33,4 +34,14 @@ public class BinSkuDao extends AbstractDao<BinSkuPojo> {
         TypedQuery<BinSkuPojo> query = em.createQuery(cr);
         return getSingle(query);
     }
+    public List<BinSkuPojo> selectByGlobalSkuId(Long globalSkuId) { //Add index
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery cr = cr();
+        Root<BinSkuPojo> root = cr.from(this.clazz);
+        cr = cr.select(root);
+        cr.where(cb.equal(root.get("globalSkuId"), globalSkuId));
+        TypedQuery<BinSkuPojo> query = em.createQuery(cr);
+        return query.getResultList();
+    }
+
 }

@@ -42,7 +42,7 @@ public class BinSkuDto {
     public Integer add(List<BinSkuForm> binSkuFormList) throws ApiException {
 
         validateList("BinSku", binSkuFormList, MAX_BIN_LIMIT);
-        checkDuplicateProductsBinSkuForm(binSkuFormList);
+        checkDuplicateBinSkuAndBinIdPairBinSkuForm(binSkuFormList);
         checkBinIdExists(binSkuFormList);
 
         HashMap<String, Long> clientToGlobalSkuIdMap = getClientToGlobalSkuIdMap(binSkuFormList);

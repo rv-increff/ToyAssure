@@ -22,4 +22,14 @@ public class OrderDao extends AbstractDao<OrderPojo> {
         TypedQuery<OrderPojo> query = em.createQuery(cr);
         return getSingle(query);
     }
+
+    public OrderPojo selectById(Long id){
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery cr = cr();
+        Root<OrderPojo> root = cr.from(this.clazz);
+        cr = cr.select(root);
+        cr.where(cb.equal(root.get("id"), id));
+        TypedQuery<OrderPojo> query = em.createQuery(cr);
+        return getSingle(query);
+    }
 }
