@@ -32,8 +32,6 @@ public class OrderService {
         orderDao.add(orderPojo);
         Long orderId = orderPojo.getId();
 
-        checkOrderIdAndGlobalSkuIdPairNotExists(orderItemPojoList);
-
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             orderItemPojo.setOrderId(orderId);
             orderItemPojo.setFulfilledQuantity(0L);
@@ -48,37 +46,35 @@ public class OrderService {
 
     public OrderPojo getCheck(Long id) throws ApiException {
         OrderPojo orderPojo = orderDao.selectById(id);
-        if(isNull(orderPojo)){
+        if (isNull(orderPojo)) {
             throw new ApiException("order does not exist");
         }
         return orderPojo;
     }
-    public List<OrderItemPojo> selectOrderItemListByOrderId(Long orderId){
+
+    public List<OrderItemPojo> selectOrderItemListByOrderId(Long orderId) {
         return orderItemDao.selectByOrderId(orderId);
     }
 
-    public Long allocateOrderItemQty(OrderItemPojo orderItemPojo, Long invQty){
-        Long allocatedQty = min(invQty,orderItemPojo.getOrderedQuantity()-orderItemPojo.getAllocatedQuantity());
+    public Long allocateOrderItemQty(OrderItemPojo orderItemPojo, Long invQty) {
+        Long allocatedQty = min(invQty, orderItemPojo.getOrderedQuantity() - orderItemPojo.getAllocatedQuantity());
         orderItemPojo.setAllocatedQuantity(allocatedQty);
         return allocatedQty;
     }
-    public void updateStatusToAllocated(Long id) throws ApiException {
+
+    public void updateStatus(Long id, OrderStatus orderStatus) throws ApiException {
         OrderPojo orderPojo = getCheck(id);
-        orderPojo.setStatus(OrderStatus.ALLOCATED);
+        orderPojo.setStatus(orderStatus);
         orderDao.update();
     }
-    private void checkOrderIdAndGlobalSkuIdPairNotExists(List<OrderItemPojo> orderItemPojoList) throws ApiException {
-        List<ErrorData> errorFormList = new ArrayList<>();
-        Integer row = 1;
-        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
-            if (!isNull(orderItemDao.selectByOrderIdAndGlobalSkuID(orderItemPojo.getOrderId(), orderItemPojo.getGlobalSkuId()))) {
-                errorFormList.add(new ErrorData(row, "sku already exist for order"));
-            }
-            row++;
-        }
-        throwErrorIfNotEmpty(errorFormList);
+
+    public Long fulfillQty(OrderItemPojo orderItemPojo) {
+        orderItemPojo.setFulfilledQuantity(orderItemPojo.getAllocatedQuantity());
+        orderItemPojo.setAllocatedQuantity(0L);
+        orderDao.update();
+
+        return orderItemPojo.getFulfilledQuantity();
+
     }
-
-
 
 }

@@ -41,6 +41,13 @@ public class InventoryService {
         inventoryPojo.setAllocatedQuantity(inventoryPojo.getAllocatedQuantity() + allocateQty);
         inventoryDao.update();
     }
+    public void fulfillQty(Long fulfilledQty,Long globalSkuId) throws ApiException {
+        InventoryPojo inventoryPojo = getCheckByGlobalSkuId(globalSkuId);
+        inventoryPojo.setAllocatedQuantity(inventoryPojo.getAllocatedQuantity() - fulfilledQty);
+        inventoryPojo.setFulfilledQuantity(fulfilledQty + inventoryPojo.getFulfilledQuantity() );
+        inventoryDao.update();
+    }
+
 
     public InventoryPojo getCheckByGlobalSkuId(Long globalSkuId) throws ApiException {
         InventoryPojo inventoryPojo = selectByGlobalSkuId(globalSkuId);
@@ -49,4 +56,5 @@ public class InventoryService {
         }
         return inventoryPojo;
     }
+
 }

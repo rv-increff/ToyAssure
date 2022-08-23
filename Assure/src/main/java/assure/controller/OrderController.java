@@ -2,6 +2,7 @@ package assure.controller;
 
 import assure.dto.OrderDto;
 import assure.model.OrderForm;
+import assure.model.OrderStatusUpdateForm;
 import assure.spring.ApiException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,11 +21,10 @@ public class OrderController {
     public Integer addOrder(@RequestBody OrderForm orderForm) throws ApiException {
         return orderDto.add(orderForm);
     }
-    @ApiOperation(value = "Allocate order")
-    @RequestMapping(path = "/orders/{orderId}", method = RequestMethod.POST) //TODO /orders   /order/upload-order
-    public Long allocateOrder(@PathVariable Long orderId) throws ApiException {
-        return orderDto.allocateOrder(orderId);
+    @ApiOperation(value = "Update order status")
+    @RequestMapping(path = "/orders/{orderId}", method = RequestMethod.PATCH) //TODO /orders   /order/upload-order
+    public OrderStatusUpdateForm updateStatus(@RequestBody OrderStatusUpdateForm orderStatusUpdateForm) throws ApiException {
+        return orderDto.updateStatus(orderStatusUpdateForm);
     }
-
 
 }
