@@ -27,7 +27,7 @@ public class PartyDto {
         return convertListPartyPojoToData(partyService.select(pageNumber, PAGE_SIZE));
     }
 
-    public PartyData selectById(Long id) {
+    public PartyData selectById(Long id) throws ApiException {
         return convertPartyPojoToData(partyService.selectById(id));
     }
 

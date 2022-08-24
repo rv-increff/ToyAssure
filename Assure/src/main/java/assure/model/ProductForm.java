@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PositiveOrZero;
 
 
 @Getter
@@ -16,7 +17,7 @@ public class ProductForm {
     private String name;
     @NotBlank
     private String brandId;
-    @Min(value = 0)
+    @PositiveOrZero
     private Double mrp;
     @NotBlank
     private String description;

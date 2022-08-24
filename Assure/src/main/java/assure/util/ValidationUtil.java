@@ -1,8 +1,9 @@
 package assure.util;
 
-import assure.model.BinSkuForm;
+import assure.model.BinSkuItemForm;
 import assure.model.ErrorData;
 import assure.model.ProductForm;
+import assure.pojo.BinSkuPojo;
 import assure.spring.ApiException;
 import org.springframework.util.CollectionUtils;
 
@@ -35,23 +36,20 @@ public class ValidationUtil {
         throwErrorIfNotEmpty(errorFormList);
     }
 
-    public static void checkDuplicateBinSkuAndBinIdPairBinSkuForm(List<BinSkuForm> binSkuFormList) throws ApiException {
+    public static void checkDuplicateGlobalSkuAndBinIdPair(List<BinSkuPojo> binSkuItemFormList) throws ApiException {
 
-        HashMap<String,Long> clientSkuIdToBinIdMap = new HashMap<>();
-        List<ErrorData> errorFormList = new ArrayList<>();
+        HashMap<Long,Set<Long>> clientSkuIdToBinIdMap = new HashMap<>(); //TODO change logic to string->set of bin ids
+        List<ErrorData> errorFormList = new ArrayList<>(); //TODO use get or default
         Integer row = 1;
 
-        for (BinSkuForm binSkuForm : binSkuFormList) {
-            if(clientSkuIdToBinIdMap.containsKey(binSkuForm.getClientSkuId())) {
-                if (clientSkuIdToBinIdMap.get(binSkuForm.getClientSkuId()) == binSkuForm.getBinId()) {
-                    errorFormList.add(new ErrorData(row, "duplicate values of clientSkuId-binId pair"));
-                }
-            }else
-                clientSkuIdToBinIdMap.put(binSkuForm.getClientSkuId(), binSkuForm.getBinId());
-
+        for (BinSkuPojo binSkuPojo : binSkuItemFormList) {
+                if (clientSkuIdToBinIdMap.getOrDefault(binSkuPojo.getGlobalSkuId(),new HashSet<>()).contains(binSkuPojo.getBinId())) {
+                    errorFormList.add(new ErrorData(row, "duplicate values of globalSkuId-binId pair"));
+                }else
+                    clientSkuIdToBinIdMap.getOrDefault(binSkuPojo.getGlobalSkuId(),new HashSet<>()).add(binSkuPojo.getBinId());
             row++;
         }
-        throwErrorIfNotEmpty(errorFormList);
+        throwErrorIfNotEmpty(errorFormList); //TODO Dont use this in service layer
     }
 
     public static <T> void validateList(String name, List<T> formList, Long maxListSize) throws ApiException {
@@ -92,7 +90,7 @@ public class ValidationUtil {
             throw new ApiException(errorFormList);
         }
     }
-    public static <T> void validate(T form) throws ApiException {
+    public static <T> void validateForm(T form) throws ApiException {
         List<ErrorData> errorFormList = new ArrayList<>();
         Integer row = 1;
         Set<ConstraintViolation<T>> constraintViolations = validator.validate(form);

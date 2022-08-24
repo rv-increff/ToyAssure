@@ -4,6 +4,7 @@ import assure.model.ChannelData;
 import assure.model.ChannelForm;
 import assure.service.ChannelService;
 import assure.spring.ApiException;
+import assure.util.InvoiceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,7 @@ import java.util.List;
 
 import static assure.util.ConversionUtil.convertChannelFormToPojo;
 import static assure.util.ConversionUtil.convertChannelPojoListToData;
-import static assure.util.ValidationUtil.validate;
+import static assure.util.ValidationUtil.validateForm;
 
 @Service
 public class ChannelDto {
@@ -26,10 +27,12 @@ public class ChannelDto {
     }
 
     public ChannelForm add(ChannelForm channelForm) throws ApiException {
-        validate(channelForm);
+        validateForm(channelForm);
         channelService.add(convertChannelFormToPojo(channelForm));
         return channelForm;
     }
+
+
 
 
 }

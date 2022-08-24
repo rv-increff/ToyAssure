@@ -114,21 +114,22 @@ public class ConversionUtil {
         return binDataList;
     }
 
-    public static BinSkuPojo convertBinSkuFormToPojo(BinSkuForm binSkuForm, Long globalSkuId) {
+    public static BinSkuPojo convertBinSkuFormToPojo(BinSkuItemForm binSkuItemForm, Long globalSkuId) {
 
         BinSkuPojo binSkuPojo = new BinSkuPojo();
-        binSkuPojo.setBinId(binSkuForm.getBinId());
+        binSkuPojo.setBinId(binSkuItemForm.getBinId());
         binSkuPojo.setGlobalSkuId(globalSkuId);
-        binSkuPojo.setQuantity(binSkuForm.getQuantity());
+        binSkuPojo.setQuantity(binSkuItemForm.getQuantity());
 
         return binSkuPojo;
 
     }
 
-    public static List<BinSkuPojo> convertListBinSkuFormToPojo(List<BinSkuForm> binSkuFormList, HashMap<String, Long> clientToGlobalSkuIdMap) {
+    public static List<BinSkuPojo> convertListBinSkuFormToPojo(List<BinSkuItemForm> binSkuItemFormList,
+                                                               HashMap<String, Long> clientToGlobalSkuIdMap) {
         List<BinSkuPojo> binSkuPojoList = new ArrayList<>();
-        for (BinSkuForm binSkuForm : binSkuFormList) {
-            binSkuPojoList.add(convertBinSkuFormToPojo(binSkuForm, clientToGlobalSkuIdMap.get(binSkuForm.getClientSkuId())));
+        for (BinSkuItemForm binSkuItemForm : binSkuItemFormList) {
+            binSkuPojoList.add(convertBinSkuFormToPojo(binSkuItemForm, clientToGlobalSkuIdMap.get(binSkuItemForm.getClientSkuId())));
         }
 
         return binSkuPojoList;
@@ -189,7 +190,8 @@ public class ConversionUtil {
         HashSet<String> setClientSkuId = new HashSet<>();
         List<ErrorData> errorFormList = new ArrayList<>();
         Integer row = 1;
-        for (ChannelListingForm channelListingForm : channelListingFormList) {
+
+        for (ChannelListingForm channelListingForm : channelListingFormList) { //TODO split in 2 for
             if (setChannelSkuId.contains(channelListingForm.getChannelSkuId())) {
                 errorFormList.add(new ErrorData(row, "duplicate values of channelSkuId"));
             }
@@ -273,11 +275,11 @@ public class ConversionUtil {
         return orderItemPojoList;
     }
 
-    public static List<InventoryPojo> convertListBinSkuFormToInventoryPojo(List<BinSkuForm> binSkuFormList,
+    public static List<InventoryPojo> convertListBinSkuFormToInventoryPojo(List<BinSkuItemForm> binSkuItemFormList,
                                                                            HashMap<String, Long> clientToGlobalSkuIdMap) {
         List<InventoryPojo> inventoryPojoList = new ArrayList<>();
-        Map<String, Long> clientSkuIdToQuantityMap = binSkuFormList.stream()
-                .collect(groupingBy(BinSkuForm::getClientSkuId, summingLong(BinSkuForm::getQuantity)));
+        Map<String, Long> clientSkuIdToQuantityMap = binSkuItemFormList.stream()
+                .collect(groupingBy(BinSkuItemForm::getClientSkuId, summingLong(BinSkuItemForm::getQuantity)));
         for (String clientSkuId : clientSkuIdToQuantityMap.keySet()) {
             InventoryPojo inventoryPojo = new InventoryPojo();
             inventoryPojo.setAvailableQuantity(clientSkuIdToQuantityMap.get(clientSkuId));
@@ -287,6 +289,14 @@ public class ConversionUtil {
         }
         return inventoryPojoList;
     }
+    public static OrderItemData convertPojoOrderItemToData(OrderItemPojo orderItemPojo, String clientSkuId){
+        OrderItemData orderItemData = new OrderItemData();
+        orderItemData.setOrderId(orderItemPojo.getOrderId());
+        orderItemData.setOrderedQuantity(orderItemPojo.getOrderedQuantity());
+        orderItemData.setClientSkuId(clientSkuId);
+        orderItemData.setSellingPricePerUnit(orderItemPojo.getSellingPricePerUnit());
 
+        return orderItemData;
+    }
 }
 

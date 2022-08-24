@@ -1,12 +1,10 @@
 package assure.dto;
 
-import assure.model.ErrorData;
-import assure.model.OrderForm;
-import assure.model.OrderItemForm;
-import assure.model.OrderStatusUpdateForm;
+import assure.model.*;
 import assure.pojo.*;
 import assure.service.*;
 import assure.spring.ApiException;
+import assure.util.DataUtil;
 import assure.util.OrderStatus;
 import assure.util.PartyType;
 import com.google.common.collect.ImmutableMap;
@@ -14,12 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.xml.transform.TransformerException;
+import java.io.File;
+import java.io.IOException;
+import java.time.ZonedDateTime;
+import java.util.*;
 
 import static assure.util.ConversionUtil.*;
+import static assure.util.DataUtil.jaxbObjectToXML;
 import static assure.util.OrderStatus.ALLOCATED;
 import static assure.util.OrderStatus.FULFILLED;
 import static assure.util.ValidationUtil.*;
@@ -68,7 +68,7 @@ public class OrderDto {
         String channelOrderId = orderForm.getChannelOrderId();
         checkChannelIdAndChannelOrderIdPairNotExist(channelId, channelOrderId);
 
-        Map<String, Long> clientSkuIdToGlobalSkuIdMap = getCheckClientSkuId(orderItemFormList);
+        Map<String, Long> clientSkuIdToGlobalSkuIdMap = getCheckClientSkuId(orderItemFormList,orderForm.getClientId());
         OrderPojo orderPojo = convertOrderFormToOrderPojo(orderForm);
         List<OrderItemPojo> orderItemPojoList = convertOrderFormToOrderItemPojo(orderForm.getOrderItemFormList(),
                 clientSkuIdToGlobalSkuIdMap);
@@ -78,7 +78,7 @@ public class OrderDto {
     }
     @Transactional(rollbackFor = ApiException.class)
     public OrderStatusUpdateForm updateStatus(OrderStatusUpdateForm orderStatusUpdateForm) throws ApiException {
-        validate(orderStatusUpdateForm);
+        validateForm(orderStatusUpdateForm);
         OrderPojo orderPojo = orderService.getCheck(orderStatusUpdateForm.getOrderId());
 
         if (validStatusUpdateMap.get(orderPojo.getStatus()) != orderStatusUpdateForm.getUpdateStatusTo()) {
@@ -97,6 +97,25 @@ public class OrderDto {
         }
 
         return orderStatusUpdateForm;
+    }
+
+    public String getInvoice(Long orderId) throws ApiException, IOException, TransformerException {
+        OrderPojo orderPojo = orderService.getCheck(orderId);
+        if(orderPojo.getStatus() != FULFILLED)throw new ApiException("order should be fulfilled for invoice generation");
+
+        if(!isNull(orderPojo.getInvoiceUrl())){
+            return orderPojo.getInvoiceUrl();
+        }
+        String url = null;
+        Long internalChannelId = channelService.selectByName(INTERNAL_CHANNEL).getId();
+        if(orderPojo.getChannelId().equals(internalChannelId)){
+            url = createPdfAndGetUrl(orderId);
+        }else{
+            //get invoice from channel
+
+        }
+        orderService.setUrl(orderId,url);
+    return url;
     }
 
     @Transactional(rollbackFor = ApiException.class)
@@ -132,6 +151,32 @@ public class OrderDto {
         orderService.updateStatus(id, FULFILLED);
     }
 
+    private String createPdfAndGetUrl(Long orderId) throws ApiException, IOException, TransformerException {
+        OrderPojo orderPojo = orderService.getCheck(orderId);
+        List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItemByOrderId(orderId); //TODO remove invoice controller
+        List<OrderItemData> orderItemDataList = new ArrayList<>();
+        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
+            String clientSkuId = productService.selectByGlobalSkuId(orderItemPojo.getGlobalSkuId()).getClientSkuId();
+            OrderItemData orderItemData = convertPojoOrderItemToData(orderItemPojo,clientSkuId);
+            orderItemDataList.add(orderItemData);
+        }
+
+        ZonedDateTime time = orderPojo.getCreatedAt();
+        Double total = 0.;
+
+        for (OrderItemData i : orderItemDataList) {
+            total += i.getOrderedQuantity() * i.getSellingPricePerUnit();
+        }
+        InvoiceData oItem = new InvoiceData(time, orderId, orderItemDataList, total);
+
+
+        String xml = jaxbObjectToXML(oItem);
+        File xsltFile = new File("src", "invoice.xsl");
+        File pdfFile = new File("src", "invoice.pdf");
+        System.out.println(xml);
+        DataUtil.convertToPDF(oItem, xsltFile, pdfFile, xml);
+        return null;
+    }
     private Map<OrderItemPojo, InventoryPojo> getOrderItemPojoInvQtyMap(List<OrderItemPojo> orderItemPojoList) throws ApiException {
         Map<OrderItemPojo, InventoryPojo> orderItemPojoInvQtyMap = new HashMap<>();
         List<ErrorData> errorFormList = new ArrayList<>();
@@ -149,13 +194,13 @@ public class OrderDto {
         return orderItemPojoInvQtyMap;
     }
 
-    private Map<String, Long> getCheckClientSkuId(List<OrderItemForm> orderItemFormList) throws ApiException {
+    private Map<String, Long> getCheckClientSkuId(List<OrderItemForm> orderItemFormList,Long clientId) throws ApiException {
         Map<String, Long> clientSkuIdToGlobalSkuIdMap = new HashMap<>();
 
         List<ErrorData> errorFormList = new ArrayList<>();
         Integer row = 1;
         for (OrderItemForm orderItemForm : orderItemFormList) {
-            ProductPojo productPojo = productService.selectByClientSkuId(orderItemForm.getClientSkuId());
+            ProductPojo productPojo = productService.selectByClientSkuIdAndClientId(orderItemForm.getClientSkuId(),clientId);
             if (isNull(productPojo)) {
                 errorFormList.add(new ErrorData(row, "clientSkuID does not exists"));
                 continue;

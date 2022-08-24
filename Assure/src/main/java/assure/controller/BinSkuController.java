@@ -23,8 +23,8 @@ public class BinSkuController {
 
     @ApiOperation(value = "Add binSkus")
     @RequestMapping(path = "/bin-skus", method = RequestMethod.POST)
-    public Integer addBinSku(@RequestBody List<BinSkuForm> binSkuFormList) throws ApiException {
-        return binSkuDto.add(binSkuFormList);
+    public Integer addBinSku(@RequestBody BinSkuForm binSkuForm) throws ApiException {
+        return binSkuDto.add(binSkuForm);
     }
 
     @ApiOperation(value = "Get binSkus")
@@ -34,7 +34,7 @@ public class BinSkuController {
     }
 
     @ApiOperation(value = "Update binSku")
-    @RequestMapping(path = "/bin-skus/{id}", method = RequestMethod.PUT)
+    @RequestMapping(path = "/bin-skus/{id}", method = RequestMethod.PUT) //TODO take them together -> shbham asked to take id here
     public BinSkuUpdateForm updateBinSku(@PathVariable Long id, @RequestBody BinSkuUpdateForm binSkuUpdateForm) throws ApiException {
         return binSkuDto.update(binSkuUpdateForm,id);
     }

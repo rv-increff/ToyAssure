@@ -19,8 +19,8 @@ public class ChannelListingController {
     @Autowired
     private ChannelListingDto channelListingDto;
 
-    @ApiOperation(value = "Add ChannelListings")  //TODO create default internal channel
-    @RequestMapping(path = "/channelListings", method = RequestMethod.POST)
+    @ApiOperation(value = "Add ChannelListings")
+    @RequestMapping(path = "/channel-listings", method = RequestMethod.POST)
     public Integer addChannelListings(@RequestBody ChannelListingUploadForm channelListingUploadForm) throws ApiException {
         return channelListingDto.add(channelListingUploadForm);
     }

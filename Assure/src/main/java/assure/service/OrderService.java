@@ -2,7 +2,6 @@ package assure.service;
 
 import assure.dao.OrderDao;
 import assure.dao.OrderItemDao;
-import assure.model.ErrorData;
 import assure.pojo.OrderItemPojo;
 import assure.pojo.OrderPojo;
 import assure.spring.ApiException;
@@ -11,10 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
 import static java.lang.Math.min;
 import static java.util.Objects.isNull;
 
@@ -77,4 +74,13 @@ public class OrderService {
 
     }
 
+    public void setUrl(Long id, String url) throws ApiException {
+        OrderPojo orderPojo = getCheck(id);
+        orderPojo.setInvoiceUrl(url);
+        orderDao.update();
+    }
+
+    public List<OrderItemPojo> selectOrderItemByOrderId(Long orderId){
+        return  orderItemDao.selectByOrderId(orderId);
+    }
 }

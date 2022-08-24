@@ -4,10 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.PositiveOrZero;
 
 @Getter
 @Setter
 public class BinSkuUpdateForm {
-    @Min(value = 0)
+    @PositiveOrZero
     private Long quantity;
 }

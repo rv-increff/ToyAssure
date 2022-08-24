@@ -42,12 +42,12 @@ public class ProductDao extends AbstractDao<ProductPojo> {
         return getSingle(query);
     }
 
-    public ProductPojo selectByClientSkuId(String clientSkuId) {
+    public ProductPojo selectByClientSkuIdAndClientId(String clientSkuId, Long clientId) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery cr = cr();
         Root<ProductPojo> root = cr.from(this.clazz);
         cr = cr.select(root);
-        cr.where(cb.equal(root.get("clientSkuId"), clientSkuId));
+        cr.where(cb.and(cb.equal(root.get("clientSkuId"), clientSkuId), cb.equal(root.get("clientId"), clientId)));
         TypedQuery<ProductPojo> query = em.createQuery(cr);
         return getSingle(query);
     }

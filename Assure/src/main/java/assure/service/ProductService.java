@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static assure.util.NormalizeUtil.normalizeProductPojo;
 import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
 import static java.util.Objects.isNull;
 
@@ -41,6 +42,7 @@ public class ProductService {
         throwErrorIfNotEmpty(errorFormList);
 
         for (ProductPojo productPojo : productPojoList) {
+            normalizeProductPojo(productPojo);
             productDao.add(productPojo);
         }
     }
@@ -85,8 +87,11 @@ public class ProductService {
         return productPojo;
     }
 
-    public ProductPojo selectByClientSkuId(String clientSkuId) {
-        return productDao.selectByClientSkuId(clientSkuId);
+    public ProductPojo selectByClientSkuIdAndClientId(String clientSkuId, Long clientId) {
+        return productDao.selectByClientSkuIdAndClientId(clientSkuId, clientId);
+    }
+    public ProductPojo selectByGlobalSkuId(Long globalSkuId){
+        return productDao.selectByGlobalSkuId(globalSkuId);
     }
 }
 

@@ -9,6 +9,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
+
 @Api
 @RestController
 public class OrderController {
@@ -26,5 +29,12 @@ public class OrderController {
     public OrderStatusUpdateForm updateStatus(@RequestBody OrderStatusUpdateForm orderStatusUpdateForm) throws ApiException {
         return orderDto.updateStatus(orderStatusUpdateForm);
     }
+
+    @ApiOperation(value = "Get invoice")
+    @RequestMapping(path = "/orders/{orderId}/get-invoice", method = RequestMethod.GET) //TODO /orders   /order/upload-order
+    public String getInvoice(@PathVariable Long orderId) throws ApiException, IOException, TransformerException {
+        return orderDto.getInvoice(orderId);
+    }
+
 
 }

@@ -21,7 +21,7 @@ public class BinDto {
         if (numberOfBins > MAX_BIN_LIMIT) {
             throw new ApiException("number of bins greater than limit , limit : " + MAX_BIN_LIMIT);
         }
-        return convertListBinPojoToData(binService.add(numberOfBins));
+        return convertListBinPojoToData(binService.add(numberOfBins)); //TODO short name
     }
 
     public List<BinData> select(Integer pageNumber) {

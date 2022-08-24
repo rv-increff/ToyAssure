@@ -1,8 +1,10 @@
 package assure.service;
 
 import assure.dao.ChannelDao;
+import assure.model.ChannelForm;
 import assure.pojo.ChannelPojo;
 import assure.spring.ApiException;
+import assure.util.InvoiceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,5 +43,8 @@ public class ChannelService {
             throw new ApiException("channel does not exist");
         }
     }
+    public ChannelPojo selectByInvoiceType(InvoiceType invoiceType){
+        return channelDao.selectByInvoiceType(invoiceType);
 
+    }
 }

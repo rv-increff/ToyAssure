@@ -16,17 +16,17 @@ import java.util.List;
 public class PartyController {
     @Autowired
     private PartyDto partyDto;
-//TODO get similar names for client-customer online synonym
+
     @ApiOperation(value = "Get Party")  //TODO change name swagger api naming convention
     @RequestMapping(path = "/parties", method = RequestMethod.GET) //TODO 3 modules assure, commons, channels
     public List<PartyData> getParty(@RequestParam(name = "pageNumber") Integer pageNumber) {
         return partyDto.select(pageNumber);
     }
-    //TODO check if url correct
+
 
     @ApiOperation(value = "Get Party by id")
     @RequestMapping(path = "/parties/{id}", method = RequestMethod.GET)
-    public PartyData getPartyById(@PathVariable Long id) {
+    public PartyData getPartyById(@PathVariable Long id) throws ApiException {
         return partyDto.selectById(id);
     }
 

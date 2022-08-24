@@ -40,10 +40,14 @@ public class ChannelListingService {
         for (ChannelListingPojo channelListing : channelListingPojoList) {
             ChannelListingPojo channelListingPojo = channelListingDao.selectByAllFields(
                     channelListing.getClientId(), channelListing.getChannelId(),
-                    channelListing.getChannelSkuId(), channelListing.getGlobalSkuId());
+                    channelListing.getChannelSkuId(), channelListing.getGlobalSkuId());//TODO check constraints loop hole
+            //(f,ck1,p,1)
+            //(f,ck1,p,2)
+            //(a,ck1,p,1)
+            //(a,ck2,p,2) -> logic correct
             if (!isNull(channelListingPojo)) {
                 errorFormList.add(new ErrorData(row, "Channel Listing data already exists"));
-            }
+            }//TODO remove row error logic in service
             row++;
         }
         throwErrorIfNotEmpty(errorFormList);

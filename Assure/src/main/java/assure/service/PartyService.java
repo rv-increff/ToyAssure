@@ -38,18 +38,16 @@ public class PartyService {
         }
     }
 
-    public PartyPojo selectById(Long id) {
-        return dao.selectById(id);
+    public PartyPojo selectById(Long id) throws ApiException {
+        return getCheck(id);
     }
 
-    public PartyPojo selectByNameAndPartyType(String name, PartyType partyType) {
-        return dao.selectByNameAndPartyType(name, partyType);
-    }
-
-    public void checkById(Long id) throws ApiException {
-        if (isNull(dao.selectById(id))) {
+    public PartyPojo getCheck(Long id) throws ApiException {
+        PartyPojo partyPojo = dao.selectById(id);
+        if (isNull(partyPojo)) {
             throw new ApiException("Party does not exist");
         }
+        return partyPojo;
     }
     public Long checkByIdAndType(Long id, PartyType type) throws ApiException {
         PartyPojo partyPojo = dao.selectById(id);

@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static assure.util.ValidationUtil.checkDuplicateGlobalSkuAndBinIdPair;
 import static java.lang.Math.min;
 import static java.util.Objects.isNull;
 
@@ -21,6 +22,11 @@ public class BinSkuService {
     private BinSkuDao binSkuDao;
 
     public void add(List<BinSkuPojo> binSkuPojoList) throws ApiException {
+        //the map to convert clientSkuId to globalSkuId will give have data case in-sensitive as response
+        // for "Abc" and "abc" will be same so checking globalSkuId-binId pair for duplicacy is enough.
+        //its here because 
+        checkDuplicateGlobalSkuAndBinIdPair(binSkuPojoList);
+
         for (BinSkuPojo binSkuPojo : binSkuPojoList) {
             BinSkuPojo exists = binSkuDao.selectByGlobalSkuIdAndBinId(binSkuPojo.getBinId(), binSkuPojo.getGlobalSkuId());
             if (isNull(exists)) {

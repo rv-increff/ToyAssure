@@ -1,14 +1,9 @@
 package assure.dto;
 
-import assure.model.BinSkuData;
-import assure.model.BinSkuForm;
-import assure.model.BinSkuUpdateForm;
-import assure.model.ErrorData;
+import assure.model.*;
+import assure.pojo.PartyPojo;
 import assure.pojo.ProductPojo;
-import assure.service.BinService;
-import assure.service.BinSkuService;
-import assure.service.InventoryService;
-import assure.service.ProductService;
+import assure.service.*;
 import assure.spring.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static assure.util.ConversionUtil.*;
 import static assure.util.ConversionUtil.convertListBinSkuFormToPojo;
+import static assure.util.DataUtil.checkClientSkuIdExist;
 import static assure.util.ValidationUtil.*;
 import static java.util.Objects.isNull;
 
@@ -37,16 +33,20 @@ public class BinSkuDto {
     private BinService binService;
     @Autowired
     private InventoryService inventoryService;
+    @Autowired
+    private PartyService partyService;
 
     @Transactional(rollbackFor = ApiException.class)
-    public Integer add(List<BinSkuForm> binSkuFormList) throws ApiException {
-
+    public Integer add(BinSkuForm binSkuForm) throws ApiException {
+        List<BinSkuItemForm> binSkuFormList = binSkuForm.getBinSkuItemFormList();
         validateList("BinSku", binSkuFormList, MAX_BIN_LIMIT);
-        checkDuplicateBinSkuAndBinIdPairBinSkuForm(binSkuFormList);
-        checkBinIdExists(binSkuFormList);
 
-        HashMap<String, Long> clientToGlobalSkuIdMap = getClientToGlobalSkuIdMap(binSkuFormList);
-        checkClientSkuIdExist(clientToGlobalSkuIdMap, binSkuFormList); //TODO make it return map validateAnd
+        checkBinIdExists(binSkuFormList);
+        Long clientId = partyService.getCheck(binSkuForm.getClientId()).getId();
+        //TODO make it return map validateAnd
+        //TODO db is case insensative normalize clientskudId
+        HashMap<String, Long> clientToGlobalSkuIdMap = getClientToGlobalSkuIdMap(binSkuFormList,clientId);
+        checkClientSkuIdExist(clientToGlobalSkuIdMap,binSkuFormList);
 
         binSkuService.add(convertListBinSkuFormToPojo(binSkuFormList, clientToGlobalSkuIdMap));
         inventoryService.add(convertListBinSkuFormToInventoryPojo(binSkuFormList, clientToGlobalSkuIdMap));
@@ -62,13 +62,13 @@ public class BinSkuDto {
         return binSkuUpdateForm;
     }
 
-    private HashMap<String, Long> getClientToGlobalSkuIdMap(List<BinSkuForm> binSkuFormList) {
-        List<String> clientSkuIdList = binSkuFormList.stream().map(BinSkuForm::getClientSkuId)
+    private HashMap<String, Long> getClientToGlobalSkuIdMap(List<BinSkuItemForm> binSkuFormList, Long clientId) {
+        List<String> clientSkuIdList = binSkuFormList.stream().map(BinSkuItemForm::getClientSkuId)
                 .collect(Collectors.toList());
 
         HashMap<String, Long> clientToGlobalSkuIdMap = new HashMap<>();
         for (String clientSkuId : clientSkuIdList) {
-            ProductPojo productPojo = productService.selectByClientSkuId(clientSkuId);
+            ProductPojo productPojo = productService.selectByClientSkuIdAndClientId(clientSkuId,clientId);
             if (!isNull(productPojo)) {
                 clientToGlobalSkuIdMap.put(productPojo.getClientSkuId(), productPojo.getGlobalSkuId());
             }
@@ -76,24 +76,10 @@ public class BinSkuDto {
         return clientToGlobalSkuIdMap;
     }
 
-    private void checkClientSkuIdExist(HashMap<String, Long> clientToGlobalSkuIdMap, List<BinSkuForm> binSkuFormList)
-            throws ApiException {
-        Integer row = 0;
-        List<ErrorData> errorFormList = new ArrayList<>();
-        for (BinSkuForm binSkuForm : binSkuFormList) {
-            if (!clientToGlobalSkuIdMap.containsKey(binSkuForm.getClientSkuId())) {
-                errorFormList.add(new ErrorData(row, "clientSkuId does not exist, clientSkuId : "
-                        + binSkuForm.getClientSkuId()));
-            }
-            row++;
-        }
-        throwErrorIfNotEmpty(errorFormList);
-    }
-
-    private void checkBinIdExists(List<BinSkuForm> binSkuFormList) throws ApiException {
+    private void checkBinIdExists(List<BinSkuItemForm> binSkuItemFormList) throws ApiException {
         Integer row = 1;
         List<ErrorData> errorFormList = new ArrayList<>();
-        for (BinSkuForm binSkuForm : binSkuFormList) {
+        for (BinSkuItemForm binSkuForm : binSkuItemFormList) {
             if (isNull(binService.selectById(binSkuForm.getBinId()))) {
                 errorFormList.add(new ErrorData(row, "bin id doest not exist, binId : " + binSkuForm.getBinId()));
             }

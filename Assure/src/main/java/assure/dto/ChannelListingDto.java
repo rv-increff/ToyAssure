@@ -33,16 +33,16 @@ public class ChannelListingDto {
     @Autowired
     private ChannelService channelService;
 
-    @Transactional(rollbackFor = ApiException.class)
+    @Transactional(rollbackFor = ApiException.class)//TODO only if more than one update/add
     public Integer add(ChannelListingUploadForm channelListingUploadForm) throws ApiException {
 
-        validate(channelListingUploadForm);
+        validateForm(channelListingUploadForm);   //TODO club all three fns
         validateListSize(channelListingUploadForm.getChannelListingFormList(), MAX_LIST_SIZE);
         checkDuplicateChannelListingFormList(channelListingUploadForm.getChannelListingFormList());
 
         Long clientId = channelListingUploadForm.getClientId();
         Long channelId = channelListingUploadForm.getChannelId();
-        partyService.checkById(clientId);
+        partyService.getCheck(clientId);
         channelService.getCheck(channelId);
 
         channelListingService.add(transformAndConvertChannelListingFormToPojo(clientId, channelId,
@@ -62,8 +62,9 @@ public class ChannelListingDto {
         Integer row = 1;
         for (ChannelListingForm channelListingForm : channelListingFormList) {
             ChannelListingPojo channelListingPojo = new ChannelListingPojo();
-
-            ProductPojo productPojo = productService.selectByClientSkuId(channelListingForm.getClientSkuId());
+//TODO use map to get data getCheckMap
+            ProductPojo productPojo = productService.selectByClientSkuIdAndClientId(channelListingForm.getClientSkuId(),
+                    clientId);
             if (isNull(productPojo)) {
                 errorFormList.add(new ErrorData(row, "client skuId does not exists"));
                 continue;

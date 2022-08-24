@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PositiveOrZero;
 
 @Getter
 @Setter
@@ -14,7 +15,7 @@ public class OrderItemForm {
     @NotBlank
     private String clientSkuId;
 
-    @Min(value = 0)
+    @PositiveOrZero
     private Long quantity;
 
     @DecimalMin(value = "0")

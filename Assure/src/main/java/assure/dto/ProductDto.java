@@ -27,7 +27,6 @@ public class ProductDto {
     @Autowired
     private PartyService partyService;
 
-    @Transactional(rollbackFor = ApiException.class)
     public Integer add(List<ProductForm> productFormList, Long consumerId) throws ApiException {
 
         validateList("Product Form", productFormList, MAX_LIST_SIZE);
@@ -50,7 +49,7 @@ public class ProductDto {
     }
 
     public ProductUpdateForm update(ProductUpdateForm productUpdateForm, Long globalSkuId) throws ApiException {
-        validate(productUpdateForm);
+        validateForm(productUpdateForm);
         Long clientId = productService.selectById(globalSkuId).getClientId();
         productService.update(convertProductUpdateFormToPojo(productUpdateForm, globalSkuId, clientId));
         return productUpdateForm;
