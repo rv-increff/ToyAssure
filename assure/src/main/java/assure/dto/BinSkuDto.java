@@ -1,10 +1,10 @@
 package assure.dto;
 
 import assure.model.*;
-import assure.pojo.PartyPojo;
 import assure.pojo.ProductPojo;
 import assure.service.*;
 import assure.spring.ApiException;
+import commons.model.ErrorData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

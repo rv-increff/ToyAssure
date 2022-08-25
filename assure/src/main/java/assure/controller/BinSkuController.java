@@ -4,11 +4,9 @@ import assure.dto.BinSkuDto;
 import assure.model.BinSkuData;
 import assure.model.BinSkuForm;
 import assure.model.BinSkuUpdateForm;
-import assure.model.ProductData;
 import assure.spring.ApiException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

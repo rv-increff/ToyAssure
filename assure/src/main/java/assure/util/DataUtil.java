@@ -3,6 +3,7 @@ package assure.util;
 import assure.model.*;
 import assure.pojo.BinSkuPojo;
 import assure.spring.ApiException;
+import commons.model.ErrorData;
 import org.apache.fop.apps.*;
 
 import javax.xml.bind.JAXBContext;
@@ -15,7 +16,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
 

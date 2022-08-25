@@ -4,7 +4,6 @@ import assure.model.ChannelData;
 import assure.model.ChannelForm;
 import assure.service.ChannelService;
 import assure.spring.ApiException;
-import assure.util.InvoiceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

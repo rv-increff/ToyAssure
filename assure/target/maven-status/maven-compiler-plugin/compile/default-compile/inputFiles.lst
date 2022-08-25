@@ -9,7 +9,6 @@
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/model/OrderForm.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/util/PartyType.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/service/BinService.java
-/Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/model/OrderItemForm.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/service/BinSkuService.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/pojo/TableConstants.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/dao/BinSkuDao.java
@@ -23,7 +22,6 @@
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/dto/ChannelDto.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/spring/SpringConfig.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/controller/ChannelListingController.java
-/Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/model/ErrorData.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/service/ChannelService.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/service/PartyService.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/controller/OrderController.java

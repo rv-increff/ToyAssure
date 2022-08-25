@@ -1,6 +1,6 @@
 package assure.spring;
 
-import assure.model.ErrorData;
+import commons.model.ErrorData;
 import lombok.Getter;
 
 import java.util.List;
@@ -10,12 +10,13 @@ public class ApiException extends Exception {
     private static final long serialVersionUID = 1L;
     private List<ErrorData> errorFormList;
     private Integer errorType = 0;
+
     public ApiException(String string) {
         super(string);
     }
 
-    public ApiException(List<ErrorData> errorFormList){
+    public ApiException(List<ErrorData> errorFormList) {
         this.errorFormList = errorFormList;
-        this.errorType=1;
+        this.errorType = 1;
     }
 }

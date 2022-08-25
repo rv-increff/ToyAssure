@@ -14,7 +14,6 @@ assure/util/InvoiceType.class
 assure/dao/ChannelListingDao.class
 assure/dao/ChannelDao.class
 assure/controller/OrderController.class
-assure/model/OrderItemForm.class
 assure/dto/ChannelDto.class
 assure/controller/RestControllerAdvice.class
 assure/spring/SpringConfig.class
@@ -71,7 +70,6 @@ assure/controller/BinController.class
 assure/pojo/BinSkuPojo.class
 assure/controller/ChannelListingController.class
 assure/dto/BinSkuDto.class
-assure/model/ErrorData.class
 assure/service/PartyService.class
 assure/util/ValidationUtil.class
 assure/dto/OrderDto.class

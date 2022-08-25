@@ -1,7 +1,7 @@
 package assure.service;
 
 import assure.dao.ChannelListingDao;
-import assure.model.ErrorData;
+import commons.model.ErrorData;
 import assure.pojo.ChannelListingPojo;
 import assure.spring.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;

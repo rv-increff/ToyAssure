@@ -1,7 +1,7 @@
 package assure.service;
 
 import assure.dao.PartyDao;
-import assure.model.ErrorData;
+import commons.model.ErrorData;
 import assure.pojo.PartyPojo;
 import assure.spring.ApiException;
 import assure.util.PartyType;

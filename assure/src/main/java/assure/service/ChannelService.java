@@ -1,7 +1,6 @@
 package assure.service;
 
 import assure.dao.ChannelDao;
-import assure.model.ChannelForm;
 import assure.pojo.ChannelPojo;
 import assure.spring.ApiException;
 import assure.util.InvoiceType;

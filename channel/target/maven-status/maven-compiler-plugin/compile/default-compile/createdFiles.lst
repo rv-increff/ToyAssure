@@ -4,3 +4,4 @@ channel/controller/OrderController.class
 channel/spring/WebInitializer.class
 channel/spring/ApiException.class
 channel/spring/SpringConfig.class
+channel/controller/RestControllerAdvice.class

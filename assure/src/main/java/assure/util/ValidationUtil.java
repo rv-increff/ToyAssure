@@ -1,7 +1,6 @@
 package assure.util;
 
-import assure.model.BinSkuItemForm;
-import assure.model.ErrorData;
+import commons.model.ErrorData;
 import assure.model.ProductForm;
 import assure.pojo.BinSkuPojo;
 import assure.spring.ApiException;

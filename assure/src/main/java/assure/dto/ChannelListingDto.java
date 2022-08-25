@@ -2,7 +2,7 @@ package assure.dto;
 
 import assure.model.ChannelListingForm;
 import assure.model.ChannelListingUploadForm;
-import assure.model.ErrorData;
+import commons.model.ErrorData;
 import assure.pojo.ChannelListingPojo;
 import assure.pojo.ProductPojo;
 import assure.service.ChannelListingService;
