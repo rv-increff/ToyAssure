@@ -19,9 +19,6 @@ public class OrderForm {
     @PositiveOrZero
     Long customerId;
 
-    @PositiveOrZero
-    Long channelId;
-
     @NotEmpty
     List<@NotNull OrderItemForm> orderItemFormList;
 }

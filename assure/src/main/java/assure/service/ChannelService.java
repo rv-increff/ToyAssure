@@ -37,10 +37,12 @@ public class ChannelService {
         return channelDao.selectByName(name.toUpperCase());
     }
 
-    public void getCheck(Long id) throws ApiException {
-        if (isNull(channelDao.selectById(id))) {
+    public ChannelPojo getCheck(Long id) throws ApiException {
+        ChannelPojo channelPojo = channelDao.selectById(id);
+        if (isNull(channelPojo)) {
             throw new ApiException("channel does not exist");
         }
+        return channelPojo;
     }
     public ChannelPojo selectByInvoiceType(InvoiceType invoiceType){
         return channelDao.selectByInvoiceType(invoiceType);

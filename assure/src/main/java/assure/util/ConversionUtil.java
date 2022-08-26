@@ -4,7 +4,9 @@ import assure.model.*;
 import assure.pojo.*;
 import assure.spring.ApiException;
 import commons.model.ErrorData;
+import commons.model.OrderFormChannel;
 import commons.model.OrderItemForm;
+import commons.model.OrderItemFormChannel;
 
 import java.util.*;
 
@@ -221,6 +223,20 @@ public class ConversionUtil {
         }
         throwErrorIfNotEmpty(errorFormList);
     }
+ public static void checkDuplicateChannelSkuIds(List<OrderItemFormChannel> orderItemFormChannelList) throws ApiException {
+        Set<String> clientSkuIdSet = new HashSet<>();
+        List<ErrorData> errorFormList = new ArrayList<>();
+        Integer row = 1;
+
+        for (OrderItemFormChannel orderItemFormChannel : orderItemFormChannelList) {
+            if (clientSkuIdSet.contains(orderItemFormChannel.getChannelSkuId())) {
+                errorFormList.add(new ErrorData(row, "Duplicate client sku id"));
+            }
+            clientSkuIdSet.add(orderItemFormChannel.getChannelSkuId());
+            row++;
+        }
+        throwErrorIfNotEmpty(errorFormList);
+    }
 
     public static OrderPojo createOrderPojo(Long clientId, Long customerId, Long channelId, String channelOrderId) {
         OrderPojo orderPojo = new OrderPojo();
@@ -252,25 +268,48 @@ public class ConversionUtil {
         return orderItemPojoList;
     }
 
-    public static OrderPojo convertOrderFormToOrderPojo(OrderForm orderForm) {
+    public static OrderPojo convertOrderFormToOrderPojo(OrderForm orderForm, Long channelId) {
         OrderPojo orderPojo = new OrderPojo();
 
         orderPojo.setChannelOrderId(orderForm.getChannelOrderId());
         orderPojo.setCustomerId(orderForm.getCustomerId());
         orderPojo.setClientId(orderForm.getClientId());
-        orderPojo.setChannelId(orderForm.getChannelId());
+        orderPojo.setChannelId(channelId);
+
+        return orderPojo;
+    }
+ public static OrderPojo convertOrderFormChannelToOrderPojo(OrderFormChannel orderFormChannel, Long channelId) {
+        OrderPojo orderPojo = new OrderPojo();
+
+        orderPojo.setChannelOrderId(orderFormChannel.getChannelOrderId());
+        orderPojo.setCustomerId(orderFormChannel.getCustomerId());
+        orderPojo.setClientId(orderFormChannel.getClientId());
+        orderPojo.setChannelId(channelId);
 
         return orderPojo;
     }
 
-    public static List<OrderItemPojo> convertOrderFormToOrderItemPojo(List<OrderItemForm> orderItemFormList,
-                                                                      Map<String, Long> clientSkuIdToGlobalSkuIdMap) {
+    public static List<OrderItemPojo> convertOrderItemListToOrderItemPojo(List<OrderItemForm> orderItemFormList,
+                                                                          Map<String, Long> clientSkuIdToGlobalSkuIdMap) {
         List<OrderItemPojo> orderItemPojoList = new ArrayList<>();
         for (OrderItemForm orderItemForm : orderItemFormList) {
             OrderItemPojo orderItemPojo = new OrderItemPojo();
             orderItemPojo.setGlobalSkuId(clientSkuIdToGlobalSkuIdMap.get(orderItemForm.getClientSkuId()));
             orderItemPojo.setOrderedQuantity(orderItemForm.getQuantity());
             orderItemPojo.setSellingPricePerUnit(orderItemForm.getSellingPricePerUnit());
+
+            orderItemPojoList.add(orderItemPojo);
+        }
+        return orderItemPojoList;
+    }
+ public static List<OrderItemPojo> convertOrderItemListChannelToOrderItemPojo(List<OrderItemFormChannel> orderItemFormChannelList,
+                                                                              Map<String, Long> channelSkuIdToGlobalSkuIdMap) {
+        List<OrderItemPojo> orderItemPojoList = new ArrayList<>();
+        for (OrderItemFormChannel orderItemFormChannel : orderItemFormChannelList) {
+            OrderItemPojo orderItemPojo = new OrderItemPojo();
+            orderItemPojo.setGlobalSkuId(channelSkuIdToGlobalSkuIdMap.get(orderItemFormChannel.getChannelSkuId()));
+            orderItemPojo.setOrderedQuantity(orderItemFormChannel.getQuantity());
+            orderItemPojo.setSellingPricePerUnit(orderItemFormChannel.getSellingPricePerUnit());
 
             orderItemPojoList.add(orderItemPojo);
         }

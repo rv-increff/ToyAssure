@@ -1,6 +1,7 @@
 package channel.controller;
 
 import channel.dto.OrderDto;
+import commons.model.OrderFormChannel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -17,8 +18,8 @@ public class OrderController {
 
     @ApiOperation(value = "Create order")
     @RequestMapping(path = "/orders", method = RequestMethod.POST) //TODO /orders   /order/upload-order
-    public String addOrder(@RequestBody OrderForm orderForm) throws Exception {
-        return orderDto.add(orderForm);
+    public String addOrder(@RequestBody OrderFormChannel orderFormChannel) throws Exception {
+        return orderDto.add(orderFormChannel);
     }
 
 

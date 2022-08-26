@@ -25,4 +25,17 @@ public class ChannelListingDao extends AbstractDao<ChannelListingPojo> {
         TypedQuery<ChannelListingPojo> query = em.createQuery(cr);
         return getSingle(query);
     }
+    public ChannelListingPojo selectByChannelIdAndClientIdAndChannelSkuId(String channelSkuId, Long clientId, Long channelId) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery cr = cr();
+        Root<ChannelListingPojo> root = cr.from(this.clazz);
+        cr = cr.select(root);
+        cr.where(cb.and(
+                cb.equal(root.get("clientId"), clientId),
+                cb.equal(root.get("channelId"), channelId),
+                cb.equal(root.get("channelSkuId"), channelSkuId)
+        ));
+        TypedQuery<ChannelListingPojo> query = em.createQuery(cr);
+        return getSingle(query);
+    }
 }

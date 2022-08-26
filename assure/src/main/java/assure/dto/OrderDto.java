@@ -1,6 +1,9 @@
 package assure.dto;
 
-import assure.model.*;
+import assure.model.InvoiceData;
+import assure.model.OrderForm;
+import assure.model.OrderItemData;
+import assure.model.OrderStatusUpdateForm;
 import assure.pojo.*;
 import assure.service.*;
 import assure.spring.ApiException;
@@ -9,7 +12,9 @@ import assure.util.OrderStatus;
 import assure.util.PartyType;
 import com.google.common.collect.ImmutableMap;
 import commons.model.ErrorData;
+import commons.model.OrderFormChannel;
 import commons.model.OrderItemForm;
+import commons.model.OrderItemFormChannel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +23,10 @@ import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.IOException;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static assure.util.ConversionUtil.*;
 import static assure.util.DataUtil.jaxbObjectToXML;
@@ -51,33 +59,61 @@ public class OrderDto {
     private InventoryService inventoryService;
     @Autowired
     private BinSkuService binSkuService;
+    @Autowired
+    private ChannelListingService channelListingService;
 
-    @Transactional(rollbackFor = ApiException.class)//TODO remove if not nessecesary
+    @Transactional(rollbackFor = ApiException.class)
     public Integer add(OrderForm orderForm) throws ApiException {
         List<OrderItemForm> orderItemFormList = orderForm.getOrderItemFormList();
+        validateForm(orderForm);
         validateList("order Item List", orderItemFormList, MAX_LIST_SIZE);
         checkDuplicateClientSkuIds(orderItemFormList);
 
         partyService.checkByIdAndType(orderForm.getClientId(), PartyType.CLIENT);
         partyService.checkByIdAndType(orderForm.getCustomerId(), PartyType.CUSTOMER);
 
-        ChannelPojo channelPojo = channelService.selectByName(INTERNAL_CHANNEL);
-        if (isNull(channelPojo)) {
-            throw new ApiException(INTERNAL_CHANNEL + " channel does not exists");
-        }
+        Long channelId = channelService.selectByName(INTERNAL_CHANNEL).getId();
 
-        Long channelId = channelPojo.getId();
         String channelOrderId = orderForm.getChannelOrderId();
         checkChannelIdAndChannelOrderIdPairNotExist(channelId, channelOrderId);
 
-        Map<String, Long> clientSkuIdToGlobalSkuIdMap = getCheckClientSkuId(orderItemFormList,orderForm.getClientId());
-        OrderPojo orderPojo = convertOrderFormToOrderPojo(orderForm);
-        List<OrderItemPojo> orderItemPojoList = convertOrderFormToOrderItemPojo(orderForm.getOrderItemFormList(),
+        Map<String, Long> clientSkuIdToGlobalSkuIdMap = getCheckClientSkuId(orderItemFormList, orderForm.getClientId());
+        OrderPojo orderPojo = convertOrderFormToOrderPojo(orderForm, channelId);
+        List<OrderItemPojo> orderItemPojoList = convertOrderItemListToOrderItemPojo(orderForm.getOrderItemFormList(),
                 clientSkuIdToGlobalSkuIdMap);
         orderService.add(orderPojo, orderItemPojoList);
 
         return orderItemFormList.size();
     }
+
+    @Transactional(rollbackFor = ApiException.class)
+    public Integer addChannelOrder(OrderFormChannel orderFormChannel) throws ApiException {
+
+        List<OrderItemFormChannel> orderItemFormChannelList = orderFormChannel.getOrderItemFormChannelList();
+        validateForm(orderFormChannel);
+        validateList("order Item List", orderItemFormChannelList, MAX_LIST_SIZE);
+        checkDuplicateChannelSkuIds(orderItemFormChannelList);
+
+        partyService.checkByIdAndType(orderFormChannel.getClientId(), PartyType.CLIENT);
+        partyService.checkByIdAndType(orderFormChannel.getCustomerId(), PartyType.CUSTOMER);
+
+        Long channelId = channelService.getCheck(orderFormChannel.getChannelId()).getId();
+
+        String channelOrderId = orderFormChannel.getChannelOrderId();
+        checkChannelIdAndChannelOrderIdPairNotExist(channelId, channelOrderId);
+
+        Map<String, Long> channelSkuIdToGlobalSkuIdMap = getCheckChannelSkuId(orderItemFormChannelList,
+                orderFormChannel.getClientId(), orderFormChannel.getChannelId());
+        OrderPojo orderPojo = convertOrderFormChannelToOrderPojo(orderFormChannel, channelId);
+        List<OrderItemPojo> orderItemPojoList = convertOrderItemListChannelToOrderItemPojo(
+                orderFormChannel.getOrderItemFormChannelList(),
+                channelSkuIdToGlobalSkuIdMap);
+
+        orderService.add(orderPojo, orderItemPojoList);
+
+        return orderItemFormChannelList.size();
+    }
+
     @Transactional(rollbackFor = ApiException.class)
     public OrderStatusUpdateForm updateStatus(OrderStatusUpdateForm orderStatusUpdateForm) throws ApiException {
         validateForm(orderStatusUpdateForm);
@@ -87,7 +123,7 @@ public class OrderDto {
             throw new ApiException("invalid order update status");
         }
         OrderStatus orderStatus = validStatusUpdateMap.get(orderPojo.getStatus());
-        switch(orderStatus){
+        switch (orderStatus) {
 
             case ALLOCATED:
                 allocateOrder(orderStatusUpdateForm.getOrderId());
@@ -103,21 +139,22 @@ public class OrderDto {
 
     public String getInvoice(Long orderId) throws ApiException, IOException, TransformerException {
         OrderPojo orderPojo = orderService.getCheck(orderId);
-        if(orderPojo.getStatus() != FULFILLED)throw new ApiException("order should be fulfilled for invoice generation");
+        if (orderPojo.getStatus() != FULFILLED)
+            throw new ApiException("order should be fulfilled for invoice generation");
 
-        if(!isNull(orderPojo.getInvoiceUrl())){
+        if (!isNull(orderPojo.getInvoiceUrl())) {
             return orderPojo.getInvoiceUrl();
         }
         String url = null;
         Long internalChannelId = channelService.selectByName(INTERNAL_CHANNEL).getId();
-        if(orderPojo.getChannelId().equals(internalChannelId)){
+        if (orderPojo.getChannelId().equals(internalChannelId)) {
             url = createPdfAndGetUrl(orderId);
-        }else{
+        } else {
             //get invoice from channel
 
         }
-        orderService.setUrl(orderId,url);
-    return url;
+        orderService.setUrl(orderId, url);
+        return url;
     }
 
     @Transactional(rollbackFor = ApiException.class)
@@ -147,7 +184,7 @@ public class OrderDto {
         List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItemListByOrderId(orderPojo.getId());
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             Long fulfilledQty = orderService.fulfillQty(orderItemPojo);
-            inventoryService.fulfillQty(fulfilledQty,orderItemPojo.getGlobalSkuId());
+            inventoryService.fulfillQty(fulfilledQty, orderItemPojo.getGlobalSkuId());
 
         }
         orderService.updateStatus(id, FULFILLED);
@@ -159,7 +196,7 @@ public class OrderDto {
         List<OrderItemData> orderItemDataList = new ArrayList<>();
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             String clientSkuId = productService.selectByGlobalSkuId(orderItemPojo.getGlobalSkuId()).getClientSkuId();
-            OrderItemData orderItemData = convertPojoOrderItemToData(orderItemPojo,clientSkuId);
+            OrderItemData orderItemData = convertPojoOrderItemToData(orderItemPojo, clientSkuId);
             orderItemDataList.add(orderItemData);
         }
 
@@ -179,6 +216,7 @@ public class OrderDto {
         DataUtil.convertToPDF(oItem, xsltFile, pdfFile, xml);
         return null;
     }
+
     private Map<OrderItemPojo, InventoryPojo> getOrderItemPojoInvQtyMap(List<OrderItemPojo> orderItemPojoList) throws ApiException {
         Map<OrderItemPojo, InventoryPojo> orderItemPojoInvQtyMap = new HashMap<>();
         List<ErrorData> errorFormList = new ArrayList<>();
@@ -196,13 +234,13 @@ public class OrderDto {
         return orderItemPojoInvQtyMap;
     }
 
-    private Map<String, Long> getCheckClientSkuId(List<OrderItemForm> orderItemFormList,Long clientId) throws ApiException {
+    private Map<String, Long> getCheckClientSkuId(List<OrderItemForm> orderItemFormList, Long clientId) throws ApiException {
         Map<String, Long> clientSkuIdToGlobalSkuIdMap = new HashMap<>();
 
         List<ErrorData> errorFormList = new ArrayList<>();
         Integer row = 1;
         for (OrderItemForm orderItemForm : orderItemFormList) {
-            ProductPojo productPojo = productService.selectByClientSkuIdAndClientId(orderItemForm.getClientSkuId(),clientId);
+            ProductPojo productPojo = productService.selectByClientSkuIdAndClientId(orderItemForm.getClientSkuId(), clientId);
             if (isNull(productPojo)) {
                 errorFormList.add(new ErrorData(row, "clientSkuID does not exists"));
                 continue;
@@ -214,6 +252,28 @@ public class OrderDto {
         throwErrorIfNotEmpty(errorFormList);
 
         return clientSkuIdToGlobalSkuIdMap;
+    }
+
+    private Map<String, Long> getCheckChannelSkuId(List<OrderItemFormChannel> orderItemFormChannelList, Long clientId,
+                                                   Long channelId) throws ApiException {
+        Map<String, Long> channelSkuIdToGlobalSkuIdMap = new HashMap<>();
+
+        List<ErrorData> errorFormList = new ArrayList<>();
+        Integer row = 1;
+        for (OrderItemFormChannel orderItemFormChannel : orderItemFormChannelList) {
+            ChannelListingPojo channelListingPojo = channelListingService.selectByChannelIdAndClientIdAndChannelSkuId(
+                    orderItemFormChannel.getChannelSkuId(), clientId, channelId);
+            if (isNull(channelListingPojo)) {
+                errorFormList.add(new ErrorData(row, "channelSkuID does not exists"));
+                continue;
+            }
+            channelSkuIdToGlobalSkuIdMap.put(orderItemFormChannel.getChannelSkuId(), channelListingPojo.getGlobalSkuId());
+
+            row++;
+        }
+        throwErrorIfNotEmpty(errorFormList);
+
+        return channelSkuIdToGlobalSkuIdMap;
     }
 
 

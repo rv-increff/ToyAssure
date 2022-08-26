@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static assure.util.NormalizeUtil.normalizePartyPojo;
 import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
 import static java.util.Objects.isNull;
 
@@ -26,6 +27,7 @@ public class PartyService {
         Integer row = 1;
         List<ErrorData> errorFormList = new ArrayList<>();
         for (PartyPojo partyPojo : partyPojoList) {
+            normalizePartyPojo(partyPojo);
             if (!isNull(dao.selectByNameAndPartyType(partyPojo.getName(), partyPojo.getType()))) {
                 errorFormList.add(new ErrorData(row, "name - Type pair exists"));
             }

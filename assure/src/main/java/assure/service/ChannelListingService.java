@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static assure.util.NormalizeUtil.normalizeChannelListingPojo;
 import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
 import static java.util.Objects.isNull;
 
@@ -25,19 +26,22 @@ public class ChannelListingService {
     public void add(List<ChannelListingPojo> channelListingPojoList) throws ApiException {
         checkDataNotExist(channelListingPojoList);
         for (ChannelListingPojo channelListingPojo : channelListingPojoList) {
+            normalizeChannelListingPojo(channelListingPojo);
             channelListingDao.add(channelListingPojo);
         }
 
     }
 
-    public ChannelListingPojo selectByAllFields(Long clientId, Long channelId, String channelSkuId, Long globalSkuId) {
-        return channelListingDao.selectByAllFields(clientId, channelId, channelSkuId, globalSkuId);
+    public ChannelListingPojo selectByChannelIdAndClientIdAndChannelSkuId(String channelSkuId, Long clientId, Long channelId) {
+
+        return channelListingDao.selectByChannelIdAndClientIdAndChannelSkuId(channelSkuId.toLowerCase(),clientId,channelId);
     }
 
     private void checkDataNotExist(List<ChannelListingPojo> channelListingPojoList) throws ApiException {
         List<ErrorData> errorFormList = new ArrayList<>();
         Integer row = 1;
         for (ChannelListingPojo channelListing : channelListingPojoList) {
+            normalizeChannelListingPojo(channelListing);
             ChannelListingPojo channelListingPojo = channelListingDao.selectByAllFields(
                     channelListing.getClientId(), channelListing.getChannelId(),
                     channelListing.getChannelSkuId(), channelListing.getGlobalSkuId());//TODO check constraints loop hole
@@ -52,4 +56,5 @@ public class ChannelListingService {
         }
         throwErrorIfNotEmpty(errorFormList);
     }
+
 }
