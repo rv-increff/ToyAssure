@@ -1,12 +1,10 @@
 package assure.util;
 
 import assure.model.*;
+import assure.model.OrderForm;
 import assure.pojo.*;
 import assure.spring.ApiException;
-import commons.model.ErrorData;
-import commons.model.OrderFormChannel;
-import commons.model.OrderItemForm;
-import commons.model.OrderItemFormChannel;
+import commons.model.*;
 
 import java.util.*;
 
@@ -330,14 +328,62 @@ public class ConversionUtil {
         }
         return inventoryPojoList;
     }
-    public static OrderItemData convertPojoOrderItemToData(OrderItemPojo orderItemPojo, String clientSkuId){
-        OrderItemData orderItemData = new OrderItemData();
-        orderItemData.setOrderId(orderItemPojo.getOrderId());
-        orderItemData.setOrderedQuantity(orderItemPojo.getOrderedQuantity());
-        orderItemData.setClientSkuId(clientSkuId);
-        orderItemData.setSellingPricePerUnit(orderItemPojo.getSellingPricePerUnit());
+    public static OrderItemInvoiceData convertPojoOrderItemToData(OrderItemPojo orderItemPojo, String clientSkuId, String channelOrderId){
+        OrderItemInvoiceData orderItemInvoiceData = new OrderItemInvoiceData();
+        orderItemInvoiceData.setChannelOrderId(channelOrderId);
+        orderItemInvoiceData.setOrderedQuantity(orderItemPojo.getOrderedQuantity());
+        orderItemInvoiceData.setClientSkuId(clientSkuId);
+        orderItemInvoiceData.setSellingPricePerUnit(orderItemPojo.getSellingPricePerUnit());
 
-        return orderItemData;
+        return orderItemInvoiceData;
+    }
+     public static OrderItemChannelData convertPojoOrderItemChannelToData(OrderItemPojo orderItemPojo,
+                                                                          String channelSkuId, String channelOrderId){
+        OrderItemChannelData orderItemChannelData = new OrderItemChannelData();
+        orderItemChannelData.setChannelOrderId(channelOrderId);
+        orderItemChannelData.setOrderedQuantity(orderItemPojo.getOrderedQuantity());
+        orderItemChannelData.setChannelSkuId(channelSkuId);
+        orderItemChannelData.setSellingPricePerUnit(orderItemPojo.getSellingPricePerUnit());
+
+        return orderItemChannelData;
+    }
+
+    public static ChannelListingData convertChannelListingPojoToData(ChannelListingPojo channelListingPojo){
+        ChannelListingData channelListingData = new ChannelListingData();
+        channelListingData.setChannelId(channelListingPojo.getChannelId());
+        channelListingData.setChannelSkuId(channelListingPojo.getChannelSkuId());
+        channelListingData.setId(channelListingPojo.getId());
+        channelListingData.setGlobalSkuId(channelListingData.getGlobalSkuId());
+        channelListingData.setClientId(channelListingPojo.getClientId());
+        return channelListingData;
+    }
+
+    public static List<ChannelListingData> convertChannelListingPojoListToData(List<ChannelListingPojo> channelListingPojoList){
+        List<ChannelListingData> channelListingDataList = new ArrayList<>();
+        for (ChannelListingPojo channelListingPojo : channelListingPojoList) {
+            channelListingDataList.add(convertChannelListingPojoToData(channelListingPojo));
+        }
+        return channelListingDataList;
+    }
+    public static OrderData convertOrderPojoToData(OrderPojo orderPojo){
+        OrderData orderData = new OrderData();
+        orderData.setChannelOrderId(orderPojo.getChannelOrderId());
+        orderData.setInvoiceUrl(orderPojo.getInvoiceUrl());
+        orderData.setChannelId(orderPojo.getChannelId());
+        orderData.setClientId(orderPojo.getClientId());
+        orderData.setCustomerId(orderPojo.getCustomerId());
+        orderData.setStatus(orderPojo.getStatus());
+        orderData.setId(orderPojo.getId());
+
+        return orderData;
+    }
+
+    public static List<OrderData> convertOrderPojoListToData(List<OrderPojo> orderPojoList){
+        List<OrderData> orderDataList = new ArrayList<>();
+        for (OrderPojo orderPojo : orderPojoList) {
+            orderDataList.add(convertOrderPojoToData(orderPojo));
+        }
+        return orderDataList;
     }
 }
 

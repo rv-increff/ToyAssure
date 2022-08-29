@@ -1,13 +1,11 @@
 package commons.requests;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.squareup.okhttp.*;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.File;
 
 public class Requests {
     public static String post(String url, String body) throws Exception {
@@ -15,15 +13,33 @@ public class Requests {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
         OkHttpClient client = new OkHttpClient();
-            RequestBody requestBody = RequestBody.create(JSON, body); // new
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(requestBody)
-                    .build();
-            Response response = client.newCall(request).execute();
-            return response.body().string();
+        RequestBody requestBody = RequestBody.create(JSON, body); // new
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+        Response response = client.newCall(request).execute();
+        return response.body().string();
 
     }
+//    public static String postData(String url, String body) throws Exception {
+//
+//
+//
+//        OkHttpClient client = new OkHttpClient();
+//        RequestBody requestBody = new MultipartBody.Builder()
+//                .setType(MultipartBody.FORM)
+//                .addFormDataPart("image", "your file name.png",
+//                        RequestBody.create(MEDIA_TYPE_PNG, new File()))
+//                .build();
+//        Request request = new Request.Builder()
+//                .url(url)
+//                .post(requestBody)
+//                .build();
+//        Response response = client.newCall(request).execute();
+//        return response.body().string();
+//
+//    }
 
     public static String get(String url) throws Exception {
 
@@ -34,5 +50,12 @@ public class Requests {
                 .build();
         Response response = client.newCall(request).execute();
         return response.body().string();
+    }
+
+    public static <T> String objectToJsonString(T obj) throws JsonProcessingException {
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(obj);
+        System.out.println(json);
+        return json;
     }
 }

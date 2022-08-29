@@ -1,20 +1,16 @@
 package assure.dto;
 
-import assure.model.InvoiceData;
+import assure.model.*;
 import assure.model.OrderForm;
-import assure.model.OrderItemData;
-import assure.model.OrderStatusUpdateForm;
 import assure.pojo.*;
 import assure.service.*;
 import assure.spring.ApiException;
-import assure.util.DataUtil;
+import assure.util.InvoiceType;
 import assure.util.OrderStatus;
 import assure.util.PartyType;
 import com.google.common.collect.ImmutableMap;
-import commons.model.ErrorData;
-import commons.model.OrderFormChannel;
-import commons.model.OrderItemForm;
-import commons.model.OrderItemFormChannel;
+import commons.model.*;
+import commons.requests.Requests;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,15 +27,19 @@ import java.util.List;
 import java.util.Map;
 
 import static assure.util.ConversionUtil.*;
-import static assure.util.DataUtil.jaxbObjectToXML;
+import static assure.util.DataUtil.returnFileStream;
 import static assure.util.OrderStatus.ALLOCATED;
 import static assure.util.OrderStatus.FULFILLED;
 import static assure.util.ValidationUtil.*;
+import static commons.requests.Requests.objectToJsonString;
+import static commons.util.pdfUtil.convertToPDF;
+import static commons.util.pdfUtil.jaxbObjectToXML;
 import static java.util.Objects.isNull;
 
 @Service
 public class OrderDto {
     private static final Long MAX_LIST_SIZE = 1000L;
+    private static final Integer PAGE_SIZE = 10;
     private static final String INTERNAL_CHANNEL = "INTERNAL";
 
     private static final Map<OrderStatus, OrderStatus> validStatusUpdateMap =
@@ -137,24 +139,38 @@ public class OrderDto {
         return orderStatusUpdateForm;
     }
 
-    public String getInvoice(Long orderId) throws ApiException, IOException, TransformerException {
+    public List<OrderData> selectOrder(Integer pageNumber){
+        return convertOrderPojoListToData(orderService.selectOrder(pageNumber,PAGE_SIZE));
+    }
+    public List<OrderItemData> selectOrderItems(Long orderId){
+        return convertOrderItemPojoListToData(orderService.selectOrderItem(orderId));
+    }
+
+    public byte[] getInvoice(Long orderId) throws Exception {
         OrderPojo orderPojo = orderService.getCheck(orderId);
         if (orderPojo.getStatus() != FULFILLED)
             throw new ApiException("order should be fulfilled for invoice generation");
 
         if (!isNull(orderPojo.getInvoiceUrl())) {
-            return orderPojo.getInvoiceUrl();
+            return returnFileStream(orderPojo.getInvoiceUrl());
         }
         String url = null;
-        Long internalChannelId = channelService.selectByName(INTERNAL_CHANNEL).getId();
-        if (orderPojo.getChannelId().equals(internalChannelId)) {
+
+        if (channelService.getCheck(orderPojo.getChannelId()).getInvoiceType() == InvoiceType.SELF) {
             url = createPdfAndGetUrl(orderId);
         } else {
-            //get invoice from channel
+            byte[] encoded = callChannelAndGetPdfByteArray(orderId);
+            byte[] pdfByteArray = java.util.Base64.getDecoder().decode(encoded);
 
+            String pdfName = orderId + "_invoice.pdf";
+            File pdfFile = new File("src", pdfName);
+            OutputStream out = Files.newOutputStream(pdfFile.getAbsoluteFile().toPath());
+            out.write(pdfByteArray);
+            out.close();
+            url = pdfFile.getAbsolutePath();
         }
         orderService.setUrl(orderId, url);
-        return url;
+        return returnFileStream(url);
     }
 
     @Transactional(rollbackFor = ApiException.class)
@@ -193,28 +209,29 @@ public class OrderDto {
     private String createPdfAndGetUrl(Long orderId) throws ApiException, IOException, TransformerException {
         OrderPojo orderPojo = orderService.getCheck(orderId);
         List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItemByOrderId(orderId); //TODO remove invoice controller
-        List<OrderItemData> orderItemDataList = new ArrayList<>();
+        List<OrderItemInvoiceData> orderItemInvoiceDataList = new ArrayList<>();
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             String clientSkuId = productService.selectByGlobalSkuId(orderItemPojo.getGlobalSkuId()).getClientSkuId();
-            OrderItemData orderItemData = convertPojoOrderItemToData(orderItemPojo, clientSkuId);
-            orderItemDataList.add(orderItemData);
+            OrderItemInvoiceData orderItemInvoiceData = convertPojoOrderItemToData(orderItemPojo, clientSkuId, orderPojo.getChannelOrderId());
+            orderItemInvoiceDataList.add(orderItemInvoiceData);
         }
 
         ZonedDateTime time = orderPojo.getCreatedAt();
         Double total = 0.;
 
-        for (OrderItemData i : orderItemDataList) {
+        for (OrderItemInvoiceData i : orderItemInvoiceDataList) {
             total += i.getOrderedQuantity() * i.getSellingPricePerUnit();
         }
-        InvoiceData oItem = new InvoiceData(time, orderId, orderItemDataList, total);
+        InvoiceData oItem = new InvoiceData(time, orderPojo.getChannelOrderId(), orderItemInvoiceDataList, total);
 
-
-        String xml = jaxbObjectToXML(oItem);
+        String xml = jaxbObjectToXML(oItem, InvoiceData.class);
+        String pdfName = orderId + "_invoice.pdf";
         File xsltFile = new File("src", "invoice.xsl");
-        File pdfFile = new File("src", "invoice.pdf");
+        File pdfFile = new File("src", pdfName);
         System.out.println(xml);
-        DataUtil.convertToPDF(oItem, xsltFile, pdfFile, xml);
-        return null;
+        convertToPDF(oItem, xsltFile, pdfFile, xml);
+        String url = pdfFile.toPath().toAbsolutePath().toString();
+        return url;
     }
 
     private Map<OrderItemPojo, InventoryPojo> getOrderItemPojoInvQtyMap(List<OrderItemPojo> orderItemPojoList) throws ApiException {
@@ -281,5 +298,47 @@ public class OrderDto {
         if (!isNull(orderService.selectByChannelIdAndChannelOrderId(channelId, channelOrderId))) {
             throw new ApiException("channel order id exists for the channel");
         }
+    }
+
+    private byte[] callChannelAndGetPdfByteArray(Long orderId) throws Exception {
+        OrderPojo orderPojo = orderService.getCheck(orderId);
+        List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItemByOrderId(orderId);
+        List<OrderItemChannelData> orderItemChannelDataList = new ArrayList<>();
+        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
+            String channelSkuId = channelListingService.selectByGlobalSkuIdAndChannelIdAndClientId(orderItemPojo.getGlobalSkuId(),
+                    orderPojo.getChannelId(), orderPojo.getClientId()).getChannelSkuId();
+            OrderItemChannelData orderItemChannelData = convertPojoOrderItemChannelToData(orderItemPojo, channelSkuId,
+                    orderPojo.getChannelOrderId());
+            orderItemChannelDataList.add(orderItemChannelData);
+        }
+
+        ZonedDateTime time = orderPojo.getCreatedAt();
+        Double total = 0.;
+
+        for (OrderItemChannelData i : orderItemChannelDataList) {
+            total += i.getOrderedQuantity() * i.getSellingPricePerUnit();
+        }
+        InvoiceDataChannel invoiceData = new InvoiceDataChannel(time, orderPojo.getChannelOrderId(), orderItemChannelDataList, total);
+
+        return Requests.post("http://localhost:9001/channel/orders/get-invoice", objectToJsonString(invoiceData)).getBytes();
+    }
+
+    public OrderItemData convertOrderItemPojToData(OrderItemPojo orderItemPojo){
+        OrderItemData orderItemData = new OrderItemData();
+        orderItemData.setOrderId(orderItemPojo.getOrderId());
+        orderItemData.setId(orderItemPojo.getId());
+        orderItemData.setSellingPricePerUnit(orderItemPojo.getSellingPricePerUnit());
+        orderItemData.setOrderedQuantity(orderItemPojo.getOrderedQuantity());
+        orderItemData.setAllocatedQuantity(orderItemPojo.getAllocatedQuantity());
+        orderItemData.setFulfilledQuantity(orderItemPojo.getFulfilledQuantity());
+        orderItemData.setClientSkuId(productService.selectByGlobalSkuId(orderItemPojo.getGlobalSkuId()).getClientSkuId());
+        return orderItemData;
+    }
+    public List<OrderItemData> convertOrderItemPojoListToData(List<OrderItemPojo> orderItemPojoList){
+        List<OrderItemData> orderItemInvoiceDataList = new ArrayList<>();
+        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
+            orderItemInvoiceDataList.add(convertOrderItemPojToData(orderItemPojo));
+        }
+        return orderItemInvoiceDataList;
     }
 }

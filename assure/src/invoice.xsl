@@ -22,7 +22,7 @@
                         Invoice generation time - <xsl:value-of select="invoiceGenerationTime"/>
                     </fo:block>
                     <fo:block font-size="12pt" text-align="center" font-family="Helvetica" font-weight="bold" space-after="5mm">
-                        Order Id-<xsl:value-of select="orderId"/>
+                        Order Id-<xsl:value-of select="channelOrderId"/>
                     </fo:block>
                     <fo:block font-size="10pt">
                         <fo:table table-layout="fixed" width="100%" border-collapse="separate">
@@ -50,7 +50,7 @@
                                 </fo:table-cell>
                             </fo:table-header>
                             <fo:table-body>
-                                <xsl:apply-templates select="orderItemDataList"/>
+                                <xsl:apply-templates select="orderItemInvoiceDataList"/>
                             </fo:table-body>
                         </fo:table>
                     </fo:block>
@@ -61,7 +61,7 @@
             </fo:page-sequence>
         </fo:root>
     </xsl:template>
-    <xsl:template match="orderItemDataList">
+    <xsl:template match="orderItemInvoiceDataList">
         <fo:table-row>
             <fo:table-cell  border="1pt solid black" xsl:use-attribute-sets="tableBorder">
                 <fo:block text-align="left" font-size="15pt">

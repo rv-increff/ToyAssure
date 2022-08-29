@@ -12,15 +12,15 @@ import java.util.List;
 @XmlRootElement
 public class InvoiceData {
     private String invoiceGenerationTime;
-    private Long orderId;
-    private List<OrderItemData> orderItemDataList;
+    private String channelOrderId;
+    private List<OrderItemInvoiceData> orderItemInvoiceDataList;
     private Double total;
 
     public InvoiceData(){}
-    public InvoiceData(ZonedDateTime invoiceGenerationTime, Long orderId, List<OrderItemData> orderItemDataList,Double total){
+    public InvoiceData(ZonedDateTime invoiceGenerationTime, String channelOrderId, List<OrderItemInvoiceData> orderItemInvoiceDataList, Double total){
         this.invoiceGenerationTime = invoiceGenerationTime.toLocalDate().toString() + " " + invoiceGenerationTime.toLocalTime().toString();
-        this.orderId = orderId;
-        this.orderItemDataList = orderItemDataList;
+        this.channelOrderId = channelOrderId;
+        this.orderItemInvoiceDataList = orderItemInvoiceDataList;
         this.total = total;
     }
 }

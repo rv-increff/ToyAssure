@@ -1,6 +1,7 @@
 package assure.service;
 
 import assure.dao.ChannelListingDao;
+import assure.pojo.ChannelPojo;
 import commons.model.ErrorData;
 import assure.pojo.ChannelListingPojo;
 import assure.spring.ApiException;
@@ -31,12 +32,16 @@ public class ChannelListingService {
         }
 
     }
-
+    public List<ChannelListingPojo> select(Integer pageNumber, Integer pageSize) {
+        return channelListingDao.select(pageNumber, pageSize);
+    }
     public ChannelListingPojo selectByChannelIdAndClientIdAndChannelSkuId(String channelSkuId, Long clientId, Long channelId) {
 
         return channelListingDao.selectByChannelIdAndClientIdAndChannelSkuId(channelSkuId.toLowerCase(),clientId,channelId);
     }
-
+    public ChannelListingPojo selectByGlobalSkuIdAndChannelIdAndClientId(Long globalSkuId, Long channelId, Long clientId){
+        return channelListingDao.selectByGlobalSkuIdAndChannelIdAndClientId(globalSkuId,channelId,clientId);
+    }
     private void checkDataNotExist(List<ChannelListingPojo> channelListingPojoList) throws ApiException {
         List<ErrorData> errorFormList = new ArrayList<>();
         Integer row = 1;
@@ -56,5 +61,6 @@ public class ChannelListingService {
         }
         throwErrorIfNotEmpty(errorFormList);
     }
+
 
 }

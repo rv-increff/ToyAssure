@@ -36,6 +36,12 @@ public class OrderService {
             orderItemDao.add(orderItemPojo);
         }
     }
+    public List<OrderPojo> selectOrder(Integer pageNumber, Integer pageSize){
+        return orderDao.select(pageNumber,pageSize);
+    }
+    public List<OrderItemPojo> selectOrderItem(Long orderId){
+        return orderItemDao.selectByOrderId(orderId);
+    }
 
     public OrderPojo selectByChannelIdAndChannelOrderId(Long channelId, String channelOrderId) {
         return orderDao.selectByChannelIdAndChannelOrderId(channelId, channelOrderId);

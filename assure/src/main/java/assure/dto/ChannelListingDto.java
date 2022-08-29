@@ -1,5 +1,6 @@
 package assure.dto;
 
+import assure.model.ChannelListingData;
 import assure.model.ChannelListingForm;
 import assure.model.ChannelListingUploadForm;
 import commons.model.ErrorData;
@@ -18,12 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static assure.util.ConversionUtil.checkDuplicateChannelListingFormList;
+import static assure.util.ConversionUtil.convertChannelListingPojoListToData;
 import static assure.util.ValidationUtil.*;
 import static java.util.Objects.isNull;
 
 @Service
 public class ChannelListingDto {
     private static final Long MAX_LIST_SIZE = 1000L;
+    private static final Integer PAGE_SIZE = 10;
     @Autowired
     private ChannelListingService channelListingService;
     @Autowired
@@ -51,7 +54,9 @@ public class ChannelListingDto {
         return channelListingUploadForm.getChannelListingFormList().size();
     }
 
-
+    public List<ChannelListingData> select(Integer pageNumber){
+        return convertChannelListingPojoListToData(channelListingService.select(pageNumber,PAGE_SIZE));
+    }
     private List<ChannelListingPojo> transformAndConvertChannelListingFormToPojo(Long clientId, Long channelId,
                                                                                  List<ChannelListingForm> channelListingFormList)
             throws ApiException {

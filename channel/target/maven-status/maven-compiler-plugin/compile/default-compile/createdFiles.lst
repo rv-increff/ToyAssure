@@ -1,4 +1,5 @@
 channel/dto/OrderDto.class
+channel/util/HelperUtil.class
 channel/spring/ControllerConfig.class
 channel/controller/OrderController.class
 channel/spring/WebInitializer.class

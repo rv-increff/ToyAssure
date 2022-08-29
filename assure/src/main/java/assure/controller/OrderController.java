@@ -1,8 +1,7 @@
 package assure.controller;
 
 import assure.dto.OrderDto;
-import assure.model.OrderForm;
-import assure.model.OrderStatusUpdateForm;
+import assure.model.*;
 import assure.spring.ApiException;
 import commons.model.OrderFormChannel;
 import io.swagger.annotations.Api;
@@ -10,8 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.transform.TransformerException;
-import java.io.IOException;
+import java.util.List;
 
 @Api
 @RestController
@@ -39,9 +37,22 @@ public class OrderController {
 
     @ApiOperation(value = "Get invoice")
     @RequestMapping(path = "/orders/{orderId}/get-invoice", method = RequestMethod.GET) //TODO /orders   /order/upload-order
-    public String getInvoice(@PathVariable Long orderId) throws ApiException, IOException, TransformerException {
+    public byte[] getInvoice(@PathVariable Long orderId) throws Exception {
         return orderDto.getInvoice(orderId);
     }
+
+    @ApiOperation(value = "Get orders")
+    @RequestMapping(path = "/orders", method = RequestMethod.GET)
+    public List<OrderData> getOrders(@RequestParam(name = "pageNumber") Integer pageNumber) {
+        return orderDto.selectOrder(pageNumber);
+    }
+
+    @ApiOperation(value = "Get orders items")
+    @RequestMapping(path = "/orders/{orderId}/order-items", method = RequestMethod.GET)
+    public List<OrderItemData> getOrderItems(@PathVariable Long orderId) {
+        return orderDto.selectOrderItems(orderId);
+    }
+
 
 
 }
