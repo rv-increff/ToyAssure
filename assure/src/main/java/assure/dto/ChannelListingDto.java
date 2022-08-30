@@ -58,8 +58,8 @@ public class ChannelListingDto {
     public List<ChannelListingData> select(Integer pageNumber){
         return convertChannelListingPojoListToData(channelListingService.select(pageNumber,PAGE_SIZE));
     }
-
     //TODO DEV_REVIEW: method name could have been ConvertToChannleListingPojo
+
     private List<ChannelListingPojo> transformAndConvertChannelListingFormToPojo(Long clientId, Long channelId,
                                                                                  List<ChannelListingForm> channelListingFormList)
             throws ApiException {

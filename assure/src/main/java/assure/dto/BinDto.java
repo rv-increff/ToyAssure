@@ -21,7 +21,7 @@ public class BinDto {
 
     public List<BinData> add(Integer numberOfBins) throws ApiException {
         if(Objects.isNull(numberOfBins) || numberOfBins <= 0)
-            throw new ApiException();
+            throw new ApiException("Null obj");
 
 
         if (numberOfBins > MAX_BIN_LIMIT) {

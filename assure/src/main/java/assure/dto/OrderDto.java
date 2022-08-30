@@ -306,6 +306,7 @@ public class OrderDto {
     }
 
     //TODO DEV_REVIEW:rename method to fetchInvoiceFromChannel
+
     private byte[] callChannelAndGetPdfByteArray(Long orderId) throws Exception {
         OrderPojo orderPojo = orderService.getCheck(orderId);
         List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItemByOrderId(orderId);
@@ -326,12 +327,14 @@ public class OrderDto {
         }
         InvoiceDataChannel invoiceData = new InvoiceDataChannel(time, orderPojo.getChannelOrderId(), orderItemChannelDataList, total);
 
+
         //TODO DEV_REVIEW:this URL should not be hardcoded. It should be taken from properties file. This code should be in ChannelClient
+        //TODO DEV_REVIEW:public methods declared below private.
+        //TODO DEV_REVIEW:Correct method name, avoid calling product service agian ans again
         return Requests.post("http://localhost:9001/channel/orders/get-invoice", objectToJsonString(invoiceData)).getBytes();
     }
 
-    //TODO DEV_REVIEW:public methods declared below private.
-    //TODO DEV_REVIEW:Correct method name, avoid calling product service agian ans again
+
     public OrderItemData convertOrderItemPojToData(OrderItemPojo orderItemPojo){
         OrderItemData orderItemData = new OrderItemData();
         orderItemData.setOrderId(orderItemPojo.getOrderId());
