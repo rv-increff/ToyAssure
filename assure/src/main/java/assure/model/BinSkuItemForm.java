@@ -14,7 +14,6 @@ public class BinSkuItemForm {
     @NotNull
     private Long binId;
     @NotNull
-    @PositiveOrZero
     private Long quantity;
     @NotBlank
     private String clientSkuId;

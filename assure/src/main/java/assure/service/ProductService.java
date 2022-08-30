@@ -90,6 +90,7 @@ public class ProductService {
     public ProductPojo selectByClientSkuIdAndClientId(String clientSkuId, Long clientId) {
         return productDao.selectByClientSkuIdAndClientId(clientSkuId, clientId);
     }
+
     public ProductPojo selectByGlobalSkuId(Long globalSkuId){
         return productDao.selectByGlobalSkuId(globalSkuId);
     }

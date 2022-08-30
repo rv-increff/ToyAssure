@@ -26,7 +26,8 @@ import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
 
 public class DataUtil {
 
-    public static HashMap<String, Long> checkClientSkuIdExist(HashMap<String, Long> clientToGlobalSkuIdMap, List<BinSkuItemForm> binSkuItemForms)
+    public static HashMap<String, Long> checkClientSkuIdExist(HashMap<String, Long> clientToGlobalSkuIdMap,
+                                                              List<BinSkuItemForm> binSkuItemForms)
             throws ApiException {
 
         Integer row = 0;

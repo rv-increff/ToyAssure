@@ -54,6 +54,7 @@ public class BinSkuService {
         List<BinSkuPojo> binSkuPojoList = binSkuDao.selectByGlobalSkuId(globalSkuId);
         Collections.sort(binSkuPojoList, Comparator.comparing(BinSkuPojo::getQuantity));
         Collections.reverse(binSkuPojoList);
+
         for (BinSkuPojo binSkuPojo : binSkuPojoList) {
             Long allocatedQtyInBin = min(allocateQty, binSkuPojo.getQuantity());
             binSkuPojo.setQuantity(binSkuPojo.getQuantity() - allocatedQtyInBin);

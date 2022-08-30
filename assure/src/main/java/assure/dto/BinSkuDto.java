@@ -42,15 +42,17 @@ public class BinSkuDto {
         validateList("BinSku", binSkuFormList, MAX_BIN_LIMIT);
 
         checkBinIdExists(binSkuFormList);
-        Long clientId = partyService.getCheck(binSkuForm.getClientId()).getId();
+        Long clientId = binSkuForm.getClientId();
+        partyService.getCheck(clientId);
+
         //TODO make it return map validateAnd
         //TODO db is case insensative normalize clientskudId
-        HashMap<String, Long> clientToGlobalSkuIdMap = getClientToGlobalSkuIdMap(binSkuFormList,clientId);
-        checkClientSkuIdExist(clientToGlobalSkuIdMap,binSkuFormList);
+        HashMap<String, Long> clientToGlobalSkuIdMap = getClientSkuIdToGSkuId(binSkuFormList, clientId);
+        checkClientSkuIdExist(clientToGlobalSkuIdMap, binSkuFormList);
 
-        binSkuService.add(convertListBinSkuFormToPojo(binSkuFormList, clientToGlobalSkuIdMap));
+        List<BinSKuPojo> binSKuPojos = binSkuService.add(convertListBinSkuFormToPojo(binSkuFormList, clientToGlobalSkuIdMap));
         inventoryService.add(convertListBinSkuFormToInventoryPojo(binSkuFormList, clientToGlobalSkuIdMap));
-        return binSkuFormList.size();
+        return binSKuPojos.size();
     }
 
     public List<BinSkuData> select(Integer pageNumber) {
@@ -62,7 +64,8 @@ public class BinSkuDto {
         return binSkuUpdateForm;
     }
 
-    private HashMap<String, Long> getClientToGlobalSkuIdMap(List<BinSkuItemForm> binSkuFormList, Long clientId) {
+    //TODO DEV_REVIEW: this should be a public staticmethod in ProductService.
+    private HashMap<String, Long> getClientSkuIdToGSkuId(List<BinSkuItemForm> binSkuFormList, Long clientId) {
         List<String> clientSkuIdList = binSkuFormList.stream().map(BinSkuItemForm::getClientSkuId)
                 .collect(Collectors.toList());
 
@@ -76,12 +79,16 @@ public class BinSkuDto {
         return clientToGlobalSkuIdMap;
     }
 
+    //TODO DEV_REVIEW: Fetch once and for all from DB the binIds that existas and collect them in SET and then c9ompare
     private void checkBinIdExists(List<BinSkuItemForm> binSkuItemFormList) throws ApiException {
         Integer row = 1;
         List<ErrorData> errorFormList = new ArrayList<>();
+        List<Long> binIds = binSkuItemFormList.stream().map(BinSkuItemForm::getBinId).distinct().collect(Collectors.toList());
+        Set<Long> existingBinIds = mewme(binIds);
+
         for (BinSkuItemForm binSkuForm : binSkuItemFormList) {
             if (isNull(binService.selectById(binSkuForm.getBinId()))) {
-                errorFormList.add(new ErrorData(row, "bin id doest not exist, binId : " + binSkuForm.getBinId()));
+                errorFormList.add(new ErrorData(row, "Bin id doesn't exist, binId : " + binSkuForm.getBinId()));
             }
             row++;
         }

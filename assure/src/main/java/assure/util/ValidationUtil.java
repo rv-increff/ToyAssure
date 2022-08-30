@@ -37,15 +37,14 @@ public class ValidationUtil {
 
     public static void checkDuplicateGlobalSkuAndBinIdPair(List<BinSkuPojo> binSkuItemFormList) throws ApiException {
 
-        HashMap<Long,Set<Long>> clientSkuIdToBinIdMap = new HashMap<>(); //TODO change logic to string->set of bin ids
+        HashMap<Long, Set<Long>> clientSkuIdToBinId = new HashMap<>(); //TODO change logic to string->set of bin ids
         List<ErrorData> errorFormList = new ArrayList<>(); //TODO use get or default
         Integer row = 1;
-
         for (BinSkuPojo binSkuPojo : binSkuItemFormList) {
-                if (clientSkuIdToBinIdMap.getOrDefault(binSkuPojo.getGlobalSkuId(),new HashSet<>()).contains(binSkuPojo.getBinId())) {
+                if (clientSkuIdToBinId.getOrDefault(binSkuPojo.getGlobalSkuId(), new HashSet<>()).contains(binSkuPojo.getBinId())) {
                     errorFormList.add(new ErrorData(row, "duplicate values of globalSkuId-binId pair"));
                 }else
-                    clientSkuIdToBinIdMap.getOrDefault(binSkuPojo.getGlobalSkuId(),new HashSet<>()).add(binSkuPojo.getBinId());
+                    clientSkuIdToBinId.getOrDefault(binSkuPojo.getGlobalSkuId(),new HashSet<>()).add(binSkuPojo.getBinId());
             row++;
         }
         throwErrorIfNotEmpty(errorFormList); //TODO Dont use this in service layer

@@ -314,11 +314,11 @@ public class ConversionUtil {
         return orderItemPojoList;
     }
 
-    public static List<InventoryPojo> convertListBinSkuFormToInventoryPojo(List<BinSkuItemForm> binSkuItemFormList,
+    public static List<InventoryPojo> convertListBinSkuFormToInventoryPojo(List<BinSkuPojo> binSkuPojoList,
                                                                            HashMap<String, Long> clientToGlobalSkuIdMap) {
         List<InventoryPojo> inventoryPojoList = new ArrayList<>();
-        Map<String, Long> clientSkuIdToQuantityMap = binSkuItemFormList.stream()
-                .collect(groupingBy(BinSkuItemForm::getClientSkuId, summingLong(BinSkuItemForm::getQuantity)));
+        Map<Long, Long> gskuIdToQuantity = binSkuPojoList.stream()
+                .collect(groupingBy(BinSkuPojo::getGlobalSkuId, summingLong(BinSkuPojo::getQuantity)));
         for (String clientSkuId : clientSkuIdToQuantityMap.keySet()) {
             InventoryPojo inventoryPojo = new InventoryPojo();
             inventoryPojo.setAvailableQuantity(clientSkuIdToQuantityMap.get(clientSkuId));

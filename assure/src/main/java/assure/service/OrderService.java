@@ -19,6 +19,7 @@ import static java.util.Objects.isNull;
 @Transactional(rollbackFor = ApiException.class)
 public class OrderService {
 
+    //TODO DEV_REVIEW add access specifiers
     @Autowired
     OrderDao orderDao;
     @Autowired
@@ -29,6 +30,7 @@ public class OrderService {
         orderDao.add(orderPojo);
         Long orderId = orderPojo.getId();
 
+        //TODO DEV_REVIEW make this a separate private method
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             orderItemPojo.setOrderId(orderId);
             orderItemPojo.setFulfilledQuantity(0L);
@@ -59,6 +61,7 @@ public class OrderService {
         return orderItemDao.selectByOrderId(orderId);
     }
 
+
     public Long allocateOrderItemQty(OrderItemPojo orderItemPojo, Long invQty) {
         Long allocatedQty = min(invQty, orderItemPojo.getOrderedQuantity() - orderItemPojo.getAllocatedQuantity());
         orderItemPojo.setAllocatedQuantity(allocatedQty);
@@ -80,6 +83,7 @@ public class OrderService {
 
     }
 
+    //TODO DEV_REVIEW rename it to update url
     public void setUrl(Long id, String url) throws ApiException {
         OrderPojo orderPojo = getCheck(id);
         orderPojo.setInvoiceUrl(url);

@@ -18,15 +18,14 @@ public class BinService {
     private BinDao binDao;
 
     public List<BinPojo> add(Integer numberOfBins) {
-        Integer num = numberOfBins;
         List<BinPojo> binPojoList = new ArrayList<>();
-        while (num > 0) {
-            BinPojo binPojo = new BinPojo();
-            binPojoList.add(binDao.add(binPojo));
-            num--;
-        }
+
+        for(int i = 0 ; i < numberOfBins; i ++)
+            binPojoList.add(createBin());
+
         return binPojoList;
     }
+
 
     public List<BinPojo> select(Integer pageNumber, Integer pageSize) {
         return binDao.select(pageNumber, pageSize);
@@ -35,4 +34,11 @@ public class BinService {
     public BinPojo selectById(Long id) {
         return binDao.selectById(id);
     }
+
+    private BinPojo createBin() {
+        BinPojo binPojo = new BinPojo();
+        binDao.add(binPojo);
+        return binPojo;
+    }
+
 }

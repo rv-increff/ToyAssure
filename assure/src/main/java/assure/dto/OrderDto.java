@@ -88,6 +88,7 @@ public class OrderDto {
         return orderItemFormList.size();
     }
 
+    //TODO DEV_REVIEW:rename to ChannelOrderForm
     @Transactional(rollbackFor = ApiException.class)
     public Integer addChannelOrder(OrderFormChannel orderFormChannel) throws ApiException {
 
@@ -116,11 +117,13 @@ public class OrderDto {
         return orderItemFormChannelList.size();
     }
 
+    //TODO DEV_REVIEW:not the correct way of doing this. Two different API's should be there. allocateOrder and FulfillOrder.
     @Transactional(rollbackFor = ApiException.class)
     public OrderStatusUpdateForm updateStatus(OrderStatusUpdateForm orderStatusUpdateForm) throws ApiException {
         validateForm(orderStatusUpdateForm);
         OrderPojo orderPojo = orderService.getCheck(orderStatusUpdateForm.getOrderId());
 
+        //TODO DEV_REVIEW:Invalid and not "invalid"
         if (validStatusUpdateMap.get(orderPojo.getStatus()) != orderStatusUpdateForm.getUpdateStatusTo()) {
             throw new ApiException("invalid order update status");
         }
@@ -194,6 +197,7 @@ public class OrderDto {
 
     }
 
+    //TODO DEV_REVIEW: order should move to fulfilled on invoice genration
     @Transactional(rollbackFor = ApiException.class)
     private void fulfillOrder(Long id) throws ApiException {
         OrderPojo orderPojo = orderService.getCheck(id);
@@ -251,6 +255,7 @@ public class OrderDto {
         return orderItemPojoInvQtyMap;
     }
 
+    //TODO DEV_REVIEW:this could be handled by static method in ProductService.
     private Map<String, Long> getCheckClientSkuId(List<OrderItemForm> orderItemFormList, Long clientId) throws ApiException {
         Map<String, Long> clientSkuIdToGlobalSkuIdMap = new HashMap<>();
 
@@ -300,6 +305,7 @@ public class OrderDto {
         }
     }
 
+    //TODO DEV_REVIEW:rename method to fetchInvoiceFromChannel
     private byte[] callChannelAndGetPdfByteArray(Long orderId) throws Exception {
         OrderPojo orderPojo = orderService.getCheck(orderId);
         List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItemByOrderId(orderId);
@@ -320,9 +326,12 @@ public class OrderDto {
         }
         InvoiceDataChannel invoiceData = new InvoiceDataChannel(time, orderPojo.getChannelOrderId(), orderItemChannelDataList, total);
 
+        //TODO DEV_REVIEW:this URL should not be hardcoded. It should be taken from properties file. This code should be in ChannelClient
         return Requests.post("http://localhost:9001/channel/orders/get-invoice", objectToJsonString(invoiceData)).getBytes();
     }
 
+    //TODO DEV_REVIEW:public methods declared below private.
+    //TODO DEV_REVIEW:Correct method name, avoid calling product service agian ans again
     public OrderItemData convertOrderItemPojToData(OrderItemPojo orderItemPojo){
         OrderItemData orderItemData = new OrderItemData();
         orderItemData.setOrderId(orderItemPojo.getOrderId());
