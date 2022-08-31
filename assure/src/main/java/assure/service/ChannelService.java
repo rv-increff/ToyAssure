@@ -44,8 +44,5 @@ public class ChannelService {
         }
         return channelPojo;
     }
-    public ChannelPojo selectByInvoiceType(InvoiceType invoiceType){
-        return channelDao.selectByInvoiceType(invoiceType);
 
-    }
 }

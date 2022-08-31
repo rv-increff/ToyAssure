@@ -22,7 +22,7 @@ public class PostConstructAssure {
     }
 
     private void checkAndCreateInternalChannel() {//TODO call through service
-        ChannelPojo channelPojo = channelService.selectByInvoiceType(InvoiceType.SELF);
+        ChannelPojo channelPojo = channelService.selectByName(INTERNAL_CHANNEL_NAME);
         if (isNull(channelPojo)) {
             channelPojo = new ChannelPojo();
             channelPojo.setName(INTERNAL_CHANNEL_NAME);

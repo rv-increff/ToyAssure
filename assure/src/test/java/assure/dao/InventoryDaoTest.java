@@ -1,7 +1,7 @@
 package assure.dao;
 
 import assure.config.QaConfig;
-import assure.pojo.BinPojo;
+import assure.pojo.InventoryPojo;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,27 +18,23 @@ import java.util.List;
 @ContextConfiguration(classes = QaConfig.class, loader = AnnotationConfigWebContextLoader.class)
 @WebAppConfiguration("src/test/webapp")
 @Transactional
-public class BinDaoTest extends AbstractTest{
-
+public class InventoryDaoTest extends AbstractTest {
     @Test
-    public void addTest(){
-        binAdd();
+    public void addTest() {
+        invAdd();
     }
 
     @Test
-    public void selectTest(){
-        List<BinPojo> binPojoList = new ArrayList<>();
-        for(int i=0;i<5;i++)
-            binPojoList.add(binAdd());
+    public void selectTest() {
+        List<InventoryPojo> inventoryPojoList = new ArrayList<>();
+        for (int i = 0; i < 5; i++) inventoryPojoList.add(invAdd());
 
-        Assert.assertEquals(binPojoList, binSelect());
+        Assert.assertEquals(inventoryPojoList, invSelect());
     }
 
     @Test
-    public void selectByIdTest(){
-        BinPojo binPojo = binAdd();
-        Assert.assertEquals(binPojo, binDao.selectById(binPojo.getBinId()));
+    public void selectByGlobalSkuIdTest() {
+        InventoryPojo inventoryPojo = invAdd();
+        Assert.assertEquals(inventoryPojo, inventoryDao.selectByGlobalSkuId(inventoryPojo.getGlobalSkuId()));
     }
-
-
 }

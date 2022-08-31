@@ -1,3 +1,4 @@
+/Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/model/ChannelListingData.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/dao/PartyDao.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/model/ChannelData.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/service/InventoryService.java
@@ -36,6 +37,7 @@
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/spring/WebInitializer.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/pojo/ProductPojo.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/dao/OrderItemDao.java
+/Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/model/OrderItemInvoiceData.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/model/ProductData.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/spring/DbConfig.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/util/InvoiceType.java
@@ -58,6 +60,7 @@
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/model/BinSkuForm.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/dao/ChannelListingDao.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/pojo/BinSkuPojo.java
+/Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/model/OrderData.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/pojo/BinPojo.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/util/NormalizeUtil.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/dto/OrderDto.java

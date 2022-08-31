@@ -28,9 +28,12 @@ assure/model/ProductData.class
 assure/model/OrderForm.class
 assure/pojo/ChannelPojo.class
 assure/dao/OrderItemDao.class
+assure/model/ChannelListingData.class
 assure/model/ProductForm.class
+assure/model/OrderItemInvoiceData.class
 assure/model/PartyForm.class
 assure/dao/PartyDao.class
+assure/model/OrderData.class
 assure/service/BinService.class
 assure/pojo/TableConstants.class
 assure/dao/InventoryDao.class

@@ -63,7 +63,7 @@ public class ProductService {
         ProductPojo exists = getCheck(productPojo.getGlobalSkuId());
 
         if (!Objects.equals(exists.getClientSkuId(), productPojo.getClientSkuId())) {
-            if (!isNull(productDao.selectByClientIdAndClientSkuId(productPojo.getClientSkuId(), productPojo.getClientId()))) {
+            if (!isNull(productDao.selectByClientSkuIdAndClientId(productPojo.getClientSkuId(), productPojo.getClientId()))) {
                 throw new ApiException("clientSkuId - clientId pair exists");
             }
         }

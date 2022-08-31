@@ -15,7 +15,7 @@ public class BinSkuDao extends AbstractDao<BinSkuPojo> {
     //TODO check the number of calls in where
 
 
-    public BinSkuPojo selectByGlobalSkuIdAndBinId(Long binId, Long globalSkuId) { //Add index
+    public BinSkuPojo selectByGlobalSkuIdAndBinId(Long globalSkuId,Long binId) { //Add index
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery cr = cr();
         Root<BinSkuPojo> root = cr.from(this.clazz);

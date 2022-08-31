@@ -37,23 +37,19 @@ public abstract class AbstractDao <T> {
 		List<T> results = query.getResultList();
 		return results;
 	}
-	public <T> TypedQuery<T> selectIn( List<?> inList, String columnName){
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<T> cr = cr();
-		Root<T> root = (Root<T>) cr.from(this.clazz);
-		cr  = cr.select(root).where(root.get(columnName).in(inList));
-		TypedQuery<T> query =  em.createQuery(cr);
-		return query;
-	}
+//	public <T> TypedQuery<T> selectIn( List<?> inList, String columnName){
+//		CriteriaBuilder cb = em.getCriteriaBuilder();
+//		CriteriaQuery<T> cr = cr();
+//		Root<T> root = (Root<T>) cr.from(this.clazz);
+//		cr  = cr.select(root).where(root.get(columnName).in(inList));
+//		TypedQuery<T> query =  em.createQuery(cr);
+//		return query;
+//	}
 
 	public void update(){}
 
 	protected <T> T getSingle(TypedQuery<T> query) {
 		return query.getResultList().stream().findFirst().orElse(null);
-	}
-
-	protected EntityManager em() {
-		return em;
 	}
 
 	protected <T> CriteriaQuery cr(){

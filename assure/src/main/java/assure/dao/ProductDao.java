@@ -32,16 +32,6 @@ public class ProductDao extends AbstractDao<ProductPojo> {
         return query.getResultList();
     }
 
-    public ProductPojo selectByClientIdAndClientSkuId(String clientSkuId, Long clientId) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery cr = cr();
-        Root<ProductPojo> root = cr.from(this.clazz);
-        cr = cr.select(root);
-        cr.where(cb.and(cb.equal(root.get("clientId"), clientId), cb.equal(root.get("clientSkuId"), clientSkuId)));
-        TypedQuery<ProductPojo> query = em.createQuery(cr);
-        return getSingle(query);
-    }
-
     public ProductPojo selectByClientSkuIdAndClientId(String clientSkuId, Long clientId) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery cr = cr();
@@ -50,10 +40,6 @@ public class ProductDao extends AbstractDao<ProductPojo> {
         cr.where(cb.and(cb.equal(root.get("clientSkuId"), clientSkuId), cb.equal(root.get("clientId"), clientId)));
         TypedQuery<ProductPojo> query = em.createQuery(cr);
         return getSingle(query);
-    }
-
-    public void update() {
-
     }
 
 }

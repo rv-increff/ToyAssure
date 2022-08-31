@@ -1,6 +1,7 @@
 package assure.dto;
 
 import assure.model.*;
+import assure.pojo.BinSkuPojo;
 import assure.pojo.ProductPojo;
 import assure.service.*;
 import assure.spring.ApiException;
@@ -50,9 +51,9 @@ public class BinSkuDto {
         HashMap<String, Long> clientToGlobalSkuIdMap = getClientSkuIdToGSkuId(binSkuFormList, clientId);
         checkClientSkuIdExist(clientToGlobalSkuIdMap, binSkuFormList);
 
-        List<BinSKuPojo> binSKuPojos = binSkuService.add(convertListBinSkuFormToPojo(binSkuFormList, clientToGlobalSkuIdMap));
-        inventoryService.add(convertListBinSkuFormToInventoryPojo(binSkuFormList, clientToGlobalSkuIdMap));
-        return binSKuPojos.size();
+        List<BinSkuPojo> binSkuPojoList = binSkuService.add(convertListBinSkuFormToPojo(binSkuFormList, clientToGlobalSkuIdMap));
+        inventoryService.add(convertListBinSkuFormToInventoryPojo(binSkuPojoList, clientToGlobalSkuIdMap));
+        return binSkuPojoList.size();
     }
 
     public List<BinSkuData> select(Integer pageNumber) {
@@ -84,7 +85,7 @@ public class BinSkuDto {
         Integer row = 1;
         List<ErrorData> errorFormList = new ArrayList<>();
         List<Long> binIds = binSkuItemFormList.stream().map(BinSkuItemForm::getBinId).distinct().collect(Collectors.toList());
-        Set<Long> existingBinIds = mewme(binIds);
+//        Set<Long> existingBinIds = mewme(binIds);
 
         for (BinSkuItemForm binSkuForm : binSkuItemFormList) {
             if (isNull(binService.selectById(binSkuForm.getBinId()))) {

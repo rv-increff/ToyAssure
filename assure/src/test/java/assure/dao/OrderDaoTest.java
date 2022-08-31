@@ -1,7 +1,8 @@
 package assure.dao;
 
 import assure.config.QaConfig;
-import assure.pojo.BinPojo;
+import assure.pojo.BinSkuPojo;
+import assure.pojo.OrderPojo;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,27 +19,31 @@ import java.util.List;
 @ContextConfiguration(classes = QaConfig.class, loader = AnnotationConfigWebContextLoader.class)
 @WebAppConfiguration("src/test/webapp")
 @Transactional
-public class BinDaoTest extends AbstractTest{
-
+public class OrderDaoTest extends AbstractTest{
     @Test
-    public void addTest(){
-        binAdd();
+    public void addTest() {
+        orderAdd();
     }
 
     @Test
     public void selectTest(){
-        List<BinPojo> binPojoList = new ArrayList<>();
-        for(int i=0;i<5;i++)
-            binPojoList.add(binAdd());
+        List<OrderPojo> orderPojoList = new ArrayList<>();
+        for(int i=0;i<5;i++)orderPojoList.add(orderAdd());
 
-        Assert.assertEquals(binPojoList, binSelect());
+        Assert.assertEquals(orderPojoList,orderSelect());
     }
 
     @Test
-    public void selectByIdTest(){
-        BinPojo binPojo = binAdd();
-        Assert.assertEquals(binPojo, binDao.selectById(binPojo.getBinId()));
-    }
+    public void selectByChannelIdAndChannelOrderIdTest(){
+        OrderPojo orderPojo = orderAdd();
+        Assert.assertEquals(orderPojo,orderDao.selectByChannelIdAndChannelOrderId(orderPojo.getChannelId(), orderPojo.getChannelOrderId()));
 
+    }
+ @Test
+    public void selectByIdTest(){
+        OrderPojo orderPojo = orderAdd();
+        Assert.assertEquals(orderPojo,orderDao.selectById(orderPojo.getId()));
+
+    }
 
 }
