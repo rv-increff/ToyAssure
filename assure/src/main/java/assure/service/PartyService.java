@@ -52,10 +52,7 @@ public class PartyService {
         return partyPojo;
     }
     public Long checkByIdAndType(Long id, PartyType type) throws ApiException {
-        PartyPojo partyPojo = dao.selectById(id);
-        if (isNull(partyPojo)) {
-            throw new ApiException("Party does not exist for given id");
-        }
+        PartyPojo partyPojo = getCheck(id);
         if(partyPojo.getType()!=type){
             throw new ApiException(type.toString() + " does not exist");
         }

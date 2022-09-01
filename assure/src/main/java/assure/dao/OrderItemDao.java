@@ -12,18 +12,18 @@ import java.util.List;
 @Repository
 public class OrderItemDao extends AbstractDao<OrderItemPojo> {
 
-    public OrderItemPojo selectByOrderIdAndGlobalSkuID(Long orderId, Long globalSkuId) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery cr = cr();
-        Root<OrderItemPojo> root = cr.from(this.clazz);
-        cr = cr.select(root);
-        cr.where(cb.and(
-                cb.equal(root.get("orderId"), orderId),
-                cb.equal(root.get("globalSkuId"), globalSkuId)
-        ));
-        TypedQuery<OrderItemPojo> query = em.createQuery(cr);
-        return getSingle(query);
-    }
+//    public OrderItemPojo selectByOrderIdAndGlobalSkuID(Long orderId, Long globalSkuId) {
+//        CriteriaBuilder cb = em.getCriteriaBuilder();
+//        CriteriaQuery cr = cr();
+//        Root<OrderItemPojo> root = cr.from(this.clazz);
+//        cr = cr.select(root);
+//        cr.where(cb.and(
+//                cb.equal(root.get("orderId"), orderId),
+//                cb.equal(root.get("globalSkuId"), globalSkuId)
+//        ));
+//        TypedQuery<OrderItemPojo> query = em.createQuery(cr);
+//        return getSingle(query);
+//    }
     public List<OrderItemPojo> selectByOrderId(Long orderId) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery cr = cr();

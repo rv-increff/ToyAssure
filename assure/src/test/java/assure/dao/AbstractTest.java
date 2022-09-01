@@ -6,6 +6,7 @@ import assure.util.OrderStatus;
 import assure.util.PartyType;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static assure.util.RandomUtil.*;
@@ -28,6 +29,8 @@ public class AbstractTest {
     public ChannelListingDao channelListingDao;
     @Autowired
     public OrderDao orderDao;
+    @Autowired
+    public OrderItemDao orderItemDao;
 
     public BinPojo binAdd() {
         BinPojo binPojo = new BinPojo();
@@ -44,6 +47,23 @@ public class AbstractTest {
         partyPojo.setType(type);
         return partyDao.add(partyPojo);
     }
+    public static List<PartyPojo> getPartyList(int n) {
+        List<PartyPojo> partyPojoList = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            PartyPojo partyPojo = new PartyPojo();
+
+            PartyType type = PartyType.CLIENT;
+            switch (getRandomNumber()%2){
+                case 0:
+                    type = PartyType.CUSTOMER;
+            }
+            partyPojo.setName(getRandomString());
+            partyPojo.setType(type);
+            partyPojoList.add(partyPojo);
+        }
+
+        return partyPojoList;
+    }
 
     public PartyPojo partyAdd() {
         int ind = getRandomNumber() % 2;
@@ -55,6 +75,9 @@ public class AbstractTest {
         return partyAdd(getRandomString(), partyType);
     }
 
+    public List<PartyPojo> partySelect() {
+        return partyDao.select(0, PAGE_SIZE);
+    }
     public ProductPojo productAdd() {
         ProductPojo productPojo = new ProductPojo();
         productPojo.setClientSkuId(getRandomString());
@@ -131,10 +154,10 @@ public class AbstractTest {
         return channelListingDao.select(0, PAGE_SIZE);
     }
 
-    public OrderPojo orderAdd(){
+    public OrderPojo orderAdd() {
         OrderPojo orderPojo = new OrderPojo();
         int ind = getRandomNumber() % 3;
-        OrderStatus orderStatus =  OrderStatus.CREATED;;
+        OrderStatus orderStatus = OrderStatus.CREATED;
         switch (ind) {
             case 1:
                 orderStatus = OrderStatus.ALLOCATED;
@@ -154,4 +177,19 @@ public class AbstractTest {
     public List<OrderStatus> orderSelect() {
         return orderDao.select(0, PAGE_SIZE);
     }
+
+    public OrderItemPojo orderItemAdd(Long orderId) {
+        OrderItemPojo orderItemPojo = new OrderItemPojo();
+
+        orderItemPojo.setOrderId(orderId);
+        orderItemPojo.setOrderedQuantity(getRandomNumberLong());
+        orderItemPojo.setAllocatedQuantity(getRandomNumberLong());
+        orderItemPojo.setFulfilledQuantity(getRandomNumberLong());
+        orderItemPojo.setSellingPricePerUnit(getRandomNumberDouble());
+        orderItemPojo.setSellingPricePerUnit(getRandomNumberDouble());
+        orderItemPojo.setGlobalSkuId(getRandomNumberLong());
+
+        return orderItemDao.add(orderItemPojo);
+    }
+
 }
