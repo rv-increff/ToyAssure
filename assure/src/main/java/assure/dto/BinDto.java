@@ -23,10 +23,9 @@ public class BinDto {
         if(Objects.isNull(numberOfBins) || numberOfBins <= 0)
             throw new ApiException("Null obj");
 
-
-        if (numberOfBins > MAX_BIN_LIMIT) {
+        if (numberOfBins > MAX_BIN_LIMIT)
             throw new ApiException("Number of bins to create cannot exceed the limit : " + MAX_BIN_LIMIT);
-        }
+
         return convertListBinPojoToData(binService.add(numberOfBins)); //TODO short name
     }
 

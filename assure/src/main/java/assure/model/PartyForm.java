@@ -13,5 +13,5 @@ public class PartyForm {
     @NotBlank
     private String name;
     @NotNull
-    private PartyType types;
+    private PartyType type;
 }

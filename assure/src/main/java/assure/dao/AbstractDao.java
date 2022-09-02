@@ -28,7 +28,7 @@ public abstract class AbstractDao <T> {
 		em.persist(pojoObject);
 		return pojoObject;
 	}
-	public <T> List<T> select(Integer pageNumber, Integer pageSize){
+	public List<T> select(Integer pageNumber, Integer pageSize){
 		CriteriaQuery<T> cr = cr();
 		Root<T> root = (Root<T>) cr.from(this.clazz);
 		cr.select(root);
@@ -50,13 +50,13 @@ public abstract class AbstractDao <T> {
 
 	public void update(){}
 
-	protected <T> T getSingle(TypedQuery<T> query) {
+	protected  T getSingle(TypedQuery<T> query) {
 		return query.getResultList().stream().findFirst().orElse(null);
 	}
 
-	protected <T> CriteriaQuery cr(){
+	protected  CriteriaQuery cr(){
 		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<T> cr = (CriteriaQuery<T>) cb.createQuery(this.clazz);
+		CriteriaQuery<T> cr = cb.createQuery(this.clazz);
 		return cr;
 	}
 

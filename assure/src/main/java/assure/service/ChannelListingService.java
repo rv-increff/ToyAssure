@@ -36,7 +36,7 @@ public class ChannelListingService {
         return channelListingDao.select(pageNumber, pageSize);
     }
 
-    public ChannelListingPojo selectByChannelIdAndClientIdAndChannelSkuId(String channelSkuId, Long clientId, Long channelId) {
+    public ChannelListingPojo selectByChannelIdAndClientIdAndChannelSkuId( Long channelId,Long clientId,String channelSkuId ) {
 
         return channelListingDao.selectByChannelIdAndClientIdAndChannelSkuId(channelId, clientId, channelSkuId.toLowerCase());
     }

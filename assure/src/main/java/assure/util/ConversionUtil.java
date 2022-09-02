@@ -16,7 +16,7 @@ public class ConversionUtil {
     public static PartyPojo convertClientFormToPojo(PartyForm partyForm) {
         PartyPojo clientPojo = new PartyPojo();
         clientPojo.setName(partyForm.getName());
-        clientPojo.setType(partyForm.getTypes());
+        clientPojo.setType(partyForm.getType());
 
         return clientPojo;
     }

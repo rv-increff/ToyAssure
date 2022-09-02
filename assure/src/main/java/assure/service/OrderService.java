@@ -57,11 +57,6 @@ public class OrderService {
         return orderPojo;
     }
 
-    public List<OrderItemPojo> selectOrderItemListByOrderId(Long orderId) {
-        return orderItemDao.selectByOrderId(orderId);
-    }
-
-
     public Long allocateOrderItemQty(OrderItemPojo orderItemPojo, Long invQty) {
         Long allocatedQty = min(invQty, orderItemPojo.getOrderedQuantity() - orderItemPojo.getAllocatedQuantity());
         orderItemPojo.setAllocatedQuantity(allocatedQty);
@@ -80,7 +75,6 @@ public class OrderService {
         orderDao.update();
 
         return orderItemPojo.getFulfilledQuantity();
-
     }
 
     //TODO DEV_REVIEW rename it to update url
@@ -88,9 +82,5 @@ public class OrderService {
         OrderPojo orderPojo = getCheck(id);
         orderPojo.setInvoiceUrl(url);
         orderDao.update();
-    }
-
-    public List<OrderItemPojo> selectOrderItemByOrderId(Long orderId){
-        return  orderItemDao.selectByOrderId(orderId);
     }
 }

@@ -180,7 +180,7 @@ public class OrderDto {
     private void allocateOrder(Long id) throws ApiException {
         OrderPojo orderPojo = orderService.getCheck(id);
 
-        List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItemListByOrderId(orderPojo.getId());
+        List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItem(orderPojo.getId());
         Map<OrderItemPojo, InventoryPojo> orderItemPojoInvQtyMap = getOrderItemPojoInvQtyMap(orderItemPojoList);
         Long countOfFullyAllocatedOrderItems = 0L;
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
@@ -201,7 +201,7 @@ public class OrderDto {
     @Transactional(rollbackFor = ApiException.class)
     private void fulfillOrder(Long id) throws ApiException {
         OrderPojo orderPojo = orderService.getCheck(id);
-        List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItemListByOrderId(orderPojo.getId());
+        List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItem(orderPojo.getId());
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             Long fulfilledQty = orderService.fulfillQty(orderItemPojo);
             inventoryService.fulfillQty(fulfilledQty, orderItemPojo.getGlobalSkuId());
@@ -212,7 +212,7 @@ public class OrderDto {
 
     private String createPdfAndGetUrl(Long orderId) throws ApiException, IOException, TransformerException {
         OrderPojo orderPojo = orderService.getCheck(orderId);
-        List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItemByOrderId(orderId); //TODO remove invoice controller
+        List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItem(orderId); //TODO remove invoice controller
         List<OrderItemInvoiceData> orderItemInvoiceDataList = new ArrayList<>();
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             String clientSkuId = productService.selectByGlobalSkuId(orderItemPojo.getGlobalSkuId()).getClientSkuId();
@@ -284,7 +284,7 @@ public class OrderDto {
         Integer row = 1;
         for (OrderItemFormChannel orderItemFormChannel : orderItemFormChannelList) {
             ChannelListingPojo channelListingPojo = channelListingService.selectByChannelIdAndClientIdAndChannelSkuId(
-                    orderItemFormChannel.getChannelSkuId(), clientId, channelId);
+                    channelId,clientId, orderItemFormChannel.getChannelSkuId());
             if (isNull(channelListingPojo)) {
                 errorFormList.add(new ErrorData(row, "channelSkuID does not exists"));
                 continue;
@@ -309,7 +309,7 @@ public class OrderDto {
 
     private byte[] callChannelAndGetPdfByteArray(Long orderId) throws Exception {
         OrderPojo orderPojo = orderService.getCheck(orderId);
-        List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItemByOrderId(orderId);
+        List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItem(orderId);
         List<OrderItemChannelData> orderItemChannelDataList = new ArrayList<>();
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             String channelSkuId = channelListingService.selectByGlobalSkuIdAndChannelIdAndClientId(orderItemPojo.getGlobalSkuId(),
