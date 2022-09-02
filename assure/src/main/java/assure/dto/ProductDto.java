@@ -26,14 +26,14 @@ public class ProductDto {
     @Autowired
     private PartyService partyService;
 
-    public Integer add(List<ProductForm> productFormList, Long consumerId) throws ApiException {
+    public Integer add(List<ProductForm> productFormList, Long clientId) throws ApiException {
 
         validateList("Product Form", productFormList, MAX_LIST_SIZE);
         checkDuplicateProductsProductForm(productFormList);
-        if (isNull(partyService.selectById(consumerId))) {
+        if (isNull(partyService.selectById(clientId))) {
             throw new ApiException("client id does not exist");
         }
-        productService.add(convertListProductFormToPojo(productFormList, consumerId));
+        productService.add(convertListProductFormToPojo(productFormList, clientId));
         return productFormList.size();
     }
 

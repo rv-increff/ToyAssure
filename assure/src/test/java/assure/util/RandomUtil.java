@@ -6,8 +6,8 @@ public class RandomUtil {
         return getRandomString(8);
     }
     public static String getRandomString(int len){
-        String src = "abcdefghijklmnopqrstuvwxyz0123456789";
-        String str = "TST";
+        String src = "TSTTSTTSTabcdefghijklTSTmnopqrTSTstuvwxyz0123456789";
+        String str = "";
 
         for(int i=0;i<len;i++){
             int index = (int) (Math.random()*100%(src.length()));

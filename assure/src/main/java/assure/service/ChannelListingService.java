@@ -1,10 +1,9 @@
 package assure.service;
 
 import assure.dao.ChannelListingDao;
-import assure.pojo.ChannelPojo;
-import commons.model.ErrorData;
 import assure.pojo.ChannelListingPojo;
 import assure.spring.ApiException;
+import commons.model.ErrorData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,19 +31,22 @@ public class ChannelListingService {
         }
 
     }
+
     public List<ChannelListingPojo> select(Integer pageNumber, Integer pageSize) {
         return channelListingDao.select(pageNumber, pageSize);
     }
+
     public ChannelListingPojo selectByChannelIdAndClientIdAndChannelSkuId(String channelSkuId, Long clientId, Long channelId) {
 
-        return channelListingDao.selectByChannelIdAndClientIdAndChannelSkuId(channelId,clientId,channelSkuId.toLowerCase());
+        return channelListingDao.selectByChannelIdAndClientIdAndChannelSkuId(channelId, clientId, channelSkuId.toLowerCase());
     }
-    public ChannelListingPojo selectByGlobalSkuIdAndChannelIdAndClientId(Long globalSkuId, Long channelId, Long clientId){
-        return channelListingDao.selectByGlobalSkuIdAndChannelIdAndClientId(globalSkuId,channelId,clientId);
+
+    public ChannelListingPojo selectByGlobalSkuIdAndChannelIdAndClientId(Long globalSkuId, Long channelId, Long clientId) {
+        return channelListingDao.selectByGlobalSkuIdAndChannelIdAndClientId(globalSkuId, channelId, clientId);
     }
+
     private void checkDataNotExist(List<ChannelListingPojo> channelListingPojoList) throws ApiException {
         List<ErrorData> errorFormList = new ArrayList<>();
-        Integer row = 1;
         for (ChannelListingPojo channelListing : channelListingPojoList) {
             normalizeChannelListingPojo(channelListing);
             ChannelListingPojo channelListingPojo = channelListingDao.selectByAllFields(
@@ -55,11 +57,10 @@ public class ChannelListingService {
             //(a,ck1,p,1)
             //(a,ck2,p,2) -> logic correct
             if (!isNull(channelListingPojo)) {
-                errorFormList.add(new ErrorData(row, "Channel Listing data already exists"));
+                throw new ApiException("Channel Listing data already exists");
             }//TODO remove row error logic in service
-            row++;
+
         }
-        throwErrorIfNotEmpty(errorFormList);
     }
 
 

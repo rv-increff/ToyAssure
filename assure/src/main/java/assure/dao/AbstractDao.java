@@ -3,6 +3,7 @@ package assure.dao;
 import assure.pojo.ProductPojo;
 import javafx.util.Pair;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -22,6 +23,7 @@ public abstract class AbstractDao <T> {
 	public AbstractDao(){
 		this.clazz = (Class)((ParameterizedType)this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 	}
+
 	public <T> T add(T pojoObject){
 		em.persist(pojoObject);
 		return pojoObject;

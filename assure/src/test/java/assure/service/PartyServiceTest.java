@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static assure.util.RandomUtil.getRandomString;
+import static org.junit.Assert.fail;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = QaConfig.class, loader = AnnotationConfigWebContextLoader.class)
@@ -46,6 +47,7 @@ public class PartyServiceTest extends AbstractTest {
         partyPojoList.add(partyPojo);
         try{
             partyService.add(partyPojoList);
+            fail("error not thrown");
         } catch (ApiException e) {
             ErrorData errorData = new ErrorData(partyPojoList.size(), "name - Type pair exists");
             Assert.assertEquals(e.getErrorFormList().get(0).toString(),errorData.toString());
@@ -62,6 +64,7 @@ public class PartyServiceTest extends AbstractTest {
     public void selectByIdNotExistsErrorTest(){
         try{
             partyService.selectById(1L);
+            fail("error not thrown");
         } catch (ApiException e) {
             Assert.assertEquals(e.getMessage(),"Party does not exist");
         }
@@ -78,6 +81,7 @@ public class PartyServiceTest extends AbstractTest {
         PartyPojo partyPojo = partyAdd(getRandomString(), PartyType.CLIENT);
         try{
             partyService.checkByIdAndType(partyPojo.getId(), PartyType.CUSTOMER);
+            fail("error not thrown");
         }catch (ApiException e){
             Assert.assertEquals(e.getMessage(), PartyType.CUSTOMER + " does not exist");
         }

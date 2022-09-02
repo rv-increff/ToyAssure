@@ -21,14 +21,14 @@ public class BinSkuService {
     @Autowired
     private BinSkuDao binSkuDao;
 
-    public List<BinSkuPojo>  add(List<BinSkuPojo> binSkuPojoList) throws ApiException {
+    public List<BinSkuPojo> add(List<BinSkuPojo> binSkuPojoList) throws ApiException {
         //the map to convert clientSkuId to globalSkuId will give have data case in-sensitive as response
         // for "Abc" and "abc" will be same so checking globalSkuId-binId pair for duplicacy is enough.
         //its here because 
         checkDuplicateGlobalSkuAndBinIdPair(binSkuPojoList);
 
         for (BinSkuPojo binSkuPojo : binSkuPojoList) {
-            BinSkuPojo exists = binSkuDao.selectByGlobalSkuIdAndBinId(binSkuPojo.getGlobalSkuId(),binSkuPojo.getBinId());
+            BinSkuPojo exists = binSkuDao.selectByGlobalSkuIdAndBinId(binSkuPojo.getGlobalSkuId(), binSkuPojo.getBinId());
             if (isNull(exists)) {
                 binSkuDao.add(binSkuPojo);
             } else {

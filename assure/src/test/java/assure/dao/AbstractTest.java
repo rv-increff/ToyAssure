@@ -90,6 +90,18 @@ public class AbstractTest {
         return productDao.add(productPojo);
 
     }
+ public ProductPojo getProduct(Long clientId,String clientSkuID ) {
+        ProductPojo productPojo = new ProductPojo();
+        productPojo.setClientSkuId(clientSkuID);
+        productPojo.setClientId(clientId);
+        productPojo.setBrandId(getRandomString());
+        productPojo.setMrp((double) getRandomNumber());
+        productPojo.setDescription(getRandomString());
+        productPojo.setName(getRandomString());
+
+        return productPojo;
+
+    }
 
     public List<ProductPojo> productSelect() {
         return productDao.select(0, PAGE_SIZE);
@@ -104,6 +116,16 @@ public class AbstractTest {
         return binSkuDao.add(binSkuPojo);
     }
 
+    public BinSkuPojo getBinSku() {
+        BinSkuPojo binSkuPojo = new BinSkuPojo();
+        binSkuPojo.setBinId(getRandomNumberLong());
+        binSkuPojo.setGlobalSkuId(getRandomNumberLong());
+        binSkuPojo.setQuantity(getRandomNumberLong());
+
+        return binSkuPojo;
+    }
+
+
     public List<BinSkuPojo> binSkuSelect() {
         return binSkuDao.select(0, PAGE_SIZE);
     }
@@ -116,9 +138,21 @@ public class AbstractTest {
             invoiceType = InvoiceType.CHANNEL;
         }
         channelPojo.setInvoiceType(invoiceType);
-        channelPojo.setName(getRandomString());
+        channelPojo.setName(getRandomString().toUpperCase());
         return channelDao.add(channelPojo);
     }
+     public ChannelPojo getChannel() {
+        ChannelPojo channelPojo = new ChannelPojo();
+        int ind = getRandomNumber() % 2;
+        InvoiceType invoiceType = InvoiceType.SELF;
+        if (ind == 0) {
+            invoiceType = InvoiceType.CHANNEL;
+        }
+        channelPojo.setInvoiceType(invoiceType);
+        channelPojo.setName(getRandomString());
+        return channelPojo;
+    }
+
 
     public List<ChannelPojo> channelSelect() {
         return channelDao.select(0, PAGE_SIZE);

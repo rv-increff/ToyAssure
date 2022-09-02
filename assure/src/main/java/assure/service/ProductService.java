@@ -32,14 +32,11 @@ public class ProductService {
         Set<String> clientSkuIdSet = productPojoByClientList.stream().map(ProductPojo::getClientSkuId)
                 .collect(Collectors.toSet());
 
-        Integer row = 1;
         for (ProductPojo productPojo : productPojoList) {
             if (clientSkuIdSet.contains(productPojo.getClientSkuId())) {
-                errorFormList.add(new ErrorData(row, "clientSkuId - clientId pair exists"));
+                throw new ApiException( "clientSkuId - clientId pair exists");
             }
-            row++;
         }
-        throwErrorIfNotEmpty(errorFormList);
 
         for (ProductPojo productPojo : productPojoList) {
             normalizeProductPojo(productPojo);

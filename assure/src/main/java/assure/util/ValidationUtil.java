@@ -38,16 +38,18 @@ public class ValidationUtil {
     public static void checkDuplicateGlobalSkuAndBinIdPair(List<BinSkuPojo> binSkuItemFormList) throws ApiException {
 
         HashMap<Long, Set<Long>> clientSkuIdToBinId = new HashMap<>(); //TODO change logic to string->set of bin ids
-        List<ErrorData> errorFormList = new ArrayList<>(); //TODO use get or default
-        Integer row = 1;
+       //TODO use get or default
         for (BinSkuPojo binSkuPojo : binSkuItemFormList) {
-                if (clientSkuIdToBinId.getOrDefault(binSkuPojo.getGlobalSkuId(), new HashSet<>()).contains(binSkuPojo.getBinId())) {
-                    errorFormList.add(new ErrorData(row, "duplicate values of globalSkuId-binId pair"));
-                }else
-                    clientSkuIdToBinId.getOrDefault(binSkuPojo.getGlobalSkuId(),new HashSet<>()).add(binSkuPojo.getBinId());
-            row++;
+                if (clientSkuIdToBinId.getOrDefault(binSkuPojo.getGlobalSkuId(), new HashSet<>()).contains(binSkuPojo.getBinId()))
+                    throw new ApiException( "duplicate values of globalSkuId-binId pair");
+                else {
+                    if (isNull(clientSkuIdToBinId.get(binSkuPojo.getGlobalSkuId()))) {
+                        clientSkuIdToBinId.put(binSkuPojo.getGlobalSkuId(), new HashSet<>());
+                    }
+                    clientSkuIdToBinId.getOrDefault(binSkuPojo.getGlobalSkuId(), new HashSet<>()).add(binSkuPojo.getBinId());
+                }
         }
-        throwErrorIfNotEmpty(errorFormList); //TODO Dont use this in service layer
+
     }
 
     public static <T> void validateList(String name, List<T> formList, Long maxListSize) throws ApiException {
