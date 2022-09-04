@@ -80,7 +80,7 @@ public class BinSkuDto {
         return clientToGlobalSkuIdMap;
     }
 
-    //TODO DEV_REVIEW: Fetch once and for all from DB the binIds that existas and collect them in SET and then c9ompare
+    //TODO DEV_REVIEW: Fetch once and for all from DB the binIds that exists and collect them in SET and then compare
     private void checkBinIdExists(List<BinSkuItemForm> binSkuItemFormList) throws ApiException {
         Integer row = 1;
         List<ErrorData> errorFormList = new ArrayList<>();

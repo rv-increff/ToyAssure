@@ -105,6 +105,18 @@ public class AbstractTest {
         return productDao.add(productPojo);
 
     }
+public ProductPojo productAdd(Long clientId) {
+        ProductPojo productPojo = new ProductPojo();
+        productPojo.setClientSkuId(getRandomString());
+        productPojo.setClientId(clientId);
+        productPojo.setBrandId(getRandomString());
+        productPojo.setMrp(getRandomNumberDouble());
+        productPojo.setDescription(getRandomString());
+        productPojo.setName(getRandomString());
+
+        return productDao.add(productPojo);
+
+    }
 
     public ProductPojo getProduct(Long clientId, String clientSkuID) {
         ProductPojo productPojo = new ProductPojo();
