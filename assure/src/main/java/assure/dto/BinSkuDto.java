@@ -24,7 +24,7 @@ import static java.util.Objects.isNull;
 @Service
 public class BinSkuDto {
 
-    private static final Long MAX_BIN_LIMIT = 100L;
+    private static final Long MAX_BIN_LIMIT = 100L; //TODO move all to common file
     private static final Integer PAGE_SIZE = 10;
     @Autowired
     private BinSkuService binSkuService;
@@ -52,7 +52,7 @@ public class BinSkuDto {
         checkClientSkuIdExist(clientToGlobalSkuIdMap, binSkuFormList);
 
         List<BinSkuPojo> binSkuPojoList = binSkuService.add(convertListBinSkuFormToPojo(binSkuFormList, clientToGlobalSkuIdMap));
-        inventoryService.add(convertListBinSkuFormToInventoryPojo(binSkuPojoList, clientToGlobalSkuIdMap));
+        inventoryService.add(convertListBinSkuFormToInventoryPojo(binSkuPojoList));
         return binSkuPojoList.size();
     }
 

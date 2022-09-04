@@ -130,6 +130,6 @@ public class ChannelListingTest extends AbstractTest {
         for (int i = 0; i < n; i++) {
             channelListAdd();
         }
-        Assert.assertEquals(channelListSelect().size(), n);
+        Assert.assertEquals(channelListingDto.select(0).size(), n);
     }
 }

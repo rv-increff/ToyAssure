@@ -2,7 +2,6 @@ package assure.dao;
 
 import assure.config.QaConfig;
 import assure.pojo.BinSkuPojo;
-import assure.pojo.ProductPojo;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,38 +18,37 @@ import java.util.List;
 @ContextConfiguration(classes = QaConfig.class, loader = AnnotationConfigWebContextLoader.class)
 @WebAppConfiguration("src/test/webapp")
 @Transactional
-public class BinSkuDaoTest extends AbstractTest{
+public class BinSkuDaoTest extends AbstractTest {
     @Test
     public void addTest() {
         binAdd();
     }
 
     @Test
-    public void selectTest(){
+    public void selectTest() {
         List<BinSkuPojo> binSkuPojoList = new ArrayList<>();
-        for(int i=0;i<5;i++)binSkuPojoList.add(binSkuAdd());
+        for (int i = 0; i < 5; i++) binSkuPojoList.add(binSkuAdd());
 
-        Assert.assertEquals(binSkuPojoList,binSkuSelect());
+        Assert.assertEquals(binSkuPojoList, binSkuSelect());
     }
 
     @Test
-    public void selectByGlobalSkuIdAndBinIdTest(){
+    public void selectByGlobalSkuIdAndBinIdTest() {
         BinSkuPojo binSkuPojo = binSkuAdd();
-        Assert.assertEquals(binSkuPojo,binSkuDao.selectByGlobalSkuIdAndBinId(binSkuPojo.getGlobalSkuId(),binSkuPojo.getBinId()));
+        Assert.assertEquals(binSkuPojo, binSkuDao.selectByGlobalSkuIdAndBinId(binSkuPojo.getGlobalSkuId(), binSkuPojo.getBinId()));
     }
 
-     @Test
-    public void selectByIdTest(){
+    @Test
+    public void selectByIdTest() {
         BinSkuPojo binSkuPojo = binSkuAdd();
-        Assert.assertEquals(binSkuPojo,binSkuDao.selectById(binSkuPojo.getId()));
+        Assert.assertEquals(binSkuPojo, binSkuDao.selectById(binSkuPojo.getId()));
     }
 
-     @Test
-    public void selectByGlobalSkuIdTest(){
+    @Test
+    public void selectByGlobalSkuIdTest() {
         BinSkuPojo binSkuPojo = binSkuAdd();
-        Assert.assertEquals(binSkuPojo,binSkuDao.selectByGlobalSkuId(binSkuPojo.getGlobalSkuId()).get(0));
+        Assert.assertEquals(binSkuPojo, binSkuDao.selectByGlobalSkuId(binSkuPojo.getGlobalSkuId()).get(0));
     }
-
 
 
 }
