@@ -125,7 +125,7 @@ public class OrderDto {
 
         //TODO DEV_REVIEW:Invalid and not "invalid"
         if (validStatusUpdateMap.get(orderPojo.getStatus()) != orderStatusUpdateForm.getUpdateStatusTo()) {
-            throw new ApiException("invalid order update status");
+            throw new ApiException("Invalid order update status");
         }
         OrderStatus orderStatus = validStatusUpdateMap.get(orderPojo.getStatus());
         switch (orderStatus) {

@@ -108,15 +108,17 @@ public class BinSkuDtoTest extends AbstractTest {
             binSkuDto.add(binSkuForm);
             fail("error should be thrown");
         } catch (ApiException e) {
-
+            Assert.assertEquals("Party does not exist", e.getMessage());
         }
     }
 
-    @Test
-    public void addClientSkuIdErrorTest() {
+    @Test(expected = ApiException.class)
+    public void addClientSkuIdErrorTest() throws ApiException {
         BinSkuForm binSkuForm = new BinSkuForm();
 
         List<BinSkuItemForm> binSkuItemFormList = new ArrayList<>();
+        PartyPojo partyPojo = partyAdd();
+
         for (int i = 0; i < 5; i++) {
             BinSkuItemForm binSkuItemForm = new BinSkuItemForm();
             binSkuItemForm.setBinId(binAdd().getBinId());
@@ -124,15 +126,11 @@ public class BinSkuDtoTest extends AbstractTest {
             binSkuItemForm.setQuantity(getRandomNumberLong());
             binSkuItemFormList.add(binSkuItemForm);
         }
-        PartyPojo partyPojo = partyAdd();
         binSkuForm.setBinSkuItemFormList(binSkuItemFormList);
         binSkuForm.setClientId(partyPojo.getId());
-        try {
-            binSkuDto.add(binSkuForm);
-            fail("error should be thrown");
-        } catch (ApiException e) {
 
-        }
+        binSkuDto.add(binSkuForm);
+
     }
 
     @Test

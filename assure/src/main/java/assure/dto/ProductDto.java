@@ -30,9 +30,8 @@ public class ProductDto {
 
         validateList("Product Form", productFormList, MAX_LIST_SIZE);
         checkDuplicateProductsProductForm(productFormList);
-        if (isNull(partyService.selectById(clientId))) {
-            throw new ApiException("client id does not exist");
-        }
+        partyService.getCheck(clientId);
+
         productService.add(convertListProductFormToPojo(productFormList, clientId));
         return productFormList.size();
     }
