@@ -137,16 +137,16 @@ function channelListingUtil(data) {
 }
 
 function channelListingUploadCall(parsedata) {
-    let clientSkuId = $("#clientSkuId").val();
-    if (isNaN(parseInt(clientSkuId)) || Number.isInteger(clientSkuId) || parseInt(clientSkuId) < 0) {
-        $.notify("Enter valid clientSkuId");
+    let clientId = $("#clientId").val();
+    if (isNaN(parseInt(clientId)) || Number.isInteger(clientId) || parseInt(clientId) < 0) {
+        $.notify("Enter valid clientId");
         return;
     }
 
     
-    let channelSkuId = $("#channelSkuId").val();
-    if (isNaN(parseInt(channelSkuId)) || Number.isInteger(channelSkuId) || parseInt(channelSkuId) < 0) {
-        $.notify("Enter valid channelSkuId");
+    let channelId = $("#channelId").val();
+    if (isNaN(parseInt(channelId)) || Number.isInteger(channelId) || parseInt(channelId) < 0) {
+        $.notify("Enter valid channelId");
         return;
     }
 
@@ -155,8 +155,8 @@ function channelListingUploadCall(parsedata) {
         contentType: 'application/json',
         url: `http://localhost:9000/assure/channel-listings`,
         data: JSON.stringify({
-            clientSkuId: parseInt(clientSkuId),
-            channelSkuId: parseInt(channelSkuId),
+            clientId: parseInt(clientId),
+            channelId: parseInt(channelId),
             channelListingFormList: parsedata
         }),
         processData: false,
@@ -185,8 +185,8 @@ function getUploadModalBody() {
     return `<form>
    
     <div class="form-group">
-    <label for="clinetId" class="form-label">Client Id</label>
-    <input class="form-control" type="number" id="clinetId" >
+    <label for="clientId" class="form-label">Client Id</label>
+    <input class="form-control" type="number" id="clientId" >
     </div>
     <div class="form-group">
     <label for="channelId" class="form-label">Channel Id</label>

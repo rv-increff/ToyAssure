@@ -80,7 +80,8 @@ public class ChannelListingDto {
             channelListingPojo.setGlobalSkuId(productPojo.getGlobalSkuId());
             channelListingPojo.setChannelId(channelId);
             channelListingPojo.setClientId(clientId);
-            channelListingPojo.setChannelSkuId(channelListingForm.getChannelSkuId());
+            channelListingPojo.setChannelSkuId(channelListingForm.getChannelSkuId().toLowerCase());
+
             channelListingPojoList.add(channelListingPojo);
             row++;
         }
