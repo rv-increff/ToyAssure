@@ -20,6 +20,7 @@ assure/spring/SpringConfig.class
 assure/dao/BinSkuDao.class
 assure/model/ChannelForm.class
 assure/pojo/InventoryPojo.class
+assure/controller/UIController.class
 assure/pojo/PartyPojo.class
 assure/spring/ControllerConfig.class
 assure/util/ConversionUtil.class

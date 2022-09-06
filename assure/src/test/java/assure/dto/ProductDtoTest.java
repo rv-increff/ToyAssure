@@ -1,7 +1,7 @@
 package assure.dto;
 
 import assure.config.QaConfig;
-import assure.dao.AbstractTest;
+import assure.util.AbstractTest;
 import assure.model.ProductForm;
 import assure.model.ProductUpdateForm;
 import assure.pojo.ProductPojo;

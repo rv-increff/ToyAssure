@@ -2,6 +2,7 @@ package assure.dao;
 
 import assure.config.QaConfig;
 import assure.pojo.BinSkuPojo;
+import assure.util.AbstractTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

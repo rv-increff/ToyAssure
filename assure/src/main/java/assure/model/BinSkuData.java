@@ -10,4 +10,5 @@ public class BinSkuData {
     private Long binId;
     private Long quantity;
     private Long globalSkuId;
+    private String clientSkuId;
 }

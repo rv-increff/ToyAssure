@@ -5,6 +5,7 @@ import assure.model.OrderForm;
 import assure.pojo.*;
 import assure.spring.ApiException;
 import commons.model.*;
+import javafx.util.Pair;
 
 import java.util.*;
 
@@ -137,22 +138,7 @@ public class ConversionUtil {
         return binSkuPojoList;
     }
 
-    public static BinSkuData convertBinSkuPojoToData(BinSkuPojo binSkuPojo) {
-        BinSkuData binSkuData = new BinSkuData();
-        binSkuData.setBinId(binSkuPojo.getBinId());
-        binSkuData.setGlobalSkuId(binSkuPojo.getGlobalSkuId());
-        binSkuData.setQuantity(binSkuPojo.getQuantity());
-        binSkuData.setId(binSkuPojo.getId());
-        return binSkuData;
-    }
 
-    public static List<BinSkuData> convertListBinSkuPojoToData(List<BinSkuPojo> binSkuPojoList) {
-        List<BinSkuData> binSkuDataList = new ArrayList<>();
-        for (BinSkuPojo binSkuPojo : binSkuPojoList) {
-            binSkuDataList.add(convertBinSkuPojoToData(binSkuPojo));
-        }
-        return binSkuDataList;
-    }
 
     public static BinSkuPojo convertBinSkuUpdateFormToPojo(BinSkuUpdateForm binSkuUpdateForm, Long id) {
         BinSkuPojo binSkuPojo = new BinSkuPojo();
@@ -325,6 +311,15 @@ public class ConversionUtil {
 
             inventoryPojoList.add(inventoryPojo);
         }
+        return inventoryPojoList;
+    }
+
+    public static List<InventoryPojo> convertBinSkuUpdateFormToInventoryPojo(BinSkuUpdateForm binSkuUpdateForm, Pair<Long,Long> dataPair){
+        List<InventoryPojo> inventoryPojoList = new ArrayList<>();
+        InventoryPojo inventoryPojo = new InventoryPojo();
+        inventoryPojo.setAvailableQuantity(dataPair.getKey() - binSkuUpdateForm.getQuantity());
+        inventoryPojo.setGlobalSkuId(dataPair.getValue());
+        inventoryPojoList.add(inventoryPojo);
         return inventoryPojoList;
     }
     public static OrderItemInvoiceData convertPojoOrderItemToData(OrderItemPojo orderItemPojo, String clientSkuId, String channelOrderId){

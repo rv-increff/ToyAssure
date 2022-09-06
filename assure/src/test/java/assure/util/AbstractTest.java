@@ -1,5 +1,6 @@
-package assure.dao;
+package assure.util;
 
+import assure.dao.*;
 import assure.model.ChannelForm;
 import assure.model.PartyForm;
 import assure.pojo.*;

@@ -1,8 +1,8 @@
 package assure.dao;
 
 import assure.config.QaConfig;
-import assure.pojo.BinSkuPojo;
 import assure.pojo.OrderPojo;
+import assure.util.AbstractTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +19,7 @@ import java.util.List;
 @ContextConfiguration(classes = QaConfig.class, loader = AnnotationConfigWebContextLoader.class)
 @WebAppConfiguration("src/test/webapp")
 @Transactional
-public class OrderDaoTest extends AbstractTest{
+public class OrderDaoTest extends AbstractTest {
     @Test
     public void addTest() {
         orderAdd();

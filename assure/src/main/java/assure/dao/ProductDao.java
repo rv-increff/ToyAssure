@@ -41,5 +41,13 @@ public class ProductDao extends AbstractDao<ProductPojo> {
         TypedQuery<ProductPojo> query = em.createQuery(cr);
         return getSingle(query);
     }
-
+    public List<ProductPojo> selectForGlobalSkuIdList(List<Long>globalSkuIdList){
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery cr = cr();
+        Root<ProductPojo> root = cr.from(this.clazz);
+        cr = cr.select(root);
+        cr.where(root.get("globalSkuId").in(globalSkuIdList));
+        TypedQuery<ProductPojo> query = em.createQuery(cr);
+        return query.getResultList();
+    }
 }

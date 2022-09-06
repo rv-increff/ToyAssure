@@ -27,4 +27,6 @@ public class BinController {
     public List<BinData> getBins(@RequestParam(name = "pageNumber") Integer pageNumber) {
         return binDto.select(pageNumber);
     }
+
+
 }

@@ -1,7 +1,7 @@
 package assure.service;
 
 import assure.config.QaConfig;
-import assure.dao.AbstractTest;
+import assure.util.AbstractTest;
 import assure.pojo.BinPojo;
 import org.junit.Assert;
 import org.junit.Test;

@@ -1,7 +1,7 @@
 package assure.service;
 
 import assure.config.QaConfig;
-import assure.dao.AbstractTest;
+import assure.util.AbstractTest;
 import assure.pojo.ChannelPojo;
 import assure.spring.ApiException;
 import org.junit.Assert;

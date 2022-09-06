@@ -3,7 +3,9 @@ package assure.service;
 import assure.dao.BinSkuDao;
 import assure.pojo.BinSkuPojo;
 import assure.spring.ApiException;
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,12 +41,14 @@ public class BinSkuService {
         return binSkuPojoList;
     }
 
-    public void update(BinSkuPojo binSkuPojo) throws ApiException {
+    public Pair<Long, Long> update(BinSkuPojo binSkuPojo) throws ApiException {
         BinSkuPojo exists = binSkuDao.selectById(binSkuPojo.getId());
+        Long existsQty = exists.getQuantity();
         if (isNull(exists)) {
             throw new ApiException("id doesn't exist, id : " + binSkuPojo.getId());
         }
         exists.setQuantity(binSkuPojo.getQuantity());
+        return new Pair<Long, Long>(existsQty,exists.getGlobalSkuId());
     }
 
     public List<BinSkuPojo> select(Integer pageNumber, Integer pageSize) {

@@ -1,21 +1,17 @@
 package assure.service;
 
 import assure.dao.ProductDao;
-import commons.model.ErrorData;
 import assure.pojo.ProductPojo;
 import assure.spring.ApiException;
+import commons.model.ErrorData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static assure.util.NormalizeUtil.normalizeProductPojo;
-import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
 import static java.util.Objects.isNull;
 
 @Service
@@ -34,7 +30,7 @@ public class ProductService {
 
         for (ProductPojo productPojo : productPojoList) {
             if (clientSkuIdSet.contains(productPojo.getClientSkuId())) {
-                throw new ApiException( "clientSkuId - clientId pair exists");
+                throw new ApiException("clientSkuId - clientId pair exists");
             }
         }
 
@@ -88,8 +84,16 @@ public class ProductService {
         return productDao.selectByClientSkuIdAndClientId(clientSkuId, clientId);
     }
 
-    public ProductPojo selectByGlobalSkuId(Long globalSkuId){
+    public ProductPojo selectByGlobalSkuId(Long globalSkuId) {
         return productDao.selectByGlobalSkuId(globalSkuId);
+    }
+
+    public Map<Long, ProductPojo> getGlobalSkuIdToPojo(Set<Long> globalSkuIdSet) {
+        List<ProductPojo> productPojoList = productDao.selectForGlobalSkuIdList(new ArrayList<>(globalSkuIdSet));
+        Map<Long, ProductPojo> globalSkuIdToPojo = productPojoList.stream().
+                collect(Collectors.toMap(pojo -> pojo.getGlobalSkuId(), pojo -> pojo));
+
+        return globalSkuIdToPojo;
     }
 }
 

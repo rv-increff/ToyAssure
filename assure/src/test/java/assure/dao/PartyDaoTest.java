@@ -2,6 +2,7 @@ package assure.dao;
 
 import assure.config.QaConfig;
 import assure.pojo.PartyPojo;
+import assure.util.AbstractTest;
 import assure.util.PartyType;
 import assure.util.RandomUtil;
 import org.junit.Assert;
@@ -17,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(classes = QaConfig.class, loader = AnnotationConfigWebContextLoader.class)
 @WebAppConfiguration("src/test/webapp")
 @Transactional
-public class PartyDaoTest extends AbstractTest{
+public class PartyDaoTest extends AbstractTest {
 
     @Test
     public void addTest(){

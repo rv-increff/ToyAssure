@@ -1,7 +1,7 @@
 package assure.service;
 
 import assure.config.QaConfig;
-import assure.dao.AbstractTest;
+import assure.util.AbstractTest;
 import assure.pojo.PartyPojo;
 import assure.spring.ApiException;
 import assure.util.PartyType;
@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static assure.util.RandomUtil.getRandomString;
 import static org.junit.Assert.fail;
