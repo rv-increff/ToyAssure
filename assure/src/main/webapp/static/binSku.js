@@ -199,7 +199,7 @@ function binSkuUploadCall(parsedata) {
             console.log(result, "uploaded binSku")
             $.notify("Bin SKUs uploaded", "success");
             $('#uploadModal').modal('hide');
-            loadBinSku() ;
+            loadBinSku();
         },
         error: function (xhr, status, error) {
             console.log(status, error, xhr)
@@ -216,9 +216,9 @@ function binSkuUploadCall(parsedata) {
     });
 }
 
-function editBinSKuModal(id,binId, globalSkuId, clientSkuId, qty) {
+function editBinSKuModal(id, binId, globalSkuId, clientSkuId, qty) {
     $('#binSkuEditModal').modal('show');
-    $('#binSkuModalbody').html(getBinSkuUpdateModal(id,qty,binId, globalSkuId, clientSkuId));
+    $('#binSkuModalbody').html(getBinSkuUpdateModal(id, qty, binId, globalSkuId, clientSkuId));
 
 }
 function editBinSkuModalCall(id, qty) {
@@ -244,7 +244,7 @@ function editBinSkuModalCall(id, qty) {
             console.log(result, "updated binSku")
             $.notify("Bin SKUs updated", "success");
             $('#binSkuEditModal').modal('hide');
-            loadBinSku() ;
+            loadBinSku();
         },
         error: function (xhr, status, error) {
             console.log(status, error, xhr)
@@ -275,7 +275,7 @@ function getBinModalBody() {
   </form>`
 }
 
-function getBinSkuUpdateModal(id,qty,binId, globalSkuId, clientSkuId) {
+function getBinSkuUpdateModal(id, qty, binId, globalSkuId, clientSkuId) {
     return `<form id="editBinSkuForm" >
     <div id="modalFormDataDiv">
       <div class="form-group">
@@ -303,10 +303,11 @@ function getBinSkuUpdateModal(id,qty,binId, globalSkuId, clientSkuId) {
 
 function getUploadModalBody() {
     return `<form>
-    <div>
+   
     <div class="form-group">
     <label for="clinetId" class="form-label">Client Id</label>
     <input class="form-control" type="number" id="clinetId" >
+    </div>
   </div>
       <div class="form-group">
         <label for="formFile" class="form-label">Select csv file for upload</label>

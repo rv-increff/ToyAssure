@@ -22,9 +22,9 @@ public class UIController {
         return "party.html";
     }
 
-    @RequestMapping(value = "/ui/inventory")
+    @RequestMapping(value = "/ui/channels")
     public String inventory(){
-        return "inventory.html";
+        return "channel.html";
     }
 
     @RequestMapping(value = "/ui/orders")
