@@ -9,6 +9,6 @@ import javax.validation.constraints.PositiveOrZero;
 @Getter
 @Setter
 public class BinSkuUpdateForm {
-    @PositiveOrZero
+    @PositiveOrZero //TODO remove
     private Long quantity;
 }

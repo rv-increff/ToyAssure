@@ -12,14 +12,14 @@ public class UIController {
         return "index.html";
     }
 
-    @RequestMapping(value = "/ui/bins")
+    @RequestMapping(value = "/ui/bin-skus")
     public String bins(){
         return "binSku.html";
     }
 
-    @RequestMapping(value = "/ui/products")
+    @RequestMapping(value = "/ui/parties")
     public String product(){
-        return "product.html";
+        return "party.html";
     }
 
     @RequestMapping(value = "/ui/inventory")
