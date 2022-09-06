@@ -152,6 +152,7 @@ public class ConversionUtil {
         ChannelData channelData = new ChannelData();
         channelData.setName(channelPojo.getName());
         channelData.setInvoiceTypes(channelPojo.getInvoiceType());
+        channelData.setId(channelPojo.getId());
 
         return channelData;
     }
@@ -347,7 +348,7 @@ public class ConversionUtil {
         channelListingData.setChannelId(channelListingPojo.getChannelId());
         channelListingData.setChannelSkuId(channelListingPojo.getChannelSkuId());
         channelListingData.setId(channelListingPojo.getId());
-        channelListingData.setGlobalSkuId(channelListingData.getGlobalSkuId());
+        channelListingData.setGlobalSkuId(channelListingPojo.getGlobalSkuId());
         channelListingData.setClientId(channelListingPojo.getClientId());
         return channelListingData;
     }

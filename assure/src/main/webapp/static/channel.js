@@ -58,7 +58,7 @@ function checkNextPageNotExist() {
 
     // Open an obejct (GET/POST, PATH,
     // ASYN-TRUE/FALSE)
-    xhr.open("GET", `http://localhost:9000/assure/parties?pageNumber=${pageNumber + 1}`, true);
+    xhr.open("GET", `http://localhost:9000/assure/channels?pageNumber=${pageNumber + 1}`, true);
     // When response is ready
     xhr.onload = function () {
         if (this.status === 200) {

@@ -27,9 +27,9 @@ public class UIController {
         return "channel.html";
     }
 
-    @RequestMapping(value = "/ui/orders")
+    @RequestMapping(value = "/ui/channel-listings")
     public String order(){
-        return "order.html";
+        return "channelListing.html";
     }
 
     @RequestMapping(value = "/ui/reports")

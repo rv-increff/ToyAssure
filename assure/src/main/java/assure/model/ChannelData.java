@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ChannelData {
-
+    private Long id;
     private String name;
     private InvoiceType invoiceTypes;
 }
