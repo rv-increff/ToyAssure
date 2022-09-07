@@ -220,7 +220,7 @@ public class OrderDto {
             orderItemInvoiceDataList.add(orderItemInvoiceData);
         }
 
-        ZonedDateTime time = orderPojo.getCreatedAt();
+        ZonedDateTime time = ZonedDateTime.now();
         Double total = 0.;
 
         for (OrderItemInvoiceData i : orderItemInvoiceDataList) {

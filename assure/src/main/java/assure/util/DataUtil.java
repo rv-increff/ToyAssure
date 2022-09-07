@@ -49,8 +49,7 @@ public class DataUtil {
         if (file.exists()) {
             try {
                 byte[] pdf = Files.readAllBytes(file.toPath());
-                byte[] encoded = Base64.getEncoder().encode(pdf);
-                return encoded;
+                return pdf;
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

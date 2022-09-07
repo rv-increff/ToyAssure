@@ -1,0 +1,154 @@
+<!doctype html>
+
+<html lang="en">
+
+<head th:replace="snippets.html :: name_head"></head>
+
+<body>
+
+<nav th:replace="snippets.html :: name_site_navbar"></nav>
+
+<div class="container-fluid">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a th:href="@{/ui/}">Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Order</li>
+    </ol>
+  </nav>
+  <div class="jumbotron" >
+    <div class="buttonBottom">
+      <button type="button" class="btn btn-primary" data-dismiss="modal" id="addBtn" onclick="addOrder()">Add Orders</button>
+    </div>
+    
+    <table  class="table" >
+        <thead class="thead-dark">
+            <tr>
+              <th scope="col">Order ID</th>
+              <th scope="col">Client ID</th>
+              <th scope="col">Customer ID</th>
+              <th scope="col">Channel ID</th>
+              <th scope="col">Channel Order ID</th>
+              <th scope="col">Status</th>
+              <th scope="col">View</th>
+              <th scope="col">Action</th>
+            </tr>
+        </thead>
+
+        <tbody id="orderTbody">
+        </tbody>
+    </table>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-end">
+        <li class="page-item disabled" id = "prevLi">
+          <a class="page-link" href="#" tabindex="-1" onclick="prevPage()">Previous</a>
+        </li>
+        <li class="page-item"><a class="page-link" id="page">1</a></li>
+        <li class="page-item" id = "nextLi">
+          <a class="page-link" href="#" onclick="nextPage()">Next</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  
+
+</div> <!--Container-->
+
+<!--edit model-->
+<div class="modal" tabindex="-1" role="dialog" id="orderEditModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" ></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="orderModalbody">
+        
+      </div>
+
+    </div>
+  </div>
+</div>
+<!--add orderItem-->
+<div class="modal" tabindex="-1" role="dialog" id="orderItemAddModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" ></h5>
+      </div>
+      <div class="modal-body" id="orderItemModalbody">
+        
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="orderItemModal">
+    <div class="modal-dialog" role="document" id="orderItemModalDialog">
+      <div class="modal-content" id="orderItemModalContent">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalTitle" >Order Item</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div id="orderDetails"></div>
+        <div id="orderItemModal-body">
+        </div>
+      </div>
+    </div>
+  </div>
+<!--upload modal-->
+<div class="modal" tabindex="-1" role="dialog" id="uploadModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="">Upload File</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="uploadModalBody">
+        <form>
+          <div>
+            <div class="form-group">
+              <label for="formFile" class="form-label">Select CSV file for upload</label>
+              <input class="form-control" type="file" id="formFile" accept=".tsv">
+            </div>
+            <div class="form-group">
+
+              <a class="" th:href="@{/static/orderTemplate.csv}" download>Download Template</a>
+            </div>
+            <div id="uploadModalFormErrorDiv" style="color:red; font-size: 14px;">
+              <!--error-->
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary" id="uploadModalBtn" onclick="bulkAddBrand()">Upload</button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer th:replace="snippets.html :: name_footer"></footer>
+
+<script>
+   $(document).ready(function() {
+    document.getElementById("orderLink").style.fontWeight = "bold";
+    loadOrder();
+ });
+
+</script>
+<script th:src="@{/static/order.js}"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+</body>
+
+</html>

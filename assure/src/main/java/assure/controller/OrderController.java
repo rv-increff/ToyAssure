@@ -29,7 +29,7 @@ public class OrderController {
         return orderDto.addChannelOrder(orderFormChannel);
     }
     @ApiOperation(value = "Update order status")
-    @RequestMapping(path = "/orders/{orderId}", method = RequestMethod.PATCH) //TODO /orders   /order/upload-order
+    @RequestMapping(path = "/orders", method = RequestMethod.PATCH) //TODO /orders   /order/upload-order
     public OrderStatusUpdateForm updateStatus(@RequestBody OrderStatusUpdateForm orderStatusUpdateForm) throws ApiException {
         return orderDto.updateStatus(orderStatusUpdateForm);
     }
