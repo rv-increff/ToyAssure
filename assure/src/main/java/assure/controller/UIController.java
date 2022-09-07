@@ -8,33 +8,38 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class UIController {
 
     @RequestMapping(value = "/ui")
-    public String index(){
+    public String index() {
         return "index.html";
     }
 
     @RequestMapping(value = "/ui/bin-skus")
-    public String bins(){
+    public String bin() {
         return "binSku.html";
     }
 
     @RequestMapping(value = "/ui/parties")
-    public String product(){
+    public String party() {
         return "party.html";
     }
 
     @RequestMapping(value = "/ui/channels")
-    public String inventory(){
+    public String channel() {
         return "channel.html";
     }
 
     @RequestMapping(value = "/ui/channel-listings")
-    public String order(){
+    public String channelListing() {
         return "channelListing.html";
     }
 
-    @RequestMapping(value = "/ui/reports")
-    public String reports(){
-        return "reports.html";
+    @RequestMapping(value = "/ui/products")
+    public String product() {
+        return "product.html";
+    }
+
+    @RequestMapping(value = "/ui/orders")
+    public String order() {
+        return "order.html";
     }
 
 }

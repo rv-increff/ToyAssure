@@ -116,6 +116,7 @@ function channelListingUtil(data) {
     for (let i = 1; i < newLinebrk.length; i++) {
         row = newLinebrk[i].split(",");
         console.log(row);
+        if(row.length == 1 && row.includes(''))continue;
         if (row.length != 2) {
             $.notify("Invalid format of csv");
             return;

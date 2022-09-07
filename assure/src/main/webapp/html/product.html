@@ -12,25 +12,29 @@
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a th:href="@{/ui/}">Home</a></li>
-      <li class="breadcrumb-item active" aria-current="page">Channel Listing</li>
+      <li class="breadcrumb-item active" aria-current="page">Product</li>
     </ol>
   </nav>
   <div class="jumbotron" >
     <div class="buttonBottom">
-      <button type="button" class="btn btn-primary" data-dismiss="modal" id="addBtn" onclick="uploadChannelList()">Add Channel Listings</button>
+      <button type="button" class="btn btn-primary" data-dismiss="modal" id="addBtn" onclick="uploadProducts()">Add Products</button>
     </div>
     
     <table  class="table" >
         <thead class="thead-dark">
             <tr>
-              <th scope="col">Channel ID</th>
-              <th scope="col">Channel SKU ID</th>
-              <th scope="col">Client ID</th>
               <th scope="col">Global SKU ID</th>
+              <th scope="col">Client SKU ID</th>
+              <th scope="col">Client ID</th>
+              <th scope="col">Name</th>
+              <th scope="col">Brand ID</th>
+              <th scope="col">MRP</th>
+              <th scope="col">Description</th>
+              <th scope="col">Edit</th>
             </tr>
         </thead>
 
-        <tbody id="binSkuTbody">
+        <tbody id="productTbody">
         </tbody>
     </table>
     <nav aria-label="Page navigation example">
@@ -49,6 +53,23 @@
 
 </div> <!--Container-->
 
+<!--edit model-->
+<div class="modal" tabindex="-1" role="dialog" id="productEditModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="productModalbody">
+        
+      </div>
+
+    </div>
+  </div>
+</div>
 
 <!--upload modal-->
 <div class="modal" tabindex="-1" role="dialog" id="uploadModal">
@@ -64,12 +85,12 @@
         <form>
           <div>
             <div class="form-group">
-              <label for="formFile" class="form-label">Select TSV file for bulk upload</label>
+              <label for="formFile" class="form-label">Select CSV file for upload</label>
               <input class="form-control" type="file" id="formFile" accept=".tsv">
             </div>
             <div class="form-group">
 
-              <a class="" th:href="@{/static/binSkuTemplate.csv}" download>Download Template</a>
+              <a class="" th:href="@{/static/productTemplate.csv}" download>Download Template</a>
             </div>
             <div id="uploadModalFormErrorDiv" style="color:red; font-size: 14px;">
               <!--error-->
@@ -91,12 +112,12 @@
 
 <script>
    $(document).ready(function() {
-    document.getElementById("channelListingLink").style.fontWeight = "bold";
-    loadChannelList();
+    document.getElementById("productLink").style.fontWeight = "bold";
+    loadProduct();
  });
 
 </script>
-<script th:src="@{/static/channelListing.js}"></script>
+<script th:src="@{/static/product.js}"></script>
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
 </body>

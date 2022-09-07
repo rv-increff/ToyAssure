@@ -41,7 +41,7 @@ public class ChannelListingDto {
     public Integer add(ChannelListingUploadForm channelListingUploadForm) throws ApiException {
 
         validateForm(channelListingUploadForm);   //TODO club all three fns
-        validateListSize(channelListingUploadForm.getChannelListingFormList(), MAX_LIST_SIZE);
+        validateList("Channel Listing Upload",channelListingUploadForm.getChannelListingFormList(), MAX_LIST_SIZE);
         checkDuplicateChannelListingFormList(channelListingUploadForm.getChannelListingFormList());
 
         Long clientId = channelListingUploadForm.getClientId();
