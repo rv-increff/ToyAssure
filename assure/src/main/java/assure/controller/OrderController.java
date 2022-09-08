@@ -34,7 +34,6 @@ public class OrderController {
         return orderDto.updateStatus(orderStatusUpdateForm);
     }
 
-
     @ApiOperation(value = "Get invoice")
     @RequestMapping(path = "/orders/{orderId}/get-invoice", method = RequestMethod.GET) //TODO /orders   /order/upload-order
     public byte[] getInvoice(@PathVariable Long orderId) throws Exception {
@@ -52,7 +51,6 @@ public class OrderController {
     public List<OrderItemData> getOrderItems(@PathVariable Long orderId) {
         return orderDto.selectOrderItems(orderId);
     }
-
 
 
 }

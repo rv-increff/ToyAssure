@@ -72,8 +72,6 @@ function checkNextPageNotExist() {
     // Instantiate an new XHR Object
     const xhr = new XMLHttpRequest();
 
-    // Open an obejct (GET/POST, PATH,
-    // ASYN-TRUE/FALSE)
     xhr.open("GET", `http://localhost:9000/assure/orders?pageNumber=${pageNumber + 1}`, true);
     // When response is ready
     xhr.onload = function () {
@@ -95,99 +93,6 @@ function checkNextPageNotExist() {
         }
     }
     xhr.send();
-}
-
-function allocateOrder(id) {
-    $.ajax({
-        type: "PATCH",
-        contentType: 'application/json',
-        url: `http://localhost:9000/assure/orders`,
-        data: JSON.stringify({
-            "orderId": id,
-            "updateStatusTo": "ALLOCATED"
-        }),
-        processData: false,
-        dataType: 'json',
-        success: function (result) {
-            console.log(result, "order allocated")
-            $.notify(`Order ${id} allocated`, "success");
-            $('#uploadModal').modal('hide');
-            loadOrder();
-        },
-        error: function (xhr, status, error) {
-            console.log(status, error, xhr)
-
-            if (xhr['responseJSON']['errorType'] === 0) {
-                $.notify(xhr['responseJSON']['description']);
-                return;
-            }
-            $.notify("Error occurred download error list file");
-            $('#errorCsv').click(function () {
-                writeFileData(xhr['responseJSON']['description'], "error");
-            });
-        }
-    });
-}
-
-function fullfillOrder(id) {
-    $.ajax({
-        type: "PATCH",
-        contentType: 'application/json',
-        url: `http://localhost:9000/assure/orders`,
-        data: JSON.stringify({
-            "orderId": id,
-            "updateStatusTo": "FULFILLED"
-        }),
-        processData: false,
-        dataType: 'json',
-        success: function (result) {
-            console.log(result, "order fulfilled")
-            $.notify(`Order ${id} fulfilled`, "success");
-            $('#uploadModal').modal('hide');
-            loadOrder();
-            getInvoice(id);
-        },
-        error: function (xhr, status, error) {
-            console.log(status, error, xhr)
-            if (xhr['responseJSON']['errorType'] === 0) {
-                $.notify(xhr['responseJSON']['description']);
-                return;
-            }
-            $.notify("Error occurred download error list file");
-            $('#errorCsv').click(function () {
-                writeFileData(xhr['responseJSON']['description'], "error");
-            });
-        }
-    });
-}
-
-function getInvoice(id) {
-    $.ajax({
-        contentType: 'application/json', xhr: function () {
-            const xhr = new XMLHttpRequest();
-            xhr.responseType = 'blob'
-            return xhr;
-        },
-        success: function (data) {
-            // data.append("pdf", blob, "invoice.pdf");
-            console.log(data)
-            var file = new Blob([data], { type: 'application/octet-stream' },);
-            file.name = "invoice.pdf"
-            var fileURL = URL.createObjectURL(file);
-            setTimeout(() => {
-                window.open(fileURL, '_blank');
-            })
-            console.log(fileURL);
-        },
-        error: function (e) {
-            console.log(e)
-            return ""
-
-        },
-        processData: false,
-        type: 'GET',
-        url: `http://localhost:9000/assure//orders/${id}/get-invoice`
-    });
 }
 
 function addOrder() {
@@ -212,17 +117,19 @@ function loadOrderItemCart(){
     str = ""
     for (var i = 0; i < obj.length; i++) {
         str += `<tr>
-                                  <td>${obj[i]['clientSkuId']}</td>
+                                  <td>${obj[i]['channelSkuId']}</td>
                                   <td>${obj[i]['quantity']}</td>
                                   <td>${obj[i]['sellingPricePerUnit']}</td>
-                                  <td><button type="button" class="btn btn-primary" onclick="editOrderItem(${i},'${obj[i]['clientSkuId']}',${obj[i]['quantity']},${obj[i]['sellingPricePerUnit']})">Edit</button</td>
+                                  <td><button type="button" class="btn btn-primary" onclick="editOrderItem(${i},'${obj[i]['channelSkuId']}',${obj[i]['quantity']},${obj[i]['sellingPricePerUnit']})">Edit</button</td>
                                   <td><button type="button" class="btn btn-primary" onclick="deleteOrderItem(${i})">Delete</button</td>
                                   </tr>`;
     }
     str += ` <div style="padding-top:1rem;padding-bottom:1rem;">
     <button type="button" class="btn btn-primary" onclick="addOrderItem()">Add</button>`;
     str += ` 
-    <button type="button" class="btn btn-primary" onclick="placeOrder()">Place Order</button><div>`;
+    <button type="button" class="btn btn-primary" onclick="placeOrder()">Place Order</button> 
+    <a class="" id="errorCsv" href="#" style="float: right;">Download Errors</a>
+  <div>`;
     body.innerHTML = str;
 }
 function placeOrder(){
@@ -252,20 +159,33 @@ function placeOrder(){
 $.ajax({
     type: "POST",
     contentType: 'application/json',
-    url: `http://localhost:9000/assure/orders`,
+    url: `http://localhost:9001/channel/orders`,
     data: JSON.stringify({
         clientId : clientId,
         channelOrderId : channelOrderId,
         customerId : customerId,
-        orderItemFormList : orderItemFormList
+        orderItemFormChannelList : orderItemFormList
     }),
     processData: false,
     dataType: 'json',
     success: function (result) {
         console.log(result, "order placed");
-        $.notify(`Order Placed`, "success");
-        $('#orderItemModal').modal('hide');
-        loadOrder();
+        let obj = result;
+        console.log(obj)
+        if(obj.code === 200){
+            $.notify(`Order Placed`, "success");
+            $('#orderItemModal').modal('hide');
+        }else {
+            if (obj['errorType'] === 0) {
+                $.notify(obj['description']);
+                return;
+            }
+            $.notify("Error occurred download error list file");
+            $('#errorCsv').click(function () {
+                writeFileData(obj['description'], "error");
+            });
+
+        }
     },
     error: function (xhr, status, error) {
         console.log(status, error, xhr)
@@ -288,17 +208,17 @@ function addOrderItem(){
     $('#orderItemModalbody').html(getAddOrderItem());
 }
 
-function editOrderItem(id, clientSkuId,qty,price){
+function editOrderItem(id, channelSkuId,qty,price){
     $('#orderItemModal').modal('hide');
     $('#orderItemAddModal').modal('show');
-    $('#orderItemModalbody').html(getAddOrderItemEdit(id,clientSkuId,qty,price));
+    $('#orderItemModalbody').html(getAddOrderItemEdit(id,channelSkuId,qty,price));
     
 }
 function saveAddEdit(id){
     //validations
       
     obj = JSON.parse(localStorage.getItem("orderItems"));
-    clientSkuId = $('#clientSkuId').val();
+    channelSkuId = $('#channelSkuId').val();
     qty = $('#qty').val();
     price = $('#price').val();
 
@@ -313,8 +233,8 @@ function saveAddEdit(id){
         return;
     }
 
-    if(clientSkuId.trim().length==0){
-        $.notify("Client SKU ID cannot be blank ");
+    if(channelSkuId.trim().length==0){
+        $.notify("Channel SKU ID cannot be blank ");
         return;
     }
 
@@ -322,7 +242,7 @@ function saveAddEdit(id){
     $('#orderItemAddModal').modal('hide');
 
     obj[id] = {
-        clientSkuId : clientSkuId,
+        channelSkuId : channelSkuId,
         quantity : qty,
         sellingPricePerUnit : price
     }
@@ -349,7 +269,7 @@ function saveAdd(){
 
     //validations
     obj = JSON.parse(localStorage.getItem("orderItems"));
-    clientSkuId = $('#clientSkuId').val();
+    channelSkuId = $('#channelSkuId').val();
     qty = $('#qty').val();
     price = $('#price').val();
 
@@ -362,15 +282,15 @@ function saveAdd(){
         $.notify("Enter valid Price per unit ");
         return;
     }
-    if(clientSkuId.trim().length==0){
-        $.notify("Client SKU ID cannot be blank ");
+    if(channelSkuId.trim().length==0){
+        $.notify("Channel SKU ID cannot be blank ");
         return;
     }
     $('#orderItemModal').modal('show');
     $('#orderItemAddModal').modal('hide');
 
     obj.push({
-        clientSkuId : clientSkuId,
+        channelSkuId : channelSkuId,
         quantity : qty,
         sellingPricePerUnit : price
     });
@@ -382,8 +302,8 @@ function saveAdd(){
 function getAddOrderItem(){
     return ` <form >
     <div class="form-group ">
-    <label for="clientSkuId">Client SKU ID</label>
-    <input type="text" class="form-control" id="clientSkuId" name="clientSkuId" aria-describedby="text" placeholder="Enter Client SKU ID" autocomplete="off" minlength="1" maxlength="20" >
+    <label for="channelSkuId">Channel SKU ID</label>
+    <input type="text" class="form-control" id="channelSkuId" name="channelSkuId" aria-describedby="text" placeholder="Enter Channel SKU ID" autocomplete="off" minlength="1" maxlength="20" >
   </div> 
   <div class="form-group ">
   <label for="qty">Quantity</label>
@@ -399,15 +319,15 @@ function getAddOrderItem(){
       </div>
 </form>`
 }
-function getAddOrderItemEdit(id,clientSkuId,qty,price){
+function getAddOrderItemEdit(id,channelSkuId,qty,price){
     return ` <form >
     <div class="form-group ">
-    <label for="clientSkuId">Client SKU ID</label>
-    <input type="text" class="form-control" id="clientSkuId" name="clientSkuId" aria-describedby="text" placeholder="Enter Client SKU ID" autocomplete="off" minlength="1" maxlength="20" value="${clientSkuId}">
+    <label for="channelSkuId">Channel SKU ID</label>
+    <input type="text" class="form-control" id="channelSkuId" name="channelSkuId" aria-describedby="text" placeholder="Enter Channel SKU ID" autocomplete="off" minlength="1" maxlength="20" value="${channelSkuId}">
   </div> 
   <div class="form-group ">
   <label for="qty">Quantity</label>
-  <input type="number" class="form-control" id="qty" name="qty" aria-describedby="text" placeholder="Enter Client ID" autocomplete="off" minlength="1" maxlength="20" value=${qty}>
+  <input type="number" class="form-control" id="qty" name="qty" aria-describedby="text" placeholder="Enter Channel ID" autocomplete="off" minlength="1" maxlength="20" value=${qty}>
 </div>
  <div class="form-group">
 <label for="price">Price Per Unit</label>
@@ -427,7 +347,7 @@ function getAddOrderModalBody() {
     <table class="table">
       <thead class="thead-dark">
         <tr>
-          <th scope="col">Client SKU ID</th>
+          <th scope="col">Channel SKU ID</th>
           <th scope="col">Quantity</th>
           <th scope="col">Selling Price</th>
           <th scope="col">Edit</th>
@@ -449,8 +369,8 @@ function getOrderDetailModal(){
     <input type="text" class="form-control" id="channelOrderId" name="channelOrderId" aria-describedby="text" placeholder="Enter Channel Order ID" autocomplete="off" minlength="1" maxlength="20" >
   </div> 
   <div class="form-group ">
-  <label for="clientId">Client ID</label>
-  <input type="number" class="form-control" id="clientId" name="clientId" aria-describedby="text" placeholder="Enter Client ID" autocomplete="off" minlength="1" maxlength="20" >
+  <label for="clientId">Channel ID</label>
+  <input type="number" class="form-control" id="clientId" name="clientId" aria-describedby="text" placeholder="Enter Channel ID" autocomplete="off" minlength="1" maxlength="20" >
 </div>
  <div class="form-group">
 <label for="customerId">Customer ID</label>
@@ -483,7 +403,7 @@ function viewOrder(orderId) {
             for (var i = 0; i < obj.length; i++) {
                 str += `<tr>
                                           <td>${obj[i]['id']}</td>
-                                          <td>${obj[i]['clientSkuId']}</td>
+                                          <td>${obj[i]['channelSkuId']}</td>
                                           <td>${obj[i]['orderedQuantity']}</td>
                                           <td>${obj[i]['allocatedQuantity']}</td>
                                           <td>${obj[i]['fulfilledQuantity']}</td>
@@ -514,7 +434,7 @@ function getOrderItemModalBody() {
       <thead class="thead-dark">
         <tr>
           <th scope="col">ID</th>
-          <th scope="col">Client SKU ID</th>
+          <th scope="col">Channel SKU ID</th>
           <th scope="col">Ordered Quantity</th>
           <th scope="col">Allocated Quantity</th>
           <th scope="col">Fulfilled Quantity</th>
@@ -528,12 +448,12 @@ function getOrderItemModalBody() {
 </div>`
 }
 
-function getOrderUpdateModal(globalSkuId, clientSkuId, name, brandId, mrp, description) {
+function getOrderUpdateModal(globalSkuId, channelSkuId, name, brandId, mrp, description) {
     return `<form id="editOrderForm" >
     <div id="modalFormDataDiv">
       <div class="form-group">
-        <label for="">Client SKU ID</label>
-        <input type="text" class="form-control" id="clientSkuId" name="clientSkuId" aria-describedby="text" placeholder="Enter ClientSkuId" autocomplete="off" minlength="1" maxlength="20" value="${clientSkuId}">
+        <label for="">Channel SKU ID</label>
+        <input type="text" class="form-control" id="channelSkuId" name="channelSkuId" aria-describedby="text" placeholder="Enter ChannelSkuId" autocomplete="off" minlength="1" maxlength="20" value="${channelSkuId}">
       </div>
       <div class="form-group">
         <label for="">Name</label>

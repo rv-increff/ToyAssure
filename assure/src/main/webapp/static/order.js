@@ -186,7 +186,7 @@ function getInvoice(id) {
         },
         processData: false,
         type: 'GET',
-        url: `http://localhost:9000/assure//orders/${id}/get-invoice`
+        url: `http://localhost:9000/assure/orders/${id}/get-invoice`
     });
 }
 
@@ -222,7 +222,8 @@ function loadOrderItemCart(){
     str += ` <div style="padding-top:1rem;padding-bottom:1rem;">
     <button type="button" class="btn btn-primary" onclick="addOrderItem()">Add</button>`;
     str += ` 
-    <button type="button" class="btn btn-primary" onclick="placeOrder()">Place Order</button><div>`;
+    <button type="button" class="btn btn-primary" onclick="placeOrder()">Place Order</button>
+    <a class="" id="errorCsv" href="#" style="float: right;">Download Errors</a><div>`;
     body.innerHTML = str;
 }
 function placeOrder(){
