@@ -20,8 +20,8 @@ public class ChannelController {
 
     @ApiOperation(value = "Get Channels")  //TODO create default internal channel
     @RequestMapping(path = "/channels", method = RequestMethod.GET)
-    public List<ChannelData> getChannels(@RequestParam(name = "pageNumber") Integer pageNumber) {
-        return channelDto.select(pageNumber);
+    public List<ChannelData> getChannels() {
+        return channelDto.select();
     }
 
     @ApiOperation(value = "Add Channel")

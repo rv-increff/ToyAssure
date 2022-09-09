@@ -103,7 +103,7 @@ function generateBinsCall() {
         success: function (result) {
             console.log(result, "bins generated")
             writeFileData(result, "Bins")
-            $.notify("Bins generated", "success");
+            $.notify("Success", "success");
             $('#binSkuEditModal').modal('hide');
         },
         error: function (xhr, status, error) {
@@ -129,9 +129,45 @@ function uploadBinSkuFile() {
 
 function uploadBinSkus() {
     $('#uploadModal').modal('show');
-    $('#uploadModalBody').html(getUploadModalBody());
+    getClientDropDown();
+    
 
 }
+
+function getClientDropDown(){
+    $.ajax({
+        type: "GET",
+        contentType: 'application/json',
+        url: `http://localhost:9000/assure/parties/partyType/CLIENT`,
+        processData: false,
+        dataType: 'json',
+        success: function (result) {
+            console.log(result,"result drop down")
+            obj  = result
+            let rows = ``
+            for(var i = 0; i < obj.length; i++){
+                rows += `<option value="${obj[i]['id']}">${obj[i]['name']}</option>`
+            }
+            // console.log(rows)
+            let drop =  `<select class="custom-select col-8 float-right" size="1" aria-label="Client ID" id="clientId">${rows}</select>`
+            
+            $('#uploadModalBody').html(getUploadModalBody(drop));
+        },
+        error: function (xhr, status, error) {
+            console.log(status, error, xhr)
+
+            if (xhr['responseJSON']['errorType'] === 0) {
+                $.notify(xhr['responseJSON']['description']);
+                return;
+            }
+            $.notify("Error occurred download error list file");
+            $('#errorCsv').click(function () {
+                writeFileData(xhr['responseJSON']['description'], "error");
+            });
+        }
+    });
+}
+
 function uploadBinSkuUtil(data) {
     let parsedata = [];
     let newLinebrk = data.split("\n");
@@ -176,8 +212,9 @@ function uploadBinSkuUtil(data) {
 }
 
 function binSkuUploadCall(parsedata) {
-    let clientId = $("#clinetId").val();
-    if (isNaN(parseInt(clientId)) || Number.isInteger(clientId) || parseInt(clientId) < 0) {
+    let clientId = $("#clientId").val();
+    console.log(clientId, isNaN(parseInt(clientId)), !Number.isInteger(parseInt(clientId)), parseInt(clientId) < 0)
+    if (isNaN(parseInt(clientId)) || !Number.isInteger(parseInt(clientId)) || parseInt(clientId) < 0) {
         $.notify("Enter valid clientId");
         return;
     }
@@ -198,7 +235,7 @@ function binSkuUploadCall(parsedata) {
         dataType: 'json',
         success: function (result) {
             console.log(result, "uploaded binSku")
-            $.notify("Bin SKUs uploaded", "success");
+            $.notify("Success", "success");
             $('#uploadModal').modal('hide');
             loadBinSku();
         },
@@ -219,6 +256,7 @@ function binSkuUploadCall(parsedata) {
 
 function editBinSKuModal(id, binId, globalSkuId, clientSkuId, qty) {
     $('#binSkuEditModal').modal('show');
+    $('#modalTitle').text('Update Bin SKU');
     $('#binSkuModalbody').html(getBinSkuUpdateModal(id, qty, binId, globalSkuId, clientSkuId));
 
 }
@@ -243,7 +281,7 @@ function editBinSkuModalCall(id, qty) {
         dataType: 'json',
         success: function (result) {
             console.log(result, "updated binSku")
-            $.notify("Bin SKUs updated", "success");
+            $.notify("Success", "success");
             $('#binSkuEditModal').modal('hide');
             loadBinSku();
         },
@@ -269,7 +307,7 @@ function getBinModalBody() {
         <label for="brandInput">Number of Bins</label>
         <input type="number" class="form-control" id="numberOfBins" name="brand" aria-describedby="text" placeholder="Enter number of Bins" autocomplete="off" minlength="1">
       </div>
-    <div class="modal-footer">
+    <div style="float:right; padding-top:8px">
       <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
       <button type="button" class="btn btn-primary" onclick="generateBinsCall()">Generate</button>
     </div>
@@ -278,48 +316,55 @@ function getBinModalBody() {
 
 function getBinSkuUpdateModal(id, qty, binId, globalSkuId, clientSkuId) {
     return `<form id="editBinSkuForm" >
-    <div id="modalFormDataDiv">
-      <div class="form-group">
-        <label for="">Bin ID</label>
-        <label for="">${binId}</label>
-      </div>
-      <div class="form-group">
-        <label for="">Global SKU ID</label>
-        <label for="">${globalSkuId}</label>
-      </div>
-      <div class="form-group">
-        <label for="">Client SKU ID</label>
-        <label for="">${clientSkuId}</label>
-      </div>
-      <div class="form-group">
-        <label for="qty">Quantity</label>
-        <input type="number" class="form-control" id="qty" name="qty" aria-describedby="text" placeholder="Enter quantity" autocomplete="off" minlength="1" value="${qty}">
-      </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-      <button type="button" class="btn btn-primary" onclick="editBinSkuModalCall(${id}, ${qty})">Save</button>
-    </div>
+
+        <div id="modalFormDataDiv" class="row">
+            <div class="form-group col-12">
+                <label for="" class="col-6">Bin ID</label>
+                <label for="">${binId}</label>
+            </div>
+            <div class="form-group col-12">
+                <label for="" class="col-6">Global SKU ID</label>
+                <label for="">${globalSkuId}</label>
+            </div>
+            <div class="form-group col-12" >
+                <label for="" class="col-6">Client SKU ID</label>
+                <label for="">${clientSkuId}</label>
+            </div>
+            <div class="form-group col-12">
+                <label for="qty" class="col-6">Quantity</label>
+                <input type="number" class="form-control col-6" id="qty" name="qty" aria-describedby="text" placeholder="Enter quantity" autocomplete="off" minlength="1" value="${qty}">
+            </div>
+        </div>
+            <div style="float:right; padding-top:8px">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="editBinSkuModalCall(${id}, ${qty})">Save</button>
+            </div>
+        
   </form>`
 }
 
-function getUploadModalBody() {
+function getUploadModalBody(clientIdDropDown) {
+
     return `<form>
-   
-    <div class="form-group">
-    <label for="clinetId" class="form-label">Client Id</label>
-    <input class="form-control" type="number" id="clinetId" >
+    <div  class="row">
+        <div class="col-12 form-group">
+            <label for="clinetId" class="form-label">Client Name</label>
+            ${clientIdDropDown}
+        </div>
+        <div class="col-12 form-group">
+        <label for="formFile" class="form-label">Upload CSV</label>
+     
+        <input class="form-control col-8" type="file" id="formFile" accept=".csv">
+        </div>
     </div>
-  </div>
-      <div class="form-group">
-        <label for="formFile" class="form-label">Select csv file for upload</label>
-        <input class="form-control" type="file" id="formFile" accept=".csv">
-      </div>
+    
+  
       <div class="form-group">
         <a class="" href="/assure/static/binSkuTemplate.csv" download>Download Template</a>
         <a class="" id="errorCsv" href="#" style="float: right;">Download Errors</a>
       </div>
 
-      <div class="modal-footer">
+      <div style="float:right; padding-top:8px">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-primary" id="uploadModalBtn" onclick="uploadBinSkuFile()">Upload</button>
       </div>

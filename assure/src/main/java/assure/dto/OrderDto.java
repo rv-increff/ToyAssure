@@ -145,6 +145,9 @@ public class OrderDto {
     public List<OrderData> selectOrder(Integer pageNumber){
         return convertOrderPojoListToData(orderService.selectOrder(pageNumber,PAGE_SIZE));
     }
+    public List<OrderData> selectOrderItemsByInvoiceType(Integer pageNumber, InvoiceType type){
+        return convertOrderPojoListToData(orderService.selectOrderByInvoiceType(pageNumber,PAGE_SIZE,type));
+    }
     public List<OrderItemData> selectOrderItems(Long orderId){
         return convertOrderItemPojoListToData(orderService.selectOrderItem(orderId));
     }

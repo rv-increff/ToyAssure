@@ -36,7 +36,7 @@ public class ChannelServiceTest extends AbstractTest {
         for (int i = 0; i < 5; i++) {
             channelPojoList.add(channelAdd());
         }
-        Assert.assertEquals(new HashSet<>(channelPojoList), new HashSet<>(channelService.select(0, channelPojoList.size())));
+        Assert.assertEquals(new HashSet<>(channelPojoList), new HashSet<>(channelService.select()));
     }
 
     @Test

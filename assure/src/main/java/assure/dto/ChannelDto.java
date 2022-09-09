@@ -22,8 +22,8 @@ public class ChannelDto {
 
 
     //TODO DEV_REVIEW: PageNumber is not required. Channle list can never be that big to require a page number. Do not overoptimise.
-    public List<ChannelData> select(Integer pageNumber) {
-        return convertChannelPojoListToData(channelService.select(pageNumber, PAGE_SIZE));
+    public List<ChannelData> select() {
+        return convertChannelPojoListToData(channelService.select());
     }
 
     public ChannelForm add(ChannelForm channelForm) throws ApiException {

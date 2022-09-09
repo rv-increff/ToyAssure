@@ -4,6 +4,7 @@ import assure.dto.PartyDto;
 import assure.model.PartyData;
 import assure.model.PartyForm;
 import assure.spring.ApiException;
+import assure.util.PartyType;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,11 @@ public class PartyController {
         return partyDto.select(pageNumber);
     }
 
+     @ApiOperation(value = "Get Party By Type")  //TODO change name swagger api naming convention
+    @RequestMapping(path = "/parties/partyType/{partyType}", method = RequestMethod.GET) //TODO 3 modules assure, commons, channels
+    public List<PartyData> getPartyByPartyType(@PathVariable PartyType partyType) {
+        return partyDto.selectByPartyType(partyType);
+    }
 
     @ApiOperation(value = "Get Party by id")
     @RequestMapping(path = "/parties/{id}", method = RequestMethod.GET)

@@ -28,7 +28,7 @@ function loadOrder() {
 
 
                 if (obj[i]['status'] == "CREATED") {
-                    str += `<td><button type='button' class='btn btn-warning' onclick=allocateOrder(${obj[i]['id']})>ALLOCATED</button></td>
+                    str += `<td><button type='button' class='btn btn-warning' onclick=allocateOrder(${obj[i]['id']})>ALLOCATE</button></td>
                     </tr>`
                 }
                 else if (obj[i]['status'] == "ALLOCATED") {
@@ -190,13 +190,15 @@ function getInvoice(id) {
     });
 }
 
-function addOrder() {
+async function addOrder() {
     obj = JSON.parse(localStorage.getItem("orderItems"));
     console.log(obj);
     console.log(obj, "inLoadfuntion");
     $('#orderItemModal').modal('show');
     $('#modalTitle').text(`Add order`);
-    $('#orderDetails').html(getOrderDetailModal());
+    let clientDropDown = await getClientDropDown();
+    let customerDropDown = await getCustomerDropDown();
+    $('#orderDetails').html(getOrderDetailModal(clientDropDown,customerDropDown));
     $('#orderItemModal-body').html(getAddOrderModalBody());
     loadOrderItemCart()
 }
@@ -208,7 +210,7 @@ function showOrderModal(){
 
 function loadOrderItemCart(){
     let body = document.getElementById("orderItemTbody");
-
+    let obj = JSON.parse(localStorage.getItem("orderItems"));
     str = ""
     for (var i = 0; i < obj.length; i++) {
         str += `<tr>
@@ -220,9 +222,9 @@ function loadOrderItemCart(){
                                   </tr>`;
     }
     str += ` <div style="padding-top:1rem;padding-bottom:1rem;">
-    <button type="button" class="btn btn-primary" onclick="addOrderItem()">Add</button>`;
+    <button type="button" class="btn btn-primary" onclick="addOrderItem()">Add Items</button>`;
     str += ` 
-    <button type="button" class="btn btn-primary" onclick="placeOrder()">Place Order</button>
+    <button type="button" class="btn btn-primary" onclick="placeOrder()">Submit</button>
     <a class="" id="errorCsv" href="#" style="float: right;">Download Errors</a><div>`;
     body.innerHTML = str;
 }
@@ -245,7 +247,7 @@ function placeOrder(){
         return;
     }
     if(orderItemFormList.length==0){
-        $.notify("Add Items");
+        $.notify("No orders in cart");
         return;
     }
 
@@ -283,16 +285,18 @@ $.ajax({
 
 }
 
-function addOrderItem(){
+async function addOrderItem(){
     $('#orderItemModal').modal('hide');
     $('#orderItemAddModal').modal('show');
-    $('#orderItemModalbody').html(getAddOrderItem());
+    let clientSkuIdDropDown = await getClientSkuIdDropDown();
+    $('#orderItemModalbody').html(getAddOrderItem(clientSkuIdDropDown));
 }
 
-function editOrderItem(id, clientSkuId,qty,price){
+async function editOrderItem(id,qty,price){
     $('#orderItemModal').modal('hide');
     $('#orderItemAddModal').modal('show');
-    $('#orderItemModalbody').html(getAddOrderItemEdit(id,clientSkuId,qty,price));
+    let clientSkuIdDropDownUpdate = await getClientSkuIdDropDownUpdate();
+    $('#orderItemModalbody').html(getAddOrderItemEdit(id,clientSkuIdDropDownUpdate,qty,price));
     
 }
 function saveAddEdit(id){
@@ -315,7 +319,7 @@ function saveAddEdit(id){
     }
 
     if(clientSkuId.trim().length==0){
-        $.notify("Client SKU ID cannot be blank ");
+        $.notify("Client SKU  cannot be blank ");
         return;
     }
 
@@ -364,7 +368,7 @@ function saveAdd(){
         return;
     }
     if(clientSkuId.trim().length==0){
-        $.notify("Client SKU ID cannot be blank ");
+        $.notify("Client SKU  cannot be blank ");
         return;
     }
     $('#orderItemModal').modal('show');
@@ -380,11 +384,11 @@ function saveAdd(){
 
 }
 
-function getAddOrderItem(){
+function getAddOrderItem(clientSkuIdDropDown){
     return ` <form >
     <div class="form-group ">
-    <label for="clientSkuId">Client SKU ID</label>
-    <input type="text" class="form-control" id="clientSkuId" name="clientSkuId" aria-describedby="text" placeholder="Enter Client SKU ID" autocomplete="off" minlength="1" maxlength="20" >
+    <label for="clientSkuId">Client SKU</label>
+    ${clientSkuIdDropDown}
   </div> 
   <div class="form-group ">
   <label for="qty">Quantity</label>
@@ -394,17 +398,17 @@ function getAddOrderItem(){
 <label for="price">Price Per Unit</label>
 <input type="number" class="form-control" id="price" name="price" aria-describedby="text" placeholder="Enter Price Per Unit" autocomplete="off" minlength="1" maxlength="20" >
 </div>
-<div class="modal-footer">
+<div style="float:right; padding-top:8px">
         <button type="button" class="btn btn-primary" onclick= "saveAdd()">Save</button>
         <button type="button" class="btn btn-secondary" onclick="cancelAdd()" >Close</button>
       </div>
 </form>`
 }
-function getAddOrderItemEdit(id,clientSkuId,qty,price){
+function getAddOrderItemEdit(id,clientSkuIdDropDownUpdate,qty,price){
     return ` <form >
     <div class="form-group ">
-    <label for="clientSkuId">Client SKU ID</label>
-    <input type="text" class="form-control" id="clientSkuId" name="clientSkuId" aria-describedby="text" placeholder="Enter Client SKU ID" autocomplete="off" minlength="1" maxlength="20" value="${clientSkuId}">
+    <label for="clientSkuId">Client SKU </label>
+    ${clientSkuIdDropDownUpdate}
   </div> 
   <div class="form-group ">
   <label for="qty">Quantity</label>
@@ -430,7 +434,7 @@ function getAddOrderModalBody() {
         <tr>
           <th scope="col">Client SKU ID</th>
           <th scope="col">Quantity</th>
-          <th scope="col">Selling Price</th>
+          <th scope="col">Unit Price</th>
           <th scope="col">Edit</th>
           <th scope="col">Delete</th>
         </tr>
@@ -442,23 +446,181 @@ function getAddOrderModalBody() {
 </div>`
 }
 
-function getOrderDetailModal(){
+function getOrderDetailModal(clientDropDown, customerDropDown){
     return `
     <form >
-    <div class="form-group ">
+    <div class="row">
+    <div class="form-group col-12">
     <label for="channelOrderId">Channel Order ID</label>
-    <input type="text" class="form-control" id="channelOrderId" name="channelOrderId" aria-describedby="text" placeholder="Enter Channel Order ID" autocomplete="off" minlength="1" maxlength="20" >
+    <input type="text" class="form-control" id="channelOrderId" name="channelOrderId" aria-describedby="text" placeholder="Enter channel order ID" autocomplete="off" minlength="1" maxlength="20" >
   </div> 
-  <div class="form-group ">
-  <label for="clientId">Client ID</label>
-  <input type="number" class="form-control" id="clientId" name="clientId" aria-describedby="text" placeholder="Enter Client ID" autocomplete="off" minlength="1" maxlength="20" >
+  <div class="form-group col-12">
+  <label for="clientId">Client Name</label>
+  ${clientDropDown}
 </div>
- <div class="form-group">
-<label for="customerId">Customer ID</label>
-<input type="number" class="form-control" id="customerId" name="customerId" aria-describedby="text" placeholder="Enter Customer ID" autocomplete="off" minlength="1" maxlength="20" >
+ <div class="form-group col-12">
+<label for="customerId">Customer Name</label>
+${customerDropDown}
+</div>
 </div>
 </form>
 `
+}
+function getClientDropDown(){
+    return new Promise(function(resolve,reject){
+        $.ajax({
+            type: "GET",
+            contentType: 'application/json',
+            url: `http://localhost:9000/assure/parties/partyType/CLIENT`,
+            processData: false,
+            dataType: 'json',
+            success: function (result) {
+                console.log(result,"result drop down")
+                obj  = result
+                let rows = ``
+                for(var i = 0; i < obj.length; i++){
+                    rows += `<option value="${obj[i]['id']}">${obj[i]['name']}</option>`
+                }
+                console.log(rows)
+                let drop =  `<select class="custom-select col-8 float-right" size="1" aria-label="Client ID" id="clientId">${rows}</select>`
+                
+                resolve(drop);
+            },
+            error: function (xhr, status, error) {
+                console.log(status, error, xhr)
+    
+                if (xhr['responseJSON']['errorType'] === 0) {
+                    $.notify(xhr['responseJSON']['description']);
+                    reject();
+                }
+                $.notify("Error occurred download error list file");
+                $('#errorCsv').click(function () {
+                    writeFileData(xhr['responseJSON']['description'], "error");
+                });
+                reject();
+            }
+        });
+    })
+    
+}
+function getClientSkuIdDropDownUpdate(){
+    return new Promise(function(resolve,reject){
+        let clientId = $('#clientId').val();
+        let clientSkuId = $('#clientSkuId').val();
+        console.log(clientSkuId, "clientSkuId")
+        $.ajax({
+            type: "GET",
+            contentType: 'application/json',
+            url: `http://localhost:9000/assure/products/client-id/${clientId}`,
+            processData: false,
+            dataType: 'json',
+            success: function (result) {
+                console.log(result,"clientSkuId drop down")
+                obj  = result
+                let rows = ``
+                for(var i = 0; i < obj.length; i++){
+                    if(String(clientSkuId) === String(obj[i]['clientSkuId'])){
+                        `<option value="${obj[i]['clientSkuId']}" selected>${obj[i]['clientSkuId']}</option>`
+                    }else{
+                        rows += `<option value="${obj[i]['clientSkuId']}">${obj[i]['clientSkuId']}</option>`
+                    }
+                }
+                console.log(rows)
+                let drop =  `<select class="custom-select col-8 float-right" size="1" aria-label="Client ID" id="clientSkuId">${rows}</select>`
+                
+                resolve(drop);
+            },
+            error: function (xhr, status, error) {
+                console.log(status, error, xhr)
+    
+                if (xhr['responseJSON']['errorType'] === 0) {
+                    $.notify(xhr['responseJSON']['description']);
+                    reject();
+                }
+                $.notify("Error occurred download error list file");
+                $('#errorCsv').click(function () {
+                    writeFileData(xhr['responseJSON']['description'], "error");
+                });
+                reject();
+            }
+        });
+    })
+    
+}
+function getClientSkuIdDropDown(){
+    return new Promise(function(resolve,reject){
+        let clientId = $('#clientId').val();
+        $.ajax({
+            type: "GET",
+            contentType: 'application/json',
+            url: `http://localhost:9000/assure/products/client-id/${clientId}`,
+            processData: false,
+            dataType: 'json',
+            success: function (result) {
+                console.log(result,"clientSkuId drop down")
+                obj  = result
+                let rows = ``
+                for(var i = 0; i < obj.length; i++){
+                    rows += `<option value="${obj[i]['clientSkuId']}">${obj[i]['clientSkuId']}</option>`
+                }
+                console.log(rows)
+                let drop =  `<select class="custom-select col-8 float-right" size="1" aria-label="Client ID" id="clientSkuId">${rows}</select>`
+                
+                resolve(drop);
+            },
+            error: function (xhr, status, error) {
+                console.log(status, error, xhr)
+    
+                if (xhr['responseJSON']['errorType'] === 0) {
+                    $.notify(xhr['responseJSON']['description']);
+                    reject();
+                }
+                $.notify("Error occurred download error list file");
+                $('#errorCsv').click(function () {
+                    writeFileData(xhr['responseJSON']['description'], "error");
+                });
+                reject();
+            }
+        });
+    })
+    
+}
+function getCustomerDropDown(){
+    return new Promise(function(resolve,reject){
+        $.ajax({
+            type: "GET",
+            contentType: 'application/json',
+            url: `http://localhost:9000/assure/parties/partyType/CUSTOMER`,
+            processData: false,
+            dataType: 'json',
+            success: function (result) {
+                console.log(result,"result drop down")
+                obj  = result
+                let rows = ``
+                for(var i = 0; i < obj.length; i++){
+                    rows += `<option value="${obj[i]['id']}">${obj[i]['name']}</option>`
+                }
+                // console.log(rows)
+                let drop =  `<select class="custom-select col-8 float-right" size="1" aria-label="Customer ID" id="customerId">${rows}</select>`
+                
+                resolve(drop);
+            },
+            error: function (xhr, status, error) {
+                console.log(status, error, xhr)
+    
+                if (xhr['responseJSON']['errorType'] === 0) {
+                    $.notify(xhr['responseJSON']['description']);
+                    reject();
+                }
+                $.notify("Error occurred download error list file");
+                $('#errorCsv').click(function () {
+                    writeFileData(xhr['responseJSON']['description'], "error");
+                });
+                reject();
+            }
+        });
+    })
+    
 }
 
 function viewOrder(orderId) {
@@ -471,7 +633,7 @@ function viewOrder(orderId) {
         processData: false,
         dataType: 'json',
         success: function (result) {
-            obj = result;
+            let obj = result;
             console.log(obj);
             console.log(obj, "inLoadfuntion");
             $('#orderItemModal').modal('show');
@@ -519,7 +681,7 @@ function getOrderItemModalBody() {
           <th scope="col">Ordered Quantity</th>
           <th scope="col">Allocated Quantity</th>
           <th scope="col">Fulfilled Quantity</th>
-          <th scope="col">Selling Price</th>
+          <th scope="col">Unit Price</th>
         </tr>
     </thead>
 
@@ -529,61 +691,6 @@ function getOrderItemModalBody() {
 </div>`
 }
 
-function getOrderUpdateModal(globalSkuId, clientSkuId, name, brandId, mrp, description) {
-    return `<form id="editOrderForm" >
-    <div id="modalFormDataDiv">
-      <div class="form-group">
-        <label for="">Client SKU ID</label>
-        <input type="text" class="form-control" id="clientSkuId" name="clientSkuId" aria-describedby="text" placeholder="Enter ClientSkuId" autocomplete="off" minlength="1" maxlength="20" value="${clientSkuId}">
-      </div>
-      <div class="form-group">
-        <label for="">Name</label>
-        <input type="text" class="form-control" id="name" name="name" aria-describedby="text" placeholder="Enter name" autocomplete="off" minlength="1" maxlength="20" value="${name}">
-      </div>
-      <div class="form-group">
-        <label for="brandId">Brand ID</label>
-        <input type="text" class="form-control" id="brandId" name="brandId" aria-describedby="text" placeholder="Enter brand ID" autocomplete="off" minlength="1" maxlength="20" value="${brandId}">
-      </div>
-      <div class="form-group">
-        <label for="mrp">MRP</label>
-        <input type="number" class="form-control" id="mrp" name="mrp" aria-describedby="text" placeholder="Enter MRP" autocomplete="off" minlength="1" value="${mrp}" max="1000000">
-        </div>
-      <div class="form-group">
-        <label for="description">Description</label>
-        <input type="text" class="form-control" id="description" name="description" aria-describedby="text" placeholder="Enter description" autocomplete="off" minlength="1" maxlength="40" value="${description}">
-      </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-      <button type="button" class="btn btn-primary" onclick="editOrderModalCall(${globalSkuId})">Save</button>
-    </div>
-  </form>`
-}
-
-function getUploadModalBody() {
-    return `<form>
-   
-    <div class="form-group">
-    <label for="partyId" class="form-label">Party Id</label>
-    <input class="form-control" type="number" id="partyId" >
-    </div>
-  </div>
-      <div class="form-group">
-        <label for="formFile" class="form-label">Select csv file for upload</label>
-        <input class="form-control" type="file" id="formFile" accept=".csv">
-      </div>
-      <div class="form-group">
-        <a class="" href="/assure/static/orderTemplate.csv" download>Download Template</a>
-        <a class="" id="errorCsv" href="#" style="float: right;">Download Errors</a>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="uploadModalBtn" onclick="uploadOrderFile()">Upload</button>
-      </div>
-    </div>
-
-  </form>`
-}
 function writeFileData(arr, fname) {
     console.log(fname, " in write file data")
     var config = {

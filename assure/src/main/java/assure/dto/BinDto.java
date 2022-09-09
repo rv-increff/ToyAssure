@@ -20,8 +20,8 @@ public class BinDto {
     private BinService binService;
 
     public List<BinData> add(Integer numberOfBins) throws ApiException {
-        if(Objects.isNull(numberOfBins) || numberOfBins <= 0)
-            throw new ApiException("Null obj");
+        if(numberOfBins <= 0)
+            throw new ApiException("Number of bins should be greater than 0");
 
         if (numberOfBins > MAX_BIN_LIMIT)
             throw new ApiException("Number of bins to create cannot exceed the limit : " + MAX_BIN_LIMIT);

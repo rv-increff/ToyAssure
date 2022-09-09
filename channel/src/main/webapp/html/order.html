@@ -20,7 +20,7 @@
       <button type="button" class="btn btn-primary" id="addBtn" onclick="addOrder()">Add Orders</button>
     </div>
     
-    <!-- <table  class="table" >
+    <table  class="table" >
         <thead class="thead-dark">
             <tr>
               <th scope="col">Order ID</th>
@@ -30,14 +30,13 @@
               <th scope="col">Channel Order ID</th>
               <th scope="col">Status</th>
               <th scope="col">View</th>
-              <th scope="col">Action</th>
             </tr>
         </thead>
 
         <tbody id="orderTbody">
         </tbody>
-    </table> -->
-    <!-- <nav aria-label="Page navigation example">
+    </table>
+    <nav aria-label="Page navigation example">
       <ul class="pagination justify-content-end">
         <li class="page-item disabled" id = "prevLi">
           <a class="page-link" href="#" tabindex="-1" onclick="prevPage()">Previous</a>
@@ -47,7 +46,7 @@
           <a class="page-link" href="#" onclick="nextPage()">Next</a>
         </li>
       </ul>
-    </nav> -->
+    </nav>
   </div>
   
 
@@ -142,6 +141,7 @@
 <script>
    $(document).ready(function() {
     document.getElementById("orderLink").style.fontWeight = "bold";
+    loadOrder();
  });
 
 </script>

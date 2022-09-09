@@ -43,10 +43,10 @@ public class BinSkuService {
 
     public Pair<Long, Long> update(BinSkuPojo binSkuPojo) throws ApiException {
         BinSkuPojo exists = binSkuDao.selectById(binSkuPojo.getId());
-        Long existsQty = exists.getQuantity();
         if (isNull(exists)) {
             throw new ApiException("id doesn't exist, id : " + binSkuPojo.getId());
         }
+        Long existsQty = exists.getQuantity();
         exists.setQuantity(binSkuPojo.getQuantity());
         return new Pair<Long, Long>(existsQty,exists.getGlobalSkuId());
     }

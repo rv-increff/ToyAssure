@@ -1,6 +1,7 @@
 package assure.service;
 
 import assure.dao.PartyDao;
+import assure.model.PartyData;
 import commons.model.ErrorData;
 import assure.pojo.PartyPojo;
 import assure.spring.ApiException;
@@ -52,8 +53,9 @@ public class PartyService {
         return partyPojo;
     }
     public Long checkByIdAndType(Long id, PartyType type) throws ApiException {
-        PartyPojo partyPojo = getCheck(id);
-        if(partyPojo.getType()!=type){
+        PartyPojo partyPojo = dao.selectById(id);
+
+        if(isNull(partyPojo) || partyPojo.getType()!=type){
             throw new ApiException(type.toString() + " does not exist");
         }
         return id;
@@ -63,4 +65,7 @@ public class PartyService {
         return dao.select(pageNumber, pageSize);
     }
 
+    public List<PartyPojo> selectByPartyType(PartyType partyType){
+        return dao.selectByPartyType(partyType);
+    }
 }

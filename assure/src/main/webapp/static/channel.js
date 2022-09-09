@@ -5,7 +5,7 @@ function loadChannel() {
 
     // Open an obejct (GET/POST, PATH,
     // ASYN-TRUE/FALSE)
-    xhr.open("GET", `http://localhost:9000/assure/channels?pageNumber=${pageNumber}`, true);
+    xhr.open("GET", `http://localhost:9000/assure/channels`, true);
     // When response is ready
     xhr.onload = function () {
         if (this.status === 200) {
@@ -105,7 +105,7 @@ function addChannelCall(){
         dataType: 'json',
         success: function (result) {
             console.log(result, "channel added")
-            $.notify("channel added", "success");
+            $.notify("Success", "success");
             $('#channelEditModal').modal('hide');
             loadChannel() ;
         },
@@ -126,25 +126,26 @@ function addChannelCall(){
 
 function getChannelModal(){
     return `<form>
-    <div class="form-group">
-    <label for="name" class="form-label">Name</label>
-    <input class="form-control" type="text" id="name" >
-    </div>
-  </div>
-      <div class="form-group">
-        <label for="formFile" class="form-label">Invoice Type</label>
-        <select name="type" id="type">
-        <option value="SELF" >SELF</option>
-        <option value="CHANNEL" >CHANNEL</option>
-        </select>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="uploadModalBtn" onclick="addChannelCall()">Save</button>
-      </div>
-    </div>
-
-  </form>`
+                <div class="row">
+                    <div class="form-group col-12">
+                        <label for="name" class="form-label">Name</label>
+                        <input class="form-control" type="text" id="name" >
+                    </div>
+                    <div class="form-group col-12">
+                        <div class="">
+                            <label for="formFile" class="form-label">Invoice Type</label>
+                            <select name="type" id="type" class="col-8 custom-select float-right">
+                                <option value="SELF" >SELF</option>
+                                <option value="CHANNEL" >CHANNEL</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div style="float:right; padding-top:8px">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="uploadModalBtn" onclick="addChannelCall()">Save</button>
+                </div>
+            </form>`
 }
 
 function writeFileData(arr, fname) {

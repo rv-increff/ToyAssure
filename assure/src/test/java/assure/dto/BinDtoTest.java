@@ -32,13 +32,13 @@ public class BinDtoTest extends AbstractTest {
     }
 
     @Test
-    public void addNullError(){
+    public void addNegativeError(){
         Integer n = -1;
         try{
             binDto.add(n);
             fail("error should be thrown");
         } catch (ApiException e) {
-            Assert.assertEquals(e.getMessage(), "Null obj");
+            Assert.assertEquals(e.getMessage(), "Number of bins should be greater than 0");
         }
     }
 

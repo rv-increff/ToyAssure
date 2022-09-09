@@ -60,7 +60,7 @@ public class ChannelListingTest extends AbstractTest {
             channelListingDto.add(channelListingUploadForm);
             fail("error should be thrown");
         }catch (ApiException e){
-            Assert.assertEquals("list size more than max limit, limit : 1000",e.getLocalizedMessage());
+            Assert.assertEquals("Channel Listing Upload List size more than limit, limit : 1000",e.getLocalizedMessage());
         }
     }
     @Test(expected = ApiException.class)

@@ -7,7 +7,6 @@ function loadChannelList() {
  
     xhr.onload = function () {
         if (this.status === 200) {
-          
             obj = JSON.parse(this.responseText);
             console.log(obj, "inLoadfuntion");
             
@@ -91,9 +90,11 @@ function uploadChannelListFile() {
     }
 }
 
-function uploadChannelList() {
+async function uploadChannelList() {
     $('#uploadModal').modal('show');
-    $('#uploadModalBody').html(getUploadModalBody());
+    let clientDropDown = await getClientDropDown();
+    let channelDropDown = await getChannelDropDown();
+    $('#uploadModalBody').html(getUploadModalBody(clientDropDown,channelDropDown));
 }
 function channelListingUtil(data) {
     let parsedata = [];
@@ -139,14 +140,15 @@ function channelListingUtil(data) {
 
 function channelListingUploadCall(parsedata) {
     let clientId = $("#clientId").val();
-    if (isNaN(parseInt(clientId)) || Number.isInteger(clientId) || parseInt(clientId) < 0) {
+  
+    if (isNaN(parseInt(clientId)) || !Number.isInteger(parseInt(clientId)) || parseInt(clientId) < 0) {
         $.notify("Enter valid clientId");
         return;
     }
 
     
     let channelId = $("#channelId").val();
-    if (isNaN(parseInt(channelId)) || Number.isInteger(channelId) || parseInt(channelId) < 0) {
+    if (isNaN(parseInt(channelId)) || !Number.isInteger(parseInt(channelId)) || parseInt(channelId) < 0) {
         $.notify("Enter valid channelId");
         return;
     }
@@ -163,7 +165,7 @@ function channelListingUploadCall(parsedata) {
         processData: false,
         dataType: 'json',
         success: function (result) {
-            $.notify("Channel Listings uploaded", "success");
+            $.notify("Success", "success");
             $('#uploadModal').modal('hide');
             loadChannelList();
         },
@@ -182,35 +184,112 @@ function channelListingUploadCall(parsedata) {
     });
 }
 
-function getUploadModalBody() {
+function getUploadModalBody(clientDropDown, channelDropDown) {
+console.log(clientDropDown, channelDropDown)
     return `<form>
-   
-    <div class="form-group">
-    <label for="clientId" class="form-label">Client Id</label>
-    <input class="form-control" type="number" id="clientId" >
-    </div>
-    <div class="form-group">
-    <label for="channelId" class="form-label">Channel Id</label>
-    <input class="form-control" type="number" id="channelId" >
-    </div>
-  </div>
-      <div class="form-group">
-        <label for="formFile" class="form-label">Select csv file for upload</label>
-        <input class="form-control" type="file" id="formFile" accept=".csv">
-      </div>
-      <div class="form-group">
-        <a class="" href="/assure/static/channelListingTemplate.csv" download>Download Template</a>
-        <a class="" id="errorCsv" href="#" style="float: right;">Download Errors</a>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="uploadModalBtn" onclick="uploadChannelListFile()">Upload</button>
-      </div>
-    </div>
-
-  </form>`
+                <div class="row">
+                    <div class="form-group col-12">
+                        <label for="clientId" class="form-label">Client Name</label>
+                        ${clientDropDown}
+                    </div>
+                    <div class="form-group col-12">
+                        <label for="channelId" class="form-label">Channel Name</label>
+                        ${channelDropDown}
+                    </div>
+                    <div class="form-group col-12">
+                        <label for="formFile" class="form-label">Upload CSV</label>
+                        <input class="form-control" type="file" id="formFile" accept=".csv">
+                    </div>
+                    <div class="form-group col-12">
+                        <a class="" href="/assure/static/channelListingTemplate.csv" download>Download Template</a>
+                        <a class="" id="errorCsv" href="#" style="float: right;">Download Errors</a>
+                    </div>
+                </div>
+                <div style="float:right; padding-top:8px">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="uploadModalBtn" onclick="uploadChannelListFile()">Upload</button>
+                </div>
+            </form>`
 }
+
+function getClientDropDown(){
+    return new Promise(function(resolve,reject){
+        $.ajax({
+            type: "GET",
+            contentType: 'application/json',
+            url: `http://localhost:9000/assure/parties/partyType/CLIENT`,
+            processData: false,
+            dataType: 'json',
+            success: function (result) {
+                console.log(result,"result drop down")
+                obj  = result
+                let rows = ``
+                for(var i = 0; i < obj.length; i++){
+                    rows += `<option value="${obj[i]['id']}">${obj[i]['name']}</option>`
+                }
+                console.log(rows)
+                let drop =  `<select class="custom-select col-8 float-right" size="1" aria-label="Client ID" id="clientId">${rows}</select>`
+                
+                resolve(drop);
+            },
+            error: function (xhr, status, error) {
+                console.log(status, error, xhr)
+    
+                if (xhr['responseJSON']['errorType'] === 0) {
+                    $.notify(xhr['responseJSON']['description']);
+                    reject();
+                }
+                $.notify("Error occurred download error list file");
+                $('#errorCsv').click(function () {
+                    writeFileData(xhr['responseJSON']['description'], "error");
+                });
+                reject();
+            }
+        });
+    })
+    
+}
+
+function getChannelDropDown(){
+    return new Promise(function(resolve, reject){
+        $.ajax({
+            type: "GET",
+            contentType: 'application/json',
+            url: `http://localhost:9000/assure/channels`,
+            processData: false,
+            dataType: 'json',
+            success: function (result) {
+                console.log(result,"result drop down")
+                obj  = result
+                let rows = ``
+                for(var i = 0; i < obj.length; i++){
+                    if(obj[i]['name']!=="INTERNAL")
+                        rows += `<option value="${obj[i]['id']}">${obj[i]['name']}</option>`
+                }
+                // console.log(rows)
+                let drop =  `<select class="custom-select col-8 float-right" size="1" aria-label="Channel ID" id="channelId">${rows}</select>`
+                
+                resolve(drop);
+            },
+            error: function (xhr, status, error) {
+                console.log(status, error, xhr)
+    
+                if (xhr['responseJSON']['errorType'] === 0) {
+                    $.notify(xhr['responseJSON']['description']);
+                    reject();
+                }
+                $.notify("Error occurred download error list file");
+                $('#errorCsv').click(function () {
+                    writeFileData(xhr['responseJSON']['description'], "error");
+                });
+                reject();
+            }
+        });
+    })
+    
+}
+
+
 function writeFileData(arr, fname) {
     console.log(fname, " in write file data")
     var config = {

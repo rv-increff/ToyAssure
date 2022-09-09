@@ -155,7 +155,7 @@ public class BinSkuDtoTest extends AbstractTest {
     public void selectTest() {
         int n = 5;
         for (int i = 0; i < 5; i++) {
-            binSkuAdd();
+            binSkuAdd(productAdd().getGlobalSkuId());
         }
         Assert.assertEquals(n, binSkuDto.select(0).size());
     }

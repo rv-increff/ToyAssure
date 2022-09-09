@@ -5,6 +5,7 @@ import assure.dao.OrderItemDao;
 import assure.pojo.OrderItemPojo;
 import assure.pojo.OrderPojo;
 import assure.spring.ApiException;
+import assure.util.InvoiceType;
 import assure.util.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,10 +39,16 @@ public class OrderService {
             orderItemDao.add(orderItemPojo);
         }
     }
-    public List<OrderPojo> selectOrder(Integer pageNumber, Integer pageSize){
-        return orderDao.select(pageNumber,pageSize);
+
+    public List<OrderPojo> selectOrder(Integer pageNumber, Integer pageSize) {
+        return orderDao.select(pageNumber, pageSize);
     }
-    public List<OrderItemPojo> selectOrderItem(Long orderId){
+
+    public List<OrderPojo> selectOrderByInvoiceType(Integer pageNumber, Integer pageSize, InvoiceType type) {
+        return orderDao.selectOrderByInvoiceType(pageNumber, pageSize, type);
+    }
+
+    public List<OrderItemPojo> selectOrderItem(Long orderId) {
         return orderItemDao.selectByOrderId(orderId);
     }
 

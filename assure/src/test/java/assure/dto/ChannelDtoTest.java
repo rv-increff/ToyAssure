@@ -26,7 +26,7 @@ public class ChannelDtoTest extends AbstractTest {
     @Test
     public void selectTest(){
         ChannelPojo channelPojo = channelAdd();
-        Assert.assertEquals(channelPojo.getName(),channelDto.select(0).get(1).getName());
+        Assert.assertEquals(channelPojo.getName(),channelDto.select().get(1).getName());
     }
 
     @Test(expected = ApiException.class)

@@ -172,3 +172,22 @@ background-color:white;
 .form-group{
   margin: 0.2rem;
 }
+
+label{
+  font-weight: bold;
+  padding-top: 5px;
+}
+
+.form-control{
+  padding  : 0.175rem;
+  width: 65%;
+  float: right;
+}
+.custom-select{
+  width : 65%;
+}
+.modal-footer{
+  float : right;
+  justify-content: flex-start;
+
+}

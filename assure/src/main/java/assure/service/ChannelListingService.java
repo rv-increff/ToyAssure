@@ -27,6 +27,8 @@ public class ChannelListingService {
         checkDataNotExist(channelListingPojoList);
         for (ChannelListingPojo channelListingPojo : channelListingPojoList) {
             normalizeChannelListingPojo(channelListingPojo);
+            if(channelListingPojo.getChannelSkuId().contains(" "))
+                throw new ApiException("Channel SKU ID cannot have empty space");
             channelListingDao.add(channelListingPojo);
         }
 

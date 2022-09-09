@@ -39,22 +39,18 @@ public abstract class AbstractDao <T> {
 
 		query.setFirstResult(pageNumber * pageSize);
 		query.setMaxResults(pageSize);
-		List<T> results = query.getResultList();
-		return results;
+		return query.getResultList();
 	}
 
-//	public Integer selectPageCount(Integer pageSize){
-//		return (Integer) em.createQuery("select count(*) from " + this.clazz).getResultList().get(0);
-//
-//	}
-//	public <T> TypedQuery<T> selectIn( List<?> inList, String columnName){
-//		CriteriaBuilder cb = em.getCriteriaBuilder();
-//		CriteriaQuery<T> cr = cr();
-//		Root<T> root = (Root<T>) cr.from(this.clazz);
-//		cr  = cr.select(root).where(root.get(columnName).in(inList));
-//		TypedQuery<T> query =  em.createQuery(cr);
-//		return query;
-//	}
+public List<T> select(){
+		CriteriaQuery<T> cr = cr();
+		Root<T> root = (Root<T>) cr.from(this.clazz);
+		cr.select(root);
+		TypedQuery<T> query =  em.createQuery(cr);
+
+		return query.getResultList();
+	}
+
 
 	public void update(){}
 

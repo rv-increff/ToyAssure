@@ -20,8 +20,8 @@ public class ChannelService {
     private ChannelDao channelDao;
 
 
-    public List<ChannelPojo> select(Integer pageNumber, Integer pageSize) {
-        return channelDao.select(pageNumber, pageSize);
+    public List<ChannelPojo> select() {
+        return channelDao.select();
     }
 
     public void add(ChannelPojo channelPojo) throws ApiException {

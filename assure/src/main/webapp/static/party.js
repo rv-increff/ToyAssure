@@ -16,11 +16,14 @@ function loadParty() {
             let body = document.getElementById("partyTbody");
 
             str = ""
+            let type = $('#type').val();
+
             for (var i = 0; i < obj.length; i++) {
+                if(obj[i]['type']==type || type=="all"){
                 str += `<tr>
                                       <td>${obj[i]['name']}</td>
                                       <td>${obj[i]['type']}</td>
-                                    </tr>`;
+                                    </tr>`;}
             }
             body.innerHTML = str;
             checkNextPageNotExist()
@@ -32,6 +35,10 @@ function loadParty() {
 
     // At last send the request
     xhr.send();
+}
+
+function onChangeType(){
+    loadParty()
 }
 
 function nextPage() {
@@ -105,7 +112,7 @@ function addPartyCall(){
         dataType: 'json',
         success: function (result) {
             console.log(result, "party added")
-            $.notify("Party added", "success");
+            $.notify("Success", "success");
             $('#partyEditModal').modal('hide');
             loadParty() ;
         },
@@ -126,25 +133,25 @@ function addPartyCall(){
 
 function getPartyModal(){
     return `<form>
-    <div>
-    <div class="form-group">
-    <label for="name" class="form-label">Name</label>
-    <input class="form-control" type="text" id="name" >
-  </div>
-      <div class="form-group">
-        <label for="formFile" class="form-label">Party Type</label>
-        <select name="type" id="type">
-        <option value="CLIENT" >CLIENT</option>
-        <option value="CUSTOMER" >CUSTOMER</option>
-        </select>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" id="uploadModalBtn" onclick="addPartyCall()">Save</button>
-      </div>
-    </div>
-
-  </form>`
+                <div class="row">
+                    <div class="form-group col-12">
+                        <label for="name" class="form-label">Name</label>
+                        <input class="form-control" type="text" id="name" >
+                    </div>
+                    <div class="form-group col-12">
+                        <label for="formFile" class="form-label">Party Type</label>
+                        <select class="custom-select float-right col-8" name="type" id="type">
+                        <option value="CLIENT" >CLIENT</option>
+                        <option value="CUSTOMER" >CUSTOMER</option>
+                        </select>
+                    </div>
+                 
+                </div>
+                <div style="float:right; padding-top:8px">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="uploadModalBtn" onclick="addPartyCall()">Save</button>
+                </div>
+            </form>`
 }
 
 function writeFileData(arr, fname) {

@@ -10,7 +10,7 @@ public class NormalizeUtil {
         channelPojo.setName(channelPojo.getName().toUpperCase());
     }
     public static void normalizeChannelListingPojo(ChannelListingPojo channelListingPojo) {
-        channelListingPojo.setChannelSkuId(channelListingPojo.getChannelSkuId().toUpperCase());
+        channelListingPojo.setChannelSkuId(channelListingPojo.getChannelSkuId().toUpperCase().trim());
     }
     public static void normalizePartyPojo(PartyPojo partyPojo) {
         partyPojo.setName(partyPojo.getName().toLowerCase());

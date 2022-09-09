@@ -67,6 +67,7 @@ public class BinSkuServiceTest extends AbstractTest {
         binSkuPojo.setId(1L);
         try {
             binSkuService.update(binSkuPojo);
+            fail("error expected");
         } catch (ApiException e) {
             Assert.assertEquals(e.getMessage(), "id doesn't exist, id : " + binSkuPojo.getId());
         }

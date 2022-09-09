@@ -40,6 +40,9 @@ public class RestControllerAdvice {
         String json = new Gson().toJson(obj);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        response.setHeader("Access-Control-Allow-Origin","*");
+        response.setHeader("Access-Control-Allow-Credentials","true");
+        response.setHeader("Access-Control-Max-Age","604800");
         response.getWriter().write(json);
     }
 
@@ -62,7 +65,17 @@ public class RestControllerAdvice {
         String json = new Gson().toJson(obj);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        response.setHeader("Access-Control-Allow-Origin","*");
+        response.setHeader("Access-Control-Allow-Credentials","true");
+        response.setHeader("Access-Control-Max-Age","604800");
         response.getWriter().write(json);
+    }
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public void addCORs(HttpServletRequest request, HttpServletResponse response){
+        response.setHeader("Access-Control-Allow-Origin","*");
+        response.setHeader("Access-Control-Allow-Credentials","true");
+        response.setHeader("Access-Control-Max-Age","604800");
     }
 }
 

@@ -144,6 +144,14 @@ public ProductPojo productAdd(Long clientId) {
 
         return binSkuDao.add(binSkuPojo);
     }
+public BinSkuPojo binSkuAdd(Long globalSkuId) {
+        BinSkuPojo binSkuPojo = new BinSkuPojo();
+        binSkuPojo.setBinId(getRandomNumberLong());
+        binSkuPojo.setGlobalSkuId(globalSkuId);
+        binSkuPojo.setQuantity(getRandomNumberLong());
+
+        return binSkuDao.add(binSkuPojo);
+    }
 
     public BinSkuPojo getBinSku() {
         BinSkuPojo binSkuPojo = new BinSkuPojo();

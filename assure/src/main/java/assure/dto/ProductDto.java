@@ -14,7 +14,6 @@ import java.util.List;
 
 import static assure.util.ConversionUtil.*;
 import static assure.util.ValidationUtil.*;
-import static java.util.Objects.isNull;
 
 @Service
 public class ProductDto {
@@ -45,6 +44,12 @@ public class ProductDto {
         ProductPojo productPojo = productService.selectById(globalSkuId);
         return convertProductPojoToData(productPojo);
     }
+
+    public List<ProductData> selectByClientId(Long clientId) throws ApiException {
+        List<ProductPojo> productPojo = productService.selectByClientId(clientId);
+        return convertListProductPojoToData(productPojo);
+    }
+
 
     public ProductUpdateForm update(ProductUpdateForm productUpdateForm, Long globalSkuId) throws ApiException {
         validateForm(productUpdateForm);
