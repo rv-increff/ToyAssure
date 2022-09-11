@@ -97,8 +97,8 @@ function addParty(){
 }
 
 function addPartyCall(){
-    let name = $('#name').val().trim().toLowerCase();
-    let type = $('#type').val();
+    let name = $('#name').val();
+    let type = $('#partyTypeInput').val();
 
     $.ajax({
         type: "POST",
@@ -135,12 +135,12 @@ function getPartyModal(){
     return `<form>
                 <div class="row">
                     <div class="form-group col-12">
-                        <label for="name" class="form-label">Name</label>
+                        <label for="name" class="form-label required">Name</label>
                         <input class="form-control" type="text" id="name" >
                     </div>
                     <div class="form-group col-12">
-                        <label for="formFile" class="form-label">Party Type</label>
-                        <select class="custom-select float-right col-8" name="type" id="type">
+                        <label for="formFile" class="form-label required">Party Type</label>
+                        <select class="custom-select float-right col-8" name="type" id="partyTypeInput">
                         <option value="CLIENT" >CLIENT</option>
                         <option value="CUSTOMER" >CUSTOMER</option>
                         </select>

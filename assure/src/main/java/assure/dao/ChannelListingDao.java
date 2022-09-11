@@ -7,6 +7,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.List;
 
 @Repository
 public class ChannelListingDao extends AbstractDao<ChannelListingPojo> {
@@ -25,7 +26,8 @@ public class ChannelListingDao extends AbstractDao<ChannelListingPojo> {
         TypedQuery<ChannelListingPojo> query = em.createQuery(cr);
         return getSingle(query);
     }
-    public ChannelListingPojo selectByChannelIdAndClientIdAndChannelSkuId( Long channelId, Long clientId,String channelSkuId) {
+
+    public ChannelListingPojo selectByChannelIdAndClientIdAndChannelSkuId(Long channelId, Long clientId, String channelSkuId) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery cr = cr();
         Root<ChannelListingPojo> root = cr.from(this.clazz);
@@ -51,6 +53,19 @@ public class ChannelListingDao extends AbstractDao<ChannelListingPojo> {
         ));
         TypedQuery<ChannelListingPojo> query = em.createQuery(cr);
         return getSingle(query);
+    }
+
+    public List<ChannelListingPojo> selectByChannelIdAndClientId(Long channelId, Long clientId) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery cr = cr();
+        Root<ChannelListingPojo> root = cr.from(this.clazz);
+        cr = cr.select(root);
+        cr.where(cb.and(
+                cb.equal(root.get("clientId"), clientId),
+                cb.equal(root.get("channelId"), channelId)
+        ));
+        TypedQuery<ChannelListingPojo> query = em.createQuery(cr);
+        return query.getResultList();
     }
 
 }

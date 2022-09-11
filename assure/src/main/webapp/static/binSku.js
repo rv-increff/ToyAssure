@@ -304,7 +304,7 @@ function getBinModalBody() {
     return `<form id="editBinSkuForm" >
     <div id="modalFormDataDiv">
       <div class="form-group">
-        <label for="brandInput">Number of Bins</label>
+        <label for="brandInput" class="required">Number of Bins</label>
         <input type="number" class="form-control" id="numberOfBins" name="brand" aria-describedby="text" placeholder="Enter number of Bins" autocomplete="off" minlength="1">
       </div>
     <div style="float:right; padding-top:8px">
@@ -319,7 +319,7 @@ function getBinSkuUpdateModal(id, qty, binId, globalSkuId, clientSkuId) {
 
         <div id="modalFormDataDiv" class="row">
             <div class="form-group col-12">
-                <label for="" class="col-6">Bin ID</label>
+                <label for="" class="col-6" >Bin ID</label>
                 <label for="">${binId}</label>
             </div>
             <div class="form-group col-12">
@@ -331,7 +331,7 @@ function getBinSkuUpdateModal(id, qty, binId, globalSkuId, clientSkuId) {
                 <label for="">${clientSkuId}</label>
             </div>
             <div class="form-group col-12">
-                <label for="qty" class="col-6">Quantity</label>
+                <label for="qty" class="col-6 required">Quantity</label>
                 <input type="number" class="form-control col-6" id="qty" name="qty" aria-describedby="text" placeholder="Enter quantity" autocomplete="off" minlength="1" value="${qty}">
             </div>
         </div>
@@ -348,11 +348,11 @@ function getUploadModalBody(clientIdDropDown) {
     return `<form>
     <div  class="row">
         <div class="col-12 form-group">
-            <label for="clinetId" class="form-label">Client Name</label>
+            <label for="clinetId" class="form-label required">Client Name</label>
             ${clientIdDropDown}
         </div>
         <div class="col-12 form-group">
-        <label for="formFile" class="form-label">Upload CSV</label>
+        <label for="formFile" class="form-label required">Upload CSV</label>
      
         <input class="form-control col-8" type="file" id="formFile" accept=".csv">
         </div>

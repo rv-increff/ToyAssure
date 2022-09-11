@@ -191,3 +191,9 @@ label{
   justify-content: flex-start;
 
 }
+.required:after {
+  content:"*";
+  color: rgb(217, 58, 58);
+  font-size: small;
+  vertical-align: super;
+}

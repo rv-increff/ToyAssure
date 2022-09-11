@@ -47,6 +47,11 @@ public class ChannelListingService {
         return channelListingDao.selectByGlobalSkuIdAndChannelIdAndClientId(globalSkuId, channelId, clientId);
     }
 
+    public List<ChannelListingPojo> selectByChannelIdAndClientId(Long channelId, Long clientId) {
+        return channelListingDao.selectByChannelIdAndClientId(channelId, clientId);
+    }
+
+
     private void checkDataNotExist(List<ChannelListingPojo> channelListingPojoList) throws ApiException {
         List<ErrorData> errorFormList = new ArrayList<>();
         for (ChannelListingPojo channelListing : channelListingPojoList) {

@@ -291,23 +291,23 @@ function getProductUpdateModal(globalSkuId, clientSkuId, name, brandId, mrp, des
     return `<form id="editProductForm" >
     <div id="modalFormDataDiv" class="row">
         <div class="form-group col-12">
-            <label for="">Client SKU ID</label>
+            <label for="clientSkuId" class="required">Client SKU ID</label>
             <input type="text" class="form-control" id="clientSkuId" name="clientSkuId" aria-describedby="text" placeholder="Enter Client SKU ID" autocomplete="off" minlength="1" maxlength="20" value="${clientSkuId}">
         </div>
         <div class="form-group col-12">
-            <label for="">Name</label>
+            <label for="name" class="required">Name</label>
             <input type="text" class="form-control" id="name" name="name" aria-describedby="text" placeholder="Enter name" autocomplete="off" minlength="1" maxlength="20" value="${name}">
         </div>
         <div class="form-group col-12">
-            <label for="brandId">Brand ID</label>
+            <label for="brandId" class="required">Brand ID</label>
             <input type="text" class="form-control" id="brandId" name="brandId" aria-describedby="text" placeholder="Enter brand ID" autocomplete="off" minlength="1" maxlength="20" value="${brandId}">
         </div>
         <div class="form-group col-12">
-            <label for="mrp">MRP</label>
+            <label for="mrp" class="required">MRP</label>
             <input type="number" class="form-control" id="mrp" name="mrp" aria-describedby="text" placeholder="Enter MRP" autocomplete="off" minlength="1" value="${mrp}" max="1000000">
             </div>
         <div class="form-group col-12">
-            <label for="description">Description</label>
+            <label for="description" class="required">Description</label>
             <input type="text" class="form-control" id="description" name="description" aria-describedby="text" placeholder="Enter description" autocomplete="off" minlength="1" maxlength="40" value="${description}">
         </div>
     </div>
@@ -324,11 +324,11 @@ function getUploadModalBody(clientDropDown) {
 
     <div class="row">
     <div class="form-group col-12">
-    <label for="partyId" class="form-label">Client Name</label>
+    <label for="partyId" class="form-label required">Client Name</label>
     ${clientDropDown}
 </div>
       <div class="form-group col-12">
-        <label for="formFile" class="form-label">Upload CSV</label>
+        <label for="formFile" class="form-label required">Upload CSV</label>
         <input class="form-control" type="file" id="formFile" accept=".csv">
       </div>
       <div class="form-group col-12">

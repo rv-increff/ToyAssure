@@ -79,43 +79,16 @@ public class ValidationUtil {
         }
     }
     public static <T> void validateForm(T form) throws ApiException {
-        List<ErrorData> errorFormList = new ArrayList<>();
         Set<ConstraintViolation<T>> constraintViolations = validator.validate(form);
         for (ConstraintViolation<T> constraintViolation : constraintViolations) {
             throw new ApiException( constraintViolation.getPropertyPath().toString()
                     + " " + constraintViolation.getMessage());
         }
-        throwErrorIfNotEmpty(errorFormList);
-    }
-    public static <T> void validateAddPojo(T pojo, List<String> excludeList) throws ApiException {
-        if (isNull(pojo)) {
-            throw new ApiException(" Pojo object can not be null");
-        }
-        try {
-            Field[] fields = pojo.getClass().getDeclaredFields();
-            for (Field m : fields) {
-                m.setAccessible(true);
-                if (isNull(m.get(pojo)) && !excludeList.contains(m.getName())) {
-                    throw new ApiException(m.getName() + " cannot be null in Pojo object");
-                }
-            }
-        } catch (IllegalAccessException err) {
-            System.out.println(err);
-        }
     }
 
-    public static <T> void validateAddPojoList(List<T> pojoList, List<String> excludeList, Long maxListSize) throws ApiException {
-        if (CollectionUtils.isEmpty(pojoList)) {
-            throw new ApiException("List cannot be empty or null");
-        }
-
-        if (pojoList.size() > maxListSize) {
-            throw new ApiException("list size more than max limit, limit : " + maxListSize);
-        }
-
-        for (T pojo : pojoList) {
-            validateAddPojo(pojo, excludeList);
+    public static <T> void validateFormList(List<T> formList) throws ApiException{
+        for (T form : formList) {
+            validateForm(form);
         }
     }
-
 }

@@ -28,14 +28,14 @@ function loadOrder() {
 
 
                 if (obj[i]['status'] == "CREATED") {
-                    str += `<td><button type='button' class='btn btn-warning' onclick=allocateOrder(${obj[i]['id']})>ALLOCATE</button></td>
+                    str += `<td><button type='button' class='btn btn-warning action-btn' onclick=allocateOrder(${obj[i]['id']})>ALLOCATE</button></td>
                     </tr>`
                 }
                 else if (obj[i]['status'] == "ALLOCATED") {
-                    str += `<td><button type='button' class='btn btn-success' onclick=fullfillOrder(${obj[i]['id']})>FULFILL</button></td>
+                    str += `<td><button type='button' class='btn btn-success action-btn' onclick=fullfillOrder(${obj[i]['id']})>FULFILL</button></td>
                     </tr>`
                 } else {
-                    str += `<td><button type='button' class='btn btn-primary' onclick=getInvoice(${obj[i]['id']})>INVOICE</button></td>
+                    str += `<td><button type='button' class='btn btn-primary action-btn' onclick=getInvoice(${obj[i]['id']})>INVOICE</button></td>
                     </tr>`
                 }
             }
@@ -217,7 +217,7 @@ function loadOrderItemCart(){
                                   <td>${obj[i]['clientSkuId']}</td>
                                   <td>${obj[i]['quantity']}</td>
                                   <td>${obj[i]['sellingPricePerUnit']}</td>
-                                  <td><button type="button" class="btn btn-primary" onclick="editOrderItem(${i},'${obj[i]['clientSkuId']}',${obj[i]['quantity']},${obj[i]['sellingPricePerUnit']})">Edit</button</td>
+                                  <td><button type="button" class="btn btn-primary" onclick="editOrderItem(${i},${obj[i]['quantity']},${obj[i]['sellingPricePerUnit']})">Edit</button</td>
                                   <td><button type="button" class="btn btn-primary" onclick="deleteOrderItem(${i})">Delete</button</td>
                                   </tr>`;
     }
@@ -229,7 +229,7 @@ function loadOrderItemCart(){
     body.innerHTML = str;
 }
 function placeOrder(){
-    let channelOrderId = $('#channelOrderId').val();
+    let channelOrderId = $('#channelOrderId').val().trim();
     let clientId = $('#clientId').val();
     let customerId = $('#customerId').val();
     let orderItemFormList = JSON.parse(localStorage.getItem("orderItems"));
@@ -244,6 +244,11 @@ function placeOrder(){
     }
     if(channelOrderId.trim().length==0){
         $.notify("Channel order ID cannot be blank ");
+        return;
+    }
+
+    if(channelOrderId.indexOf(' ')>=0){
+        $.notify("Channel order ID cannot have empty space ");
         return;
     }
     if(orderItemFormList.length==0){
@@ -268,6 +273,7 @@ $.ajax({
         console.log(result, "order placed");
         $.notify(`Order Placed`, "success");
         $('#orderItemModal').modal('hide');
+        localStorage.setItem("orderItems", JSON.stringify([]));
         loadOrder();
     },
     error: function (xhr, status, error) {
@@ -288,6 +294,7 @@ $.ajax({
 async function addOrderItem(){
     $('#orderItemModal').modal('hide');
     $('#orderItemAddModal').modal('show');
+    $('#orderItemTitle').text('Add Order Item');
     let clientSkuIdDropDown = await getClientSkuIdDropDown();
     $('#orderItemModalbody').html(getAddOrderItem(clientSkuIdDropDown));
 }
@@ -295,6 +302,7 @@ async function addOrderItem(){
 async function editOrderItem(id,qty,price){
     $('#orderItemModal').modal('hide');
     $('#orderItemAddModal').modal('show');
+    $('#orderItemTitle').text('Add Order Item');
     let clientSkuIdDropDownUpdate = await getClientSkuIdDropDownUpdate();
     $('#orderItemModalbody').html(getAddOrderItemEdit(id,clientSkuIdDropDownUpdate,qty,price));
     
@@ -387,15 +395,15 @@ function saveAdd(){
 function getAddOrderItem(clientSkuIdDropDown){
     return ` <form >
     <div class="form-group ">
-    <label for="clientSkuId">Client SKU</label>
+    <label for="clientSkuId" class="required">Client SKU</label>
     ${clientSkuIdDropDown}
   </div> 
   <div class="form-group ">
-  <label for="qty">Quantity</label>
+  <label for="qty" class="required">Quantity</label>
   <input type="number" class="form-control" id="qty" name="qty" aria-describedby="text" placeholder="Enter Quantity" autocomplete="off" minlength="1" maxlength="20" >
 </div>
  <div class="form-group">
-<label for="price">Price Per Unit</label>
+<label for="price" class="required">Price Per Unit</label>
 <input type="number" class="form-control" id="price" name="price" aria-describedby="text" placeholder="Enter Price Per Unit" autocomplete="off" minlength="1" maxlength="20" >
 </div>
 <div style="float:right; padding-top:8px">
@@ -407,18 +415,18 @@ function getAddOrderItem(clientSkuIdDropDown){
 function getAddOrderItemEdit(id,clientSkuIdDropDownUpdate,qty,price){
     return ` <form >
     <div class="form-group ">
-    <label for="clientSkuId">Client SKU </label>
+    <label for="clientSkuId" class="required">Client SKU </label>
     ${clientSkuIdDropDownUpdate}
   </div> 
   <div class="form-group ">
-  <label for="qty">Quantity</label>
-  <input type="number" class="form-control" id="qty" name="qty" aria-describedby="text" placeholder="Enter Client ID" autocomplete="off" minlength="1" maxlength="20" value=${qty}>
+  <label for="qty" class="required">Quantity</label>
+  <input type="number" class="form-control" id="qty" name="qty" aria-describedby="text" placeholder="Enter Quantity" autocomplete="off" minlength="1" maxlength="20" value=${qty}>
 </div>
  <div class="form-group">
-<label for="price">Price Per Unit</label>
-<input type="number" class="form-control" id="price" name="price" aria-describedby="text" placeholder="Enter Customer ID" autocomplete="off" minlength="1" maxlength="20" value="${price}">
+<label for="price" class="required">Unit price</label>
+<input type="number" class="form-control" id="price" name="price" aria-describedby="text" placeholder="Enter Unit Price" autocomplete="off" minlength="1" maxlength="20" value="${price}">
 </div>
-<div class="modal-footer">
+<div style="float:right; padding-top:8px">
         <button type="button" class="btn btn-primary" onclick= "saveAddEdit(${id})">Save</button>
         <button type="button" class="btn btn-secondary" onclick="cancelAdd()" >Close</button>
       </div>
@@ -451,15 +459,15 @@ function getOrderDetailModal(clientDropDown, customerDropDown){
     <form >
     <div class="row">
     <div class="form-group col-12">
-    <label for="channelOrderId">Channel Order ID</label>
+    <label for="channelOrderId" class="required">Channel Order ID</label>
     <input type="text" class="form-control" id="channelOrderId" name="channelOrderId" aria-describedby="text" placeholder="Enter channel order ID" autocomplete="off" minlength="1" maxlength="20" >
   </div> 
   <div class="form-group col-12">
-  <label for="clientId">Client Name</label>
+  <label for="clientId" class="required">Client Name</label>
   ${clientDropDown}
 </div>
  <div class="form-group col-12">
-<label for="customerId">Customer Name</label>
+<label for="customerId" class="required">Customer Name</label>
 ${customerDropDown}
 </div>
 </div>
@@ -519,8 +527,9 @@ function getClientSkuIdDropDownUpdate(){
                 obj  = result
                 let rows = ``
                 for(var i = 0; i < obj.length; i++){
+                    console.log(String(clientSkuId), obj[i]['clientSkuId'],String(clientSkuId) === String(obj[i]['clientSkuId']) )
                     if(String(clientSkuId) === String(obj[i]['clientSkuId'])){
-                        `<option value="${obj[i]['clientSkuId']}" selected>${obj[i]['clientSkuId']}</option>`
+                        rows +=  `<option value="${obj[i]['clientSkuId']}" selected>${obj[i]['clientSkuId']}</option>`
                     }else{
                         rows += `<option value="${obj[i]['clientSkuId']}">${obj[i]['clientSkuId']}</option>`
                     }

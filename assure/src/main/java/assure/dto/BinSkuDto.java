@@ -51,8 +51,6 @@ public class BinSkuDto {
         Long clientId = binSkuForm.getClientId();
         partyService.getCheck(clientId);
 
-        //TODO make it return map validateAnd
-        //TODO db is case insensative normalize clientskudId
         HashMap<String, Long> clientToGlobalSkuIdMap = getClientSkuIdToGSkuId(binSkuFormList, clientId);
         checkClientSkuIdExist(clientToGlobalSkuIdMap, binSkuFormList);
 

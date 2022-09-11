@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Api
 @RestController
 public class ChannelListingController {
@@ -26,9 +28,21 @@ public class ChannelListingController {
 
     @ApiOperation(value = "Get ChannelListings")
     @RequestMapping(path = "/channel-listings", method = RequestMethod.GET)
-    public List<ChannelListingData> getChannelListings(@RequestParam(name = "pageNumber") Integer pageNumber) {
-        return channelListingDto.select(pageNumber);
+    public List<ChannelListingData> getChannelListings(@RequestParam(required = false) Integer pageNumber,
+                                                       @RequestParam(required = false) Long channelId,
+                                                       @RequestParam(required = false) Long clientId ) throws ApiException {
+        if(!isNull(pageNumber))
+            return channelListingDto.select(pageNumber);
+
+        return channelListingDto.selectByChannelIdAndClientId(channelId,clientId);
+
     }
+
+//    @ApiOperation(value = "Get ChannelListings By ChannelId And ClientId")
+//    @RequestMapping(path = "/channel-listings", method = RequestMethod.GET)
+//    public List<ChannelListingData> getChannelListingByChannelIdAndClientId(@RequestParam Long channelId, @RequestParam Long clientId ) {
+//
+//    }
 
 
 }

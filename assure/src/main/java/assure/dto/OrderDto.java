@@ -155,7 +155,7 @@ public class OrderDto {
     public byte[] getInvoice(Long orderId) throws Exception {
         OrderPojo orderPojo = orderService.getCheck(orderId);
         if (orderPojo.getStatus() != FULFILLED)
-            throw new ApiException("order should be fulfilled for invoice generation");
+            throw new ApiException("Order should be fulfilled for invoice generation");
 
         if (!isNull(orderPojo.getInvoiceUrl())) {
             return returnFileStream(orderPojo.getInvoiceUrl());
@@ -248,13 +248,13 @@ public class OrderDto {
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             InventoryPojo inventoryPojo = inventoryService.selectByGlobalSkuId(orderItemPojo.getGlobalSkuId());
             if (isNull(inventoryPojo)) {
-                errorFormList.add(new ErrorData(row, "inventory for orderItem does not exists"));
+                throw new ApiException("Inventory for orderItem does not exists, row : " + row);
             } else {
                 orderItemPojoInvQtyMap.put(orderItemPojo, inventoryPojo);
             }
             row++;
         }
-        throwErrorIfNotEmpty(errorFormList);
+
         return orderItemPojoInvQtyMap;
     }
 

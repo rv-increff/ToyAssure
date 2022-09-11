@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static assure.util.ConversionUtil.*;
+import static assure.util.ValidationUtil.validateFormList;
 
 @Service
 public class PartyDto {
@@ -20,6 +21,7 @@ public class PartyDto {
     private PartyService partyService;
 
     public Integer add(List<PartyForm> partyFormList) throws ApiException {
+        validateFormList(partyFormList);
         partyService.add(convertListPartyFormToPojo(partyFormList));
         return partyFormList.size();
     }

@@ -58,6 +58,12 @@ public class ChannelListingDto {
     public List<ChannelListingData> select(Integer pageNumber){
         return convertChannelListingPojoListToData(channelListingService.select(pageNumber,PAGE_SIZE));
     }
+
+    public List<ChannelListingData> selectByChannelIdAndClientId(Long channelId, Long clientId) throws ApiException {
+        if(isNull(channelId) || isNull(clientId))
+            throw new ApiException("channel Id or client Id are NULL");
+        return convertChannelListingPojoListToData(channelListingService.selectByChannelIdAndClientId(channelId, clientId));
+    }
     //TODO DEV_REVIEW: method name could have been ConvertToChannleListingPojo
 
     private List<ChannelListingPojo> transformAndConvertChannelListingFormToPojo(Long clientId, Long channelId,

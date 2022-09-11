@@ -189,15 +189,15 @@ console.log(clientDropDown, channelDropDown)
     return `<form>
                 <div class="row">
                     <div class="form-group col-12">
-                        <label for="clientId" class="form-label">Client Name</label>
+                        <label for="clientId" class="form-label required">Client Name</label>
                         ${clientDropDown}
                     </div>
                     <div class="form-group col-12">
-                        <label for="channelId" class="form-label">Channel Name</label>
+                        <label for="channelId" class="form-label required">Channel Name</label>
                         ${channelDropDown}
                     </div>
                     <div class="form-group col-12">
-                        <label for="formFile" class="form-label">Upload CSV</label>
+                        <label for="formFile" class="form-label required">Upload CSV</label>
                         <input class="form-control" type="file" id="formFile" accept=".csv">
                     </div>
                     <div class="form-group col-12">
