@@ -31,12 +31,9 @@ public class OrderService {
         orderDao.add(orderPojo);
         Long orderId = orderPojo.getId();
 
-        //TODO DEV_REVIEW make this a separate private method
+
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
-            orderItemPojo.setOrderId(orderId);
-            orderItemPojo.setFulfilledQuantity(0L);
-            orderItemPojo.setAllocatedQuantity(0L);
-            orderItemDao.add(orderItemPojo);
+            add(orderItemPojo,orderId);
         }
     }
 
@@ -85,9 +82,16 @@ public class OrderService {
     }
 
     //TODO DEV_REVIEW rename it to update url
-    public void setUrl(Long id, String url) throws ApiException {
+    public void updateUrl(Long id, String url) throws ApiException {
         OrderPojo orderPojo = getCheck(id);
         orderPojo.setInvoiceUrl(url);
         orderDao.update();
+    }
+    //TODO DEV_REVIEW make this a separate private method
+    private void add(OrderItemPojo orderItemPojo, Long orderId){
+        orderItemPojo.setOrderId(orderId);
+        orderItemPojo.setFulfilledQuantity(0L);
+        orderItemPojo.setAllocatedQuantity(0L);
+        orderItemDao.add(orderItemPojo);
     }
 }

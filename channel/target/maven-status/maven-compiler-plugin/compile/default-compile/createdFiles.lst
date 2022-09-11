@@ -1,9 +1,10 @@
 channel/dto/OrderDto.class
+channel/controller/UIController.class
+channel/controller/RestControllerAdvice.class
 channel/util/HelperUtil.class
 channel/spring/ControllerConfig.class
 channel/controller/OrderController.class
 channel/spring/WebInitializer.class
-channel/controller/UIController.class
 channel/spring/ApiException.class
 channel/spring/SpringConfig.class
-channel/controller/RestControllerAdvice.class
+channel/dto/AssureClient.class

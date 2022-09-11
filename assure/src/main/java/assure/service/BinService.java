@@ -26,7 +26,6 @@ public class BinService {
         return binPojoList;
     }
 
-
     public List<BinPojo> select(Integer pageNumber, Integer pageSize) {
         return binDao.select(pageNumber, pageSize);
     }

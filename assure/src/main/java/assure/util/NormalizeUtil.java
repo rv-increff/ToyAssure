@@ -16,7 +16,7 @@ public class NormalizeUtil {
         partyPojo.setName(partyPojo.getName().toLowerCase());
     }
     public static void normalizeProductPojo(ProductPojo productPojo){
-        productPojo.setClientSkuId(productPojo.getClientSkuId().toLowerCase());
+        productPojo.setClientSkuId(productPojo.getClientSkuId().toUpperCase());
     }
 
 }

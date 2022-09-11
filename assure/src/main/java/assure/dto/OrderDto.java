@@ -1,7 +1,7 @@
 package assure.dto;
 
-import assure.model.*;
 import assure.model.OrderForm;
+import assure.model.*;
 import assure.pojo.*;
 import assure.service.*;
 import assure.spring.ApiException;
@@ -10,7 +10,6 @@ import assure.util.OrderStatus;
 import assure.util.PartyType;
 import com.google.common.collect.ImmutableMap;
 import commons.model.*;
-import commons.requests.Requests;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,16 +21,16 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static assure.util.ConversionUtil.*;
 import static assure.util.DataUtil.returnFileStream;
 import static assure.util.OrderStatus.ALLOCATED;
 import static assure.util.OrderStatus.FULFILLED;
-import static assure.util.ValidationUtil.*;
-import static commons.requests.Requests.objectToJsonString;
+import static assure.util.ValidationUtil.validateForm;
+import static assure.util.ValidationUtil.validateList;
 import static commons.util.pdfUtil.convertToPDF;
 import static commons.util.pdfUtil.jaxbObjectToXML;
 import static java.util.Objects.isNull;
@@ -63,6 +62,8 @@ public class OrderDto {
     private BinSkuService binSkuService;
     @Autowired
     private ChannelListingService channelListingService;
+    @Autowired
+    private ChannelClient channelClient;
 
     @Transactional(rollbackFor = ApiException.class)
     public Integer add(OrderForm orderForm) throws ApiException {
@@ -79,7 +80,9 @@ public class OrderDto {
         String channelOrderId = orderForm.getChannelOrderId();
         checkChannelIdAndChannelOrderIdPairNotExist(channelId, channelOrderId);
 
-        Map<String, Long> clientSkuIdToGlobalSkuIdMap = getCheckClientSkuId(orderItemFormList, orderForm.getClientId());
+        List<String> clientSkuIdList = orderItemFormList.stream().map(OrderItemForm::getClientSkuId).collect(Collectors.toList());
+        Map<String, Long> clientSkuIdToGlobalSkuIdMap = productService.getCheckClientSkuId(clientSkuIdList, orderForm.getClientId());
+
         OrderPojo orderPojo = convertOrderFormToOrderPojo(orderForm, channelId);
         List<OrderItemPojo> orderItemPojoList = convertOrderItemListToOrderItemPojo(orderForm.getOrderItemFormList(),
                 clientSkuIdToGlobalSkuIdMap);
@@ -90,26 +93,26 @@ public class OrderDto {
 
     //TODO DEV_REVIEW:rename to ChannelOrderForm
     @Transactional(rollbackFor = ApiException.class)
-    public Integer addChannelOrder(OrderFormChannel orderFormChannel) throws ApiException {
+    public Integer addChannelOrder(ChannelOrderForm channelOrderForm) throws ApiException {
 
-        List<OrderItemFormChannel> orderItemFormChannelList = orderFormChannel.getOrderItemFormChannelList();
-        validateForm(orderFormChannel);
+        List<OrderItemFormChannel> orderItemFormChannelList = channelOrderForm.getOrderItemFormChannelList();
+        validateForm(channelOrderForm);
         validateList("order Item List", orderItemFormChannelList, MAX_LIST_SIZE);
         checkDuplicateChannelSkuIds(orderItemFormChannelList);
 
-        partyService.checkByIdAndType(orderFormChannel.getClientId(), PartyType.CLIENT);
-        partyService.checkByIdAndType(orderFormChannel.getCustomerId(), PartyType.CUSTOMER);
+        partyService.checkByIdAndType(channelOrderForm.getClientId(), PartyType.CLIENT);
+        partyService.checkByIdAndType(channelOrderForm.getCustomerId(), PartyType.CUSTOMER);
 
-        Long channelId = channelService.getCheck(orderFormChannel.getChannelId()).getId();
+        Long channelId = channelService.getCheck(channelOrderForm.getChannelId()).getId();
 
-        String channelOrderId = orderFormChannel.getChannelOrderId();
+        String channelOrderId = channelOrderForm.getChannelOrderId();
         checkChannelIdAndChannelOrderIdPairNotExist(channelId, channelOrderId);
 
-        Map<String, Long> channelSkuIdToGlobalSkuIdMap = getCheckChannelSkuId(orderItemFormChannelList,
-                orderFormChannel.getClientId(), orderFormChannel.getChannelId());
-        OrderPojo orderPojo = convertOrderFormChannelToOrderPojo(orderFormChannel, channelId);
+        Map<String, Long> channelSkuIdToGlobalSkuIdMap = channelListingService.getCheckChannelSkuId(orderItemFormChannelList,
+                channelOrderForm.getClientId(), channelOrderForm.getChannelId());
+        OrderPojo orderPojo = convertOrderFormChannelToOrderPojo(channelOrderForm, channelId);
         List<OrderItemPojo> orderItemPojoList = convertOrderItemListChannelToOrderItemPojo(
-                orderFormChannel.getOrderItemFormChannelList(),
+                channelOrderForm.getOrderItemFormChannelList(),
                 channelSkuIdToGlobalSkuIdMap);
 
         orderService.add(orderPojo, orderItemPojoList);
@@ -142,13 +145,15 @@ public class OrderDto {
         return orderStatusUpdateForm;
     }
 
-    public List<OrderData> selectOrder(Integer pageNumber){
-        return convertOrderPojoListToData(orderService.selectOrder(pageNumber,PAGE_SIZE));
+    public List<OrderData> selectOrder(Integer pageNumber) {
+        return convertOrderPojoListToData(orderService.selectOrder(pageNumber, PAGE_SIZE));
     }
-    public List<OrderData> selectOrderItemsByInvoiceType(Integer pageNumber, InvoiceType type){
-        return convertOrderPojoListToData(orderService.selectOrderByInvoiceType(pageNumber,PAGE_SIZE,type));
+
+    public List<OrderData> selectOrderItemsByInvoiceType(Integer pageNumber, InvoiceType type) {
+        return convertOrderPojoListToData(orderService.selectOrderByInvoiceType(pageNumber, PAGE_SIZE, type));
     }
-    public List<OrderItemData> selectOrderItems(Long orderId){
+
+    public List<OrderItemData> selectOrderItems(Long orderId) {
         return convertOrderItemPojoListToData(orderService.selectOrderItem(orderId));
     }
 
@@ -165,7 +170,7 @@ public class OrderDto {
         if (channelService.getCheck(orderPojo.getChannelId()).getInvoiceType() == InvoiceType.SELF) {
             url = createPdfAndGetUrl(orderId);
         } else {
-            byte[] encoded = callChannelAndGetPdfByteArray(orderId);
+            byte[] encoded = fetchInvoiceFromChannel(orderId);
             byte[] pdfByteArray = java.util.Base64.getDecoder().decode(encoded);
 
             String pdfName = orderId + "_invoice.pdf";
@@ -175,7 +180,7 @@ public class OrderDto {
             out.close();
             url = pdfFile.getAbsolutePath();
         }
-        orderService.setUrl(orderId, url);
+        orderService.updateUrl(orderId, url);
         return returnFileStream(url);
     }
 
@@ -184,7 +189,7 @@ public class OrderDto {
         OrderPojo orderPojo = orderService.getCheck(id);
 
         List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItem(orderPojo.getId());
-        Map<OrderItemPojo, InventoryPojo> orderItemPojoInvQtyMap = getOrderItemPojoInvQtyMap(orderItemPojoList);
+        Map<OrderItemPojo, InventoryPojo> orderItemPojoInvQtyMap = inventoryService.getOrderItemPojoInvQtyMap(orderItemPojoList);
         Long countOfFullyAllocatedOrderItems = 0L;
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             Long invQty = orderItemPojoInvQtyMap.get(orderItemPojo).getAvailableQuantity();
@@ -208,7 +213,6 @@ public class OrderDto {
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             Long fulfilledQty = orderService.fulfillQty(orderItemPojo);
             inventoryService.fulfillQty(fulfilledQty, orderItemPojo.getGlobalSkuId());
-
         }
         orderService.updateStatus(id, FULFILLED);
     }
@@ -241,66 +245,6 @@ public class OrderDto {
         return url;
     }
 
-    private Map<OrderItemPojo, InventoryPojo> getOrderItemPojoInvQtyMap(List<OrderItemPojo> orderItemPojoList) throws ApiException {
-        Map<OrderItemPojo, InventoryPojo> orderItemPojoInvQtyMap = new HashMap<>();
-        List<ErrorData> errorFormList = new ArrayList<>();
-        Integer row = 1;
-        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
-            InventoryPojo inventoryPojo = inventoryService.selectByGlobalSkuId(orderItemPojo.getGlobalSkuId());
-            if (isNull(inventoryPojo)) {
-                throw new ApiException("Inventory for orderItem does not exists, row : " + row);
-            } else {
-                orderItemPojoInvQtyMap.put(orderItemPojo, inventoryPojo);
-            }
-            row++;
-        }
-
-        return orderItemPojoInvQtyMap;
-    }
-
-    //TODO DEV_REVIEW:this could be handled by static method in ProductService.
-    private Map<String, Long> getCheckClientSkuId(List<OrderItemForm> orderItemFormList, Long clientId) throws ApiException {
-        Map<String, Long> clientSkuIdToGlobalSkuIdMap = new HashMap<>();
-
-        List<ErrorData> errorFormList = new ArrayList<>();
-        Integer row = 1;
-        for (OrderItemForm orderItemForm : orderItemFormList) {
-            ProductPojo productPojo = productService.selectByClientSkuIdAndClientId(orderItemForm.getClientSkuId(), clientId);
-            if (isNull(productPojo)) {
-                errorFormList.add(new ErrorData(row, "clientSkuID does not exists"));
-                continue;
-            }
-            clientSkuIdToGlobalSkuIdMap.put(orderItemForm.getClientSkuId(), productPojo.getGlobalSkuId());
-
-            row++;
-        }
-        throwErrorIfNotEmpty(errorFormList);
-
-        return clientSkuIdToGlobalSkuIdMap;
-    }
-
-    private Map<String, Long> getCheckChannelSkuId(List<OrderItemFormChannel> orderItemFormChannelList, Long clientId,
-                                                   Long channelId) throws ApiException {
-        Map<String, Long> channelSkuIdToGlobalSkuIdMap = new HashMap<>();
-
-        List<ErrorData> errorFormList = new ArrayList<>();
-        Integer row = 1;
-        for (OrderItemFormChannel orderItemFormChannel : orderItemFormChannelList) {
-            ChannelListingPojo channelListingPojo = channelListingService.selectByChannelIdAndClientIdAndChannelSkuId(
-                    channelId,clientId, orderItemFormChannel.getChannelSkuId());
-            if (isNull(channelListingPojo)) {
-                errorFormList.add(new ErrorData(row, "channelSkuID does not exists"));
-                continue;
-            }
-            channelSkuIdToGlobalSkuIdMap.put(orderItemFormChannel.getChannelSkuId(), channelListingPojo.getGlobalSkuId());
-
-            row++;
-        }
-        throwErrorIfNotEmpty(errorFormList);
-
-        return channelSkuIdToGlobalSkuIdMap;
-    }
-
 
     private void checkChannelIdAndChannelOrderIdPairNotExist(Long channelId, String channelOrderId) throws ApiException {
         if (!isNull(orderService.selectByChannelIdAndChannelOrderId(channelId, channelOrderId))) {
@@ -308,15 +252,32 @@ public class OrderDto {
         }
     }
 
-    //TODO DEV_REVIEW:rename method to fetchInvoiceFromChannel
+    public List<OrderItemData> convertOrderItemPojoListToData(List<OrderItemPojo> orderItemPojoList) {
+        List<OrderItemData> orderItemInvoiceDataList = new ArrayList<>();
+        Map<Long, ProductPojo> globalSkuIdToPojo = productService.getGlobalSkuIdToPojo(orderItemPojoList.stream().
+                map(OrderItemPojo::getGlobalSkuId).collect(Collectors.toSet()));
 
-    private byte[] callChannelAndGetPdfByteArray(Long orderId) throws Exception {
+        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
+            orderItemInvoiceDataList.add(convertOrderItemPojToData(orderItemPojo,
+                    globalSkuIdToPojo.getOrDefault(orderItemPojo.getGlobalSkuId(), new ProductPojo()).getClientSkuId()));
+        }
+        return orderItemInvoiceDataList;
+    }
+
+
+    //TODO DEV_REVIEW:rename method to fetchInvoiceFromChannel
+    private byte[] fetchInvoiceFromChannel(Long orderId) throws Exception {
         OrderPojo orderPojo = orderService.getCheck(orderId);
         List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItem(orderId);
         List<OrderItemChannelData> orderItemChannelDataList = new ArrayList<>();
+
+        List<Long> gSkuList = orderItemPojoList.stream().map(OrderItemPojo::getGlobalSkuId).collect(Collectors.toList());
+        Map<String, ChannelListingPojo> globalSkuIdAndChannelIdAndClientIdToPojo = channelListingService.
+                getGlobalSkuIdAndChannelIdAndClientIdToPojo(gSkuList, orderPojo.getChannelId(), orderPojo.getClientId());
+
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
-            String channelSkuId = channelListingService.selectByGlobalSkuIdAndChannelIdAndClientId(orderItemPojo.getGlobalSkuId(),
-                    orderPojo.getChannelId(), orderPojo.getClientId()).getChannelSkuId();
+            String key = orderItemPojo.getGlobalSkuId() + "_" + orderPojo.getChannelId() + "_" + orderPojo.getClientId();
+            String channelSkuId = globalSkuIdAndChannelIdAndClientIdToPojo.get(key).getChannelSkuId();
             OrderItemChannelData orderItemChannelData = convertPojoOrderItemChannelToData(orderItemPojo, channelSkuId,
                     orderPojo.getChannelOrderId());
             orderItemChannelDataList.add(orderItemChannelData);
@@ -331,29 +292,9 @@ public class OrderDto {
         InvoiceDataChannel invoiceData = new InvoiceDataChannel(time, orderPojo.getChannelOrderId(), orderItemChannelDataList, total);
 
 
-        //TODO DEV_REVIEW:this URL should not be hardcoded. It should be taken from properties file. This code should be in ChannelClient
-        //TODO DEV_REVIEW:public methods declared below private.
-        //TODO DEV_REVIEW:Correct method name, avoid calling product service agian ans again
-        return Requests.post("http://localhost:9001/channel/orders/get-invoice", objectToJsonString(invoiceData)).getBytes();
-    }
-
-
-    public OrderItemData convertOrderItemPojToData(OrderItemPojo orderItemPojo){
-        OrderItemData orderItemData = new OrderItemData();
-        orderItemData.setOrderId(orderItemPojo.getOrderId());
-        orderItemData.setId(orderItemPojo.getId());
-        orderItemData.setSellingPricePerUnit(orderItemPojo.getSellingPricePerUnit());
-        orderItemData.setOrderedQuantity(orderItemPojo.getOrderedQuantity());
-        orderItemData.setAllocatedQuantity(orderItemPojo.getAllocatedQuantity());
-        orderItemData.setFulfilledQuantity(orderItemPojo.getFulfilledQuantity());
-        orderItemData.setClientSkuId(productService.selectByGlobalSkuId(orderItemPojo.getGlobalSkuId()).getClientSkuId());
-        return orderItemData;
-    }
-    public List<OrderItemData> convertOrderItemPojoListToData(List<OrderItemPojo> orderItemPojoList){
-        List<OrderItemData> orderItemInvoiceDataList = new ArrayList<>();
-        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
-            orderItemInvoiceDataList.add(convertOrderItemPojToData(orderItemPojo));
-        }
-        return orderItemInvoiceDataList;
+        //TODO DEV_REVIEW:this URL should not be hardcoded. It should be taken from properties file. This code should be in ChannelClient done
+        //TODO DEV_REVIEW:public methods declared below private. done
+        //TODO DEV_REVIEW:Correct method name, avoid calling product service agian ans again done
+        return channelClient.post("orders/get-invoice", invoiceData).getBytes();
     }
 }

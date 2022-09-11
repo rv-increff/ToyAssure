@@ -1,9 +1,11 @@
 package assure.service;
 
 import assure.dao.ProductDao;
+import assure.model.BinSkuItemForm;
 import assure.pojo.ProductPojo;
 import assure.spring.ApiException;
 import commons.model.ErrorData;
+import commons.model.OrderItemForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static assure.util.NormalizeUtil.normalizeProductPojo;
+import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
 import static java.util.Objects.isNull;
 
 @Service
@@ -23,7 +26,6 @@ public class ProductService {
 
     public void add(List<ProductPojo> productPojoList) throws ApiException {
         Long clientId = productPojoList.get(0).getClientId();
-        List<ErrorData> errorFormList = new ArrayList<>();
         List<ProductPojo> productPojoByClientList = selectByClientId(clientId);
         Set<String> clientSkuIdSet = productPojoByClientList.stream().map(ProductPojo::getClientSkuId)
                 .collect(Collectors.toSet());
@@ -60,7 +62,6 @@ public class ProductService {
                 throw new ApiException("clientSkuId - clientId pair exists");
             }
         }
-
         exists.setBrandId(productPojo.getBrandId());
         exists.setClientId(productPojo.getClientId());
         exists.setDescription(productPojo.getDescription());
@@ -90,10 +91,29 @@ public class ProductService {
 
     public Map<Long, ProductPojo> getGlobalSkuIdToPojo(Set<Long> globalSkuIdSet) {
         List<ProductPojo> productPojoList = productDao.selectForGlobalSkuIdList(new ArrayList<>(globalSkuIdSet));
-        Map<Long, ProductPojo> globalSkuIdToPojo = productPojoList.stream().
-                collect(Collectors.toMap(pojo -> pojo.getGlobalSkuId(), pojo -> pojo));
 
-        return globalSkuIdToPojo;
+        return productPojoList.stream().collect(Collectors.toMap(ProductPojo::getGlobalSkuId, pojo -> pojo));
+    }
+
+
+    //TODO DEV_REVIEW:this could be handled by static method in ProductService.
+    public Map<String, Long> getCheckClientSkuId(List<String> clientSkuIdList, Long clientId) throws ApiException {
+        List<ProductPojo> productPojoList = productDao.selectForClientSkuIdAndClientId(clientSkuIdList,clientId);
+        Map<String, ProductPojo> clientSkuIdToPojoMap = productPojoList.stream().collect(Collectors.toMap
+                (ProductPojo::getClientSkuId,ProductPojo->ProductPojo));
+        Map<String, Long>clientSkuIdToGlobalSkuIdMap = new HashMap<>();
+
+        for (String clientSkuId : clientSkuIdList) {
+            ProductPojo productPojo = clientSkuIdToPojoMap.get(clientSkuId);
+            if (isNull(productPojo))
+                throw new ApiException("clientSkuID does not exists");
+
+            clientSkuIdToGlobalSkuIdMap.put(clientSkuId, productPojo.getGlobalSkuId());
+
+
+        }
+
+        return clientSkuIdToGlobalSkuIdMap;
     }
 }
 

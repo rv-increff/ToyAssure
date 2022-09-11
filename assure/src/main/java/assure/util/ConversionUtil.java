@@ -129,7 +129,7 @@ public class ConversionUtil {
     }
 
     public static List<BinSkuPojo> convertListBinSkuFormToPojo(List<BinSkuItemForm> binSkuItemFormList,
-                                                               HashMap<String, Long> clientToGlobalSkuIdMap) {
+                                                               Map<String, Long> clientToGlobalSkuIdMap) {
         List<BinSkuPojo> binSkuPojoList = new ArrayList<>();
         for (BinSkuItemForm binSkuItemForm : binSkuItemFormList) {
             binSkuPojoList.add(convertBinSkuFormToPojo(binSkuItemForm, clientToGlobalSkuIdMap.get(binSkuItemForm.getClientSkuId())));
@@ -263,12 +263,12 @@ public class ConversionUtil {
 
         return orderPojo;
     }
- public static OrderPojo convertOrderFormChannelToOrderPojo(OrderFormChannel orderFormChannel, Long channelId) {
+ public static OrderPojo convertOrderFormChannelToOrderPojo(ChannelOrderForm channelOrderForm, Long channelId) {
         OrderPojo orderPojo = new OrderPojo();
 
-        orderPojo.setChannelOrderId(orderFormChannel.getChannelOrderId());
-        orderPojo.setCustomerId(orderFormChannel.getCustomerId());
-        orderPojo.setClientId(orderFormChannel.getClientId());
+        orderPojo.setChannelOrderId(channelOrderForm.getChannelOrderId());
+        orderPojo.setCustomerId(channelOrderForm.getCustomerId());
+        orderPojo.setClientId(channelOrderForm.getClientId());
         orderPojo.setChannelId(channelId);
 
         return orderPojo;
@@ -380,5 +380,18 @@ public class ConversionUtil {
         }
         return orderDataList;
     }
+
+    public static OrderItemData convertOrderItemPojToData(OrderItemPojo orderItemPojo, String clientSkuId){
+        OrderItemData orderItemData = new OrderItemData();
+        orderItemData.setOrderId(orderItemPojo.getOrderId());
+        orderItemData.setId(orderItemPojo.getId());
+        orderItemData.setSellingPricePerUnit(orderItemPojo.getSellingPricePerUnit());
+        orderItemData.setOrderedQuantity(orderItemPojo.getOrderedQuantity());
+        orderItemData.setAllocatedQuantity(orderItemPojo.getAllocatedQuantity());
+        orderItemData.setFulfilledQuantity(orderItemPojo.getFulfilledQuantity());
+        orderItemData.setClientSkuId(clientSkuId);
+        return orderItemData;
+    }
+
 }
 

@@ -17,16 +17,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
 
 public class DataUtil {
 
-    public static HashMap<String, Long> checkClientSkuIdExist(HashMap<String, Long> clientToGlobalSkuIdMap,
+    public static Map<String, Long> checkClientSkuIdExist(Map<String, Long> clientToGlobalSkuIdMap,
                                                               List<BinSkuItemForm> binSkuItemForms)
             throws ApiException {
 

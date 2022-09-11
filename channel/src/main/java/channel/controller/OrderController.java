@@ -2,7 +2,7 @@ package channel.controller;
 
 import channel.dto.OrderDto;
 import commons.model.InvoiceDataChannel;
-import commons.model.OrderFormChannel;
+import commons.model.ChannelOrderForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +20,8 @@ public class OrderController {
 
     @ApiOperation(value = "Create order")
     @RequestMapping(path = "/orders", method = RequestMethod.POST)
-    public String addOrder(@RequestBody OrderFormChannel orderFormChannel) throws Exception {
-        return orderDto.add(orderFormChannel);
+    public String addOrder(@RequestBody ChannelOrderForm channelOrderForm) throws Exception {
+        return orderDto.add(channelOrderForm);
     }
 
     @ApiOperation(value = "Get invoice")

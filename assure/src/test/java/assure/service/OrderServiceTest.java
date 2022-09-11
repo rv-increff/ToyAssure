@@ -124,7 +124,7 @@ public class OrderServiceTest extends AbstractTest {
     public void setUrl() throws ApiException {
         OrderPojo orderPojo = orderAdd();
         String url = getRandomString();
-        orderService.setUrl(orderPojo.getId(), url);
+        orderService.updateUrl(orderPojo.getId(), url);
         assertEquals(url, orderPojo.getInvoiceUrl());
     }
 

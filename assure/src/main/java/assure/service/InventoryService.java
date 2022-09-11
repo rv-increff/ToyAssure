@@ -2,12 +2,15 @@ package assure.service;
 
 import assure.dao.InventoryDao;
 import assure.pojo.InventoryPojo;
+import assure.pojo.OrderItemPojo;
 import assure.spring.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Objects.isNull;
 
@@ -56,5 +59,19 @@ public class InventoryService {
         }
         return inventoryPojo;
     }
+    public Map<OrderItemPojo, InventoryPojo> getOrderItemPojoInvQtyMap(List<OrderItemPojo> orderItemPojoList) throws ApiException {
+        Map<OrderItemPojo, InventoryPojo> orderItemPojoInvQtyMap = new HashMap<>();
+        Integer row = 1;
+        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
+            InventoryPojo inventoryPojo = selectByGlobalSkuId(orderItemPojo.getGlobalSkuId());
+            if (isNull(inventoryPojo)) {
+                throw new ApiException("Inventory for orderItem does not exists, row : " + row);
+            } else {
+                orderItemPojoInvQtyMap.put(orderItemPojo, inventoryPojo);
+            }
+            row++;
+        }
 
+        return orderItemPojoInvQtyMap;
+    }
 }

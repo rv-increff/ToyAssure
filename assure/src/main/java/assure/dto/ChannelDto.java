@@ -15,13 +15,12 @@ import static assure.util.ValidationUtil.validateForm;
 
 @Service
 public class ChannelDto {
-
-    private static final Integer PAGE_SIZE = 10;
     @Autowired
     private ChannelService channelService;
 
 
     //TODO DEV_REVIEW: PageNumber is not required. Channle list can never be that big to require a page number. Do not overoptimise.
+    //done
     public List<ChannelData> select() {
         return convertChannelPojoListToData(channelService.select());
     }

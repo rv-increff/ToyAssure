@@ -14,17 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static assure.util.ConversionUtil.*;
 import static assure.util.DataUtil.checkClientSkuIdExist;
 import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
 import static assure.util.ValidationUtil.validateList;
-import static java.util.Objects.isNull;
 
 @Service
 public class BinSkuDto {
@@ -41,7 +37,7 @@ public class BinSkuDto {
     private InventoryService inventoryService;
     @Autowired
     private PartyService partyService;
-//TODO trim strings
+
     @Transactional(rollbackFor = ApiException.class)
     public Integer add(BinSkuForm binSkuForm) throws ApiException {
         List<BinSkuItemForm> binSkuFormList = binSkuForm.getBinSkuItemFormList();
@@ -50,8 +46,9 @@ public class BinSkuDto {
         checkBinIdExists(binSkuFormList);
         Long clientId = binSkuForm.getClientId();
         partyService.getCheck(clientId);
-
-        HashMap<String, Long> clientToGlobalSkuIdMap = getClientSkuIdToGSkuId(binSkuFormList, clientId);
+        List<String> clientSkuIdList = binSkuFormList.stream().map(BinSkuItemForm::getClientSkuId)
+                .collect(Collectors.toList());
+        Map<String, Long> clientToGlobalSkuIdMap = productService.getCheckClientSkuId(clientSkuIdList, clientId);
         checkClientSkuIdExist(clientToGlobalSkuIdMap, binSkuFormList);
 
         List<BinSkuPojo> binSkuPojoList = binSkuService.add(convertListBinSkuFormToPojo(binSkuFormList, clientToGlobalSkuIdMap));
@@ -70,30 +67,17 @@ public class BinSkuDto {
         return binSkuUpdateForm;
     }
 
-    //TODO DEV_REVIEW: this should be a public staticmethod in ProductService.
-    private HashMap<String, Long> getClientSkuIdToGSkuId(List<BinSkuItemForm> binSkuFormList, Long clientId) {
-        List<String> clientSkuIdList = binSkuFormList.stream().map(BinSkuItemForm::getClientSkuId)
-                .collect(Collectors.toList());
 
-        HashMap<String, Long> clientToGlobalSkuIdMap = new HashMap<>();
-        for (String clientSkuId : clientSkuIdList) {
-            ProductPojo productPojo = productService.selectByClientSkuIdAndClientId(clientSkuId, clientId);
-            if (!isNull(productPojo)) {
-                clientToGlobalSkuIdMap.put(productPojo.getClientSkuId(), productPojo.getGlobalSkuId());
-            }
-        }
-        return clientToGlobalSkuIdMap;
-    }
-
-    //TODO DEV_REVIEW: Fetch once and for all from DB the binIds that exists and collect them in SET and then compare
+    //TODO DEV_REVIEW: Fetch once and for all from DB the binIds that exists and collect them in SET and then compare -done
     private void checkBinIdExists(List<BinSkuItemForm> binSkuItemFormList) throws ApiException {
-        Integer row = 1;
         List<ErrorData> errorFormList = new ArrayList<>();
         List<Long> binIds = binSkuItemFormList.stream().map(BinSkuItemForm::getBinId).distinct().collect(Collectors.toList());
-//        Set<Long> existingBinIds = mewme(binIds);
+        Set<Long> existingBinIds = binSkuService.selectForBinIds(binIds).stream().map(BinSkuPojo::getBinId)
+                .collect(Collectors.toSet());
 
+        Integer row = 1;
         for (BinSkuItemForm binSkuForm : binSkuItemFormList) {
-            if (isNull(binService.selectById(binSkuForm.getBinId()))) {
+            if (existingBinIds.contains(binSkuForm.getBinId())) {
                 errorFormList.add(new ErrorData(row, "Bin id doesn't exist, binId : " + binSkuForm.getBinId()));
             }
             row++;
@@ -113,7 +97,7 @@ public class BinSkuDto {
 
     private List<BinSkuData> convertListBinSkuPojoToData(List<BinSkuPojo> binSkuPojoList) {
         List<BinSkuData> binSkuDataList = new ArrayList<>();
-        if (binSkuPojoList.size()==0)
+        if (binSkuPojoList.size() == 0)
             return binSkuDataList;
 
         Map<Long, ProductPojo> globalSkuIdToPojo = productService.getGlobalSkuIdToPojo(binSkuPojoList.stream().

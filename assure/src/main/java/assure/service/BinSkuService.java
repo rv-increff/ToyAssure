@@ -9,9 +9,8 @@ import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static assure.util.ValidationUtil.checkDuplicateGlobalSkuAndBinIdPair;
 import static java.lang.Math.min;
@@ -28,9 +27,10 @@ public class BinSkuService {
         // for "Abc" and "abc" will be same so checking globalSkuId-binId pair for duplicacy is enough.
         //its here because 
         checkDuplicateGlobalSkuAndBinIdPair(binSkuPojoList);
-
+        Map<String, BinSkuPojo> globalSkuIdAndBinIdToBinSKuPojo = getGlobalSkuIdAndBinIdToBinSKuPojo(binSkuPojoList);
         for (BinSkuPojo binSkuPojo : binSkuPojoList) {
-            BinSkuPojo exists = binSkuDao.selectByGlobalSkuIdAndBinId(binSkuPojo.getGlobalSkuId(), binSkuPojo.getBinId());
+            String key = binSkuPojo.getGlobalSkuId()+"_"+ binSkuPojo.getBinId();
+            BinSkuPojo exists = globalSkuIdAndBinIdToBinSKuPojo.get(key);
             if (isNull(exists)) {
                 binSkuDao.add(binSkuPojo);
             } else {
@@ -39,6 +39,10 @@ public class BinSkuService {
             }
         }
         return binSkuPojoList;
+    }
+
+    public List<BinSkuPojo> selectForBinIds(List<Long> binIdList){
+        return binSkuDao.selectForBinIds(binIdList);
     }
 
     public Pair<Long, Long> update(BinSkuPojo binSkuPojo) throws ApiException {
@@ -68,6 +72,10 @@ public class BinSkuService {
             if (allocateQty == 0) break;
         }
     }
-
+    private Map<String, BinSkuPojo> getGlobalSkuIdAndBinIdToBinSKuPojo(List<BinSkuPojo> binSkuPojoList){
+        List<BinSkuPojo> exists = binSkuDao.selectForGlobalSkuIdAndBinId(binSkuPojoList);
+        return exists.stream().collect(Collectors.
+                toMap(binSkuPojo -> binSkuPojo.getGlobalSkuId()+"_"+ binSkuPojo.getBinId(),binSkuPojo->binSkuPojo));
+    }
 
 }

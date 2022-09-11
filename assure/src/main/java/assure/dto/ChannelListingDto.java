@@ -49,7 +49,7 @@ public class ChannelListingDto {
         partyService.getCheck(clientId);
         channelService.getCheck(channelId);
 
-        channelListingService.add(transformAndConvertChannelListingFormToPojo(clientId, channelId,
+        channelListingService.add(convertChannelListingFormToPojo(clientId, channelId,
                 channelListingUploadForm.getChannelListingFormList()));
 
         return channelListingUploadForm.getChannelListingFormList().size();
@@ -64,10 +64,10 @@ public class ChannelListingDto {
             throw new ApiException("channel Id or client Id are NULL");
         return convertChannelListingPojoListToData(channelListingService.selectByChannelIdAndClientId(channelId, clientId));
     }
-    //TODO DEV_REVIEW: method name could have been ConvertToChannleListingPojo
 
-    private List<ChannelListingPojo> transformAndConvertChannelListingFormToPojo(Long clientId, Long channelId,
-                                                                                 List<ChannelListingForm> channelListingFormList)
+    //TODO DEV_REVIEW: method name could have been ConvertToChannleListingPojo
+    private List<ChannelListingPojo> convertChannelListingFormToPojo(Long clientId, Long channelId,
+                                                                     List<ChannelListingForm> channelListingFormList)
             throws ApiException {
 
         List<ChannelListingPojo> channelListingPojoList = new ArrayList<>();
@@ -76,7 +76,7 @@ public class ChannelListingDto {
         Integer row = 1;
         for (ChannelListingForm channelListingForm : channelListingFormList) {
             ChannelListingPojo channelListingPojo = new ChannelListingPojo();
-//TODO use map to get data getCheckMap
+
             ProductPojo productPojo = productService.selectByClientSkuIdAndClientId(channelListingForm.getClientSkuId(),
                     clientId);
             if (isNull(productPojo)) {

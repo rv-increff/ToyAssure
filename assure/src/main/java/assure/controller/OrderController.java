@@ -7,7 +7,7 @@ import assure.model.OrderItemData;
 import assure.model.OrderStatusUpdateForm;
 import assure.spring.ApiException;
 import assure.util.InvoiceType;
-import commons.model.OrderFormChannel;
+import commons.model.ChannelOrderForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +32,8 @@ public class OrderController {
 
     @ApiOperation(value = "Create channel order")
     @RequestMapping(path = "/orders/channel-orders", method = RequestMethod.POST)
-    public Integer addChannelOrder(@RequestBody OrderFormChannel orderFormChannel) throws ApiException {
-        return orderDto.addChannelOrder(orderFormChannel);
+    public Integer addChannelOrder(@RequestBody ChannelOrderForm channelOrderForm) throws ApiException {
+        return orderDto.addChannelOrder(channelOrderForm);
     }
 
     @ApiOperation(value = "Update order status")

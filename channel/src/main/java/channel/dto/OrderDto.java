@@ -1,8 +1,8 @@
 package channel.dto;
 
 import commons.model.InvoiceDataChannel;
-import commons.model.OrderFormChannel;
-import commons.requests.Requests;
+import commons.model.ChannelOrderForm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.xml.transform.TransformerException;
@@ -15,8 +15,10 @@ import static commons.util.pdfUtil.jaxbObjectToXML;
 
 @Service
 public class OrderDto {
-    public String add(OrderFormChannel orderFormChannel) throws Exception {
-        return Requests.post("http://localhost:9000/assure/orders/channel-orders", Requests.objectToJsonString(orderFormChannel));
+    @Autowired
+    AssureClient assureClient;
+    public String add(ChannelOrderForm channelOrderForm) throws Exception {
+        return assureClient.post("orders/channel-orders", channelOrderForm);
     }
 
     public byte[] getInvoice(InvoiceDataChannel invoiceDataChannel) throws IOException, TransformerException {
