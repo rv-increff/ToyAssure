@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-@MappedSuperclass //TODO get reason-> without this it would consider it as a pojo and create a table
+@MappedSuperclass
 public class AbstractPojo {
 
     @Version

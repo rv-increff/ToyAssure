@@ -109,7 +109,7 @@ public class ConversionUtil {
         return binData;
     }
 
-    public static List<BinData> convertListBinPojoToData(List<BinPojo> binPojoList) {
+    public static List<BinData> convertBinPojoListToData(List<BinPojo> binPojoList) {
         List<BinData> binDataList = new ArrayList<>();
         for (BinPojo binPojo : binPojoList) {
             binDataList.add(convertBinPojoToData(binPojo));

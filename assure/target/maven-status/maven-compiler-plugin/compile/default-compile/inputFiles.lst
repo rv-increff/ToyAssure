@@ -14,7 +14,7 @@
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/service/BinSkuService.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/pojo/TableConstants.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/dao/BinSkuDao.java
-/Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/spring/PostConstructAssure.java
+/Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/spring/PostConstructConfig.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/model/PartyData.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/spring/ControllerConfig.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/dto/PartyDto.java

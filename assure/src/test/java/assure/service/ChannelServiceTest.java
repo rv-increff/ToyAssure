@@ -1,7 +1,8 @@
 package assure.service;
 
 import assure.config.QaConfig;
-import assure.util.AbstractTest;
+import assure.util.BaseTest;
+import assure.util.TestData;
 import assure.pojo.ChannelPojo;
 import assure.spring.ApiException;
 import org.junit.Assert;
@@ -20,34 +21,32 @@ import java.util.List;
 
 import static org.junit.Assert.fail;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = QaConfig.class, loader = AnnotationConfigWebContextLoader.class)
-@WebAppConfiguration("src/test/webapp")
-@Transactional
-public class ChannelServiceTest extends AbstractTest {
+public class ChannelServiceTest extends BaseTest {
 
     @Autowired
     private ChannelService channelService;
+    @Autowired
+    private TestData testData;
 
     @Test
     public void selectTest() {
         List<ChannelPojo> channelPojoList = new ArrayList<>();
-        channelPojoList.addAll(channelSelect());
+        channelPojoList.addAll(testData.channelSelect());
         for (int i = 0; i < 5; i++) {
-            channelPojoList.add(channelAdd());
+            channelPojoList.add(testData.channelAdd());
         }
         Assert.assertEquals(new HashSet<>(channelPojoList), new HashSet<>(channelService.select()));
     }
 
     @Test
     public void addTest() throws ApiException {
-        ChannelPojo channelPojo = getChannel();
+        ChannelPojo channelPojo = testData.getChannel();
         channelService.add(channelPojo);
     }
 
     @Test
     public void addErrorTest() {
-        ChannelPojo channelPojo = channelAdd();
+        ChannelPojo channelPojo = testData.channelAdd();
         try {
             channelService.add(channelPojo);
             fail("error not thrown");
@@ -58,19 +57,19 @@ public class ChannelServiceTest extends AbstractTest {
 
     @Test
     public void selectByNameTest() {
-        ChannelPojo channelPojo = channelAdd();
+        ChannelPojo channelPojo = testData.channelAdd();
         Assert.assertEquals(channelPojo, channelService.selectByName(channelPojo.getName()));
     }
 
     @Test
     public void getCheckTest() throws ApiException {
-        ChannelPojo channelPojo = channelAdd();
+        ChannelPojo channelPojo = testData.channelAdd();
         Assert.assertEquals(channelPojo, channelService.getCheck(channelPojo.getId()));
     }
 
     @Test
     public void getCheckErrorTest() throws ApiException {
-        ChannelPojo channelPojo = channelAdd();
+        ChannelPojo channelPojo = testData.channelAdd();
 
         try {
             channelService.getCheck(channelPojo.getId() + 1);

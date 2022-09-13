@@ -2,16 +2,19 @@ package assure.dto;
 
 import assure.model.PartyData;
 import assure.model.PartyForm;
+import assure.model.PartySearchForm;
 import assure.service.PartyService;
 import assure.spring.ApiException;
 import assure.util.PartyType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static assure.util.ConversionUtil.*;
 import static assure.util.ValidationUtil.validateFormList;
+import static java.util.Objects.isNull;
 
 @Service
 public class PartyDto {
@@ -24,6 +27,15 @@ public class PartyDto {
         validateFormList(partyFormList);
         partyService.add(convertListPartyFormToPojo(partyFormList));
         return partyFormList.size();
+    }
+
+    public List<PartyData> partySearch(PartySearchForm partySearchForm){
+        if(!isNull(partySearchForm.getPageNumber()))
+            return select(partySearchForm.getPageNumber());
+        if(!isNull(partySearchForm.getType()))
+            return selectByPartyType(partySearchForm.getType());
+
+        return new ArrayList<>();
     }
 
     public List<PartyData> select(Integer pageNumber) {

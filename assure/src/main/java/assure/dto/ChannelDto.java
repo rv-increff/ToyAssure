@@ -19,7 +19,7 @@ public class ChannelDto {
     private ChannelService channelService;
 
 
-    //TODO DEV_REVIEW: PageNumber is not required. Channle list can never be that big to require a page number. Do not overoptimise.
+    //TODO DEV_REVIEW: PageNumber is not required. Channel list can never be that big to require a page number. Do not overoptimise.
     //done
     public List<ChannelData> select() {
         return convertChannelPojoListToData(channelService.select());

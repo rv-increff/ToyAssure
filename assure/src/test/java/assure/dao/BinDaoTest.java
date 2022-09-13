@@ -1,43 +1,39 @@
 package assure.dao;
 
-import assure.config.QaConfig;
 import assure.pojo.BinPojo;
-import assure.util.AbstractTest;
+import assure.util.BaseTest;
+import assure.util.TestData;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.AnnotationConfigWebContextLoader;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = QaConfig.class, loader = AnnotationConfigWebContextLoader.class)
-@WebAppConfiguration("src/test/webapp")
-@Transactional
-public class BinDaoTest extends AbstractTest {
+public class BinDaoTest extends BaseTest {
+
+    @Autowired
+    private BinDao binDao;
+    @Autowired
+    private TestData testData;
 
     @Test
     public void addTest(){
-        binAdd();
+        testData.binAdd();
     }
 
     @Test
     public void selectTest(){
         List<BinPojo> binPojoList = new ArrayList<>();
         for(int i=0;i<5;i++)
-            binPojoList.add(binAdd());
+            binPojoList.add(testData.binAdd());
 
-        Assert.assertEquals(binPojoList, binSelect());
+        Assert.assertEquals(binPojoList, testData.binSelect());
     }
 
     @Test
     public void selectByIdTest(){
-        BinPojo binPojo = binAdd();
+        BinPojo binPojo = testData.binAdd();
         Assert.assertEquals(binPojo, binDao.selectById(binPojo.getBinId()));
     }
 

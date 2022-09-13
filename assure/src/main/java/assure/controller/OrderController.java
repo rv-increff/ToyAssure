@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -37,14 +38,13 @@ public class OrderController {
     }
 
     @ApiOperation(value = "Update order status")
-    @RequestMapping(path = "/orders", method = RequestMethod.PATCH) //TODO /orders   /order/upload-order
+    @RequestMapping(path = "/orders", method = RequestMethod.PATCH)
     public OrderStatusUpdateForm updateStatus(@RequestBody OrderStatusUpdateForm orderStatusUpdateForm) throws ApiException {
         return orderDto.updateStatus(orderStatusUpdateForm);
     }
 
     @ApiOperation(value = "Get invoice")
     @RequestMapping(path = "/orders/{orderId}/get-invoice", method = RequestMethod.GET)
-    //TODO /orders   /order/upload-order
     public byte[] getInvoice(@PathVariable Long orderId) throws Exception {
         return orderDto.getInvoice(orderId);
     }
@@ -57,11 +57,12 @@ public class OrderController {
 
     @ApiOperation(value = "Get orders")
     @RequestMapping(path = "/orders", method = RequestMethod.GET)
-    public List<OrderData> getOrders(@RequestParam(required = false, name = "InvoiceType") InvoiceType type, @RequestParam(name = "pageNumber") Integer pageNumber) {
-        if (isNull(type))
+    public List<OrderData> getOrders(@RequestParam(required = false) InvoiceType type, @RequestParam Integer pageNumber) {
+        if (isNull(type) && !isNull(pageNumber))
             return orderDto.selectOrder(pageNumber);
-        else
+        if(!isNull(pageNumber))
             return orderDto.selectOrderItemsByInvoiceType(pageNumber, type);
+        return new ArrayList<>();
     }
 
 

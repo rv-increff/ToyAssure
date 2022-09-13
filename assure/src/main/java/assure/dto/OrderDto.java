@@ -91,7 +91,7 @@ public class OrderDto {
         return orderItemFormList.size();
     }
 
-    //TODO DEV_REVIEW:rename to ChannelOrderForm
+    //TODO DEV_REVIEW:rename to ChannelOrderForm done
     @Transactional(rollbackFor = ApiException.class)
     public Integer addChannelOrder(ChannelOrderForm channelOrderForm) throws ApiException {
 
@@ -125,7 +125,7 @@ public class OrderDto {
     public OrderStatusUpdateForm updateStatus(OrderStatusUpdateForm orderStatusUpdateForm) throws ApiException {
         validateForm(orderStatusUpdateForm);
         OrderPojo orderPojo = orderService.getCheck(orderStatusUpdateForm.getOrderId());
-
+        //TODO split functions
         //TODO DEV_REVIEW:Invalid and not "invalid"
         if (validStatusUpdateMap.get(orderPojo.getStatus()) != orderStatusUpdateForm.getUpdateStatusTo()) {
             throw new ApiException("Invalid order update status");
@@ -183,6 +183,17 @@ public class OrderDto {
         orderService.updateUrl(orderId, url);
         return returnFileStream(url);
     }
+    public List<OrderItemData> convertOrderItemPojoListToData(List<OrderItemPojo> orderItemPojoList) {
+        List<OrderItemData> orderItemInvoiceDataList = new ArrayList<>();
+        Map<Long, ProductPojo> globalSkuIdToPojo = productService.getGlobalSkuIdToPojo(orderItemPojoList.stream().
+                map(OrderItemPojo::getGlobalSkuId).collect(Collectors.toSet()));
+
+        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
+            orderItemInvoiceDataList.add(convertOrderItemPojToData(orderItemPojo,
+                    globalSkuIdToPojo.getOrDefault(orderItemPojo.getGlobalSkuId(), new ProductPojo()).getClientSkuId()));
+        }
+        return orderItemInvoiceDataList;
+    }
 
     @Transactional(rollbackFor = ApiException.class)
     private void allocateOrder(Long id) throws ApiException {
@@ -219,7 +230,7 @@ public class OrderDto {
 
     private String createPdfAndGetUrl(Long orderId) throws ApiException, IOException, TransformerException {
         OrderPojo orderPojo = orderService.getCheck(orderId);
-        List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItem(orderId); //TODO remove invoice controller
+        List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItem(orderId);
         List<OrderItemInvoiceData> orderItemInvoiceDataList = new ArrayList<>();
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             String clientSkuId = productService.selectByGlobalSkuId(orderItemPojo.getGlobalSkuId()).getClientSkuId();
@@ -237,13 +248,16 @@ public class OrderDto {
 
         String xml = jaxbObjectToXML(oItem, InvoiceData.class);
         String pdfName = orderId + "_invoice.pdf";
-        File xsltFile = new File("src", "invoice.xsl");
-        File pdfFile = new File("src", pdfName);
+        File xsltFile = new File("src/invoiceTemplate", "invoice.xsl");
+        File pdfFile = new File("src/invoice", pdfName);
         System.out.println(xml);
         convertToPDF(oItem, xsltFile, pdfFile, xml);
         String url = pdfFile.toPath().toAbsolutePath().toString();
         return url;
     }
+
+
+
 
 
     private void checkChannelIdAndChannelOrderIdPairNotExist(Long channelId, String channelOrderId) throws ApiException {
@@ -252,20 +266,6 @@ public class OrderDto {
         }
     }
 
-    public List<OrderItemData> convertOrderItemPojoListToData(List<OrderItemPojo> orderItemPojoList) {
-        List<OrderItemData> orderItemInvoiceDataList = new ArrayList<>();
-        Map<Long, ProductPojo> globalSkuIdToPojo = productService.getGlobalSkuIdToPojo(orderItemPojoList.stream().
-                map(OrderItemPojo::getGlobalSkuId).collect(Collectors.toSet()));
-
-        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
-            orderItemInvoiceDataList.add(convertOrderItemPojToData(orderItemPojo,
-                    globalSkuIdToPojo.getOrDefault(orderItemPojo.getGlobalSkuId(), new ProductPojo()).getClientSkuId()));
-        }
-        return orderItemInvoiceDataList;
-    }
-
-
-    //TODO DEV_REVIEW:rename method to fetchInvoiceFromChannel
     private byte[] fetchInvoiceFromChannel(Long orderId) throws Exception {
         OrderPojo orderPojo = orderService.getCheck(orderId);
         List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItem(orderId);
@@ -291,10 +291,6 @@ public class OrderDto {
         }
         InvoiceDataChannel invoiceData = new InvoiceDataChannel(time, orderPojo.getChannelOrderId(), orderItemChannelDataList, total);
 
-
-        //TODO DEV_REVIEW:this URL should not be hardcoded. It should be taken from properties file. This code should be in ChannelClient done
-        //TODO DEV_REVIEW:public methods declared below private. done
-        //TODO DEV_REVIEW:Correct method name, avoid calling product service agian ans again done
         return channelClient.post("orders/get-invoice", invoiceData).getBytes();
     }
 }

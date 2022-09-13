@@ -14,31 +14,31 @@ import java.util.List;
 public class PartyDao extends AbstractDao<PartyPojo> {
     public PartyPojo selectById(Long id) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery cr = cr();
-        Root<PartyPojo> root = cr.from(this.clazz);
-        cr = cr.select(root);
-        cr.where(cb.equal(root.get("id"), id));
-        TypedQuery<PartyPojo> query = em.createQuery(cr);
+        CriteriaQuery criteriaQuery = criteriaQuery();
+        Root<PartyPojo> root = criteriaQuery.from(this.clazz);
+        criteriaQuery = criteriaQuery.select(root);
+        criteriaQuery.where(cb.equal(root.get("id"), id));
+        TypedQuery<PartyPojo> query = em.createQuery(criteriaQuery);
         return getSingle(query);
     }
  public List<PartyPojo> selectByPartyType(PartyType type) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery cr = cr();
-        Root<PartyPojo> root = cr.from(this.clazz);
-        cr = cr.select(root);
-        cr.where(cb.equal(root.get("type"), type));
-        TypedQuery<PartyPojo> query = em.createQuery(cr);
+        CriteriaQuery criteriaQuery = criteriaQuery();
+        Root<PartyPojo> root = criteriaQuery.from(this.clazz);
+        criteriaQuery = criteriaQuery.select(root);
+        criteriaQuery.where(cb.equal(root.get("type"), type));
+        TypedQuery<PartyPojo> query = em.createQuery(criteriaQuery);
         return query.getResultList();
     }
 
 
     public PartyPojo selectByNameAndPartyType(String name, PartyType type) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery cr = cr();
-        Root<PartyPojo> root = cr.from(this.clazz);
-        cr = cr.select(root);
-        cr.where(cb.and((cb.equal(root.get("name"), name)), (cb.equal(root.get("type"), type))));
-        TypedQuery<PartyPojo> query = em.createQuery(cr);
+        CriteriaQuery criteriaQuery = criteriaQuery();
+        Root<PartyPojo> root = criteriaQuery.from(this.clazz);
+        criteriaQuery = criteriaQuery.select(root);
+        criteriaQuery.where(cb.and((cb.equal(root.get("name"), name)), (cb.equal(root.get("type"), type))));
+        TypedQuery<PartyPojo> query = em.createQuery(criteriaQuery);
         return getSingle(query);
     }
 }

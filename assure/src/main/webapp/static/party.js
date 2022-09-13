@@ -1,18 +1,19 @@
 var pageNumber = 0
 function loadParty() {
-    // Instantiate an new XHR Object
-    const xhr = new XMLHttpRequest();
-
-    // Open an obejct (GET/POST, PATH,
-    // ASYN-TRUE/FALSE)
-    xhr.open("GET", `http://localhost:9000/assure/parties?pageNumber=${pageNumber}`, true);
-    // When response is ready
-    xhr.onload = function () {
-        if (this.status === 200) {
-            // Changing string data into JSON Object
+    $.ajax({
+        type: "POST",
+        contentType: 'application/json',
+        url: `http://localhost:9000/assure/parties/search`,
+        data: JSON.stringify([{
+            pageNumber: pageNumber,
+        }]),
+        processData: false,
+        dataType: 'json',
+        success: function (result) {
+            
             obj = JSON.parse(this.responseText);
             console.log(obj, "inLoadfuntion");
-            // Getting the ul element
+           
             let body = document.getElementById("partyTbody");
 
             str = ""
@@ -27,14 +28,11 @@ function loadParty() {
             }
             body.innerHTML = str;
             checkNextPageNotExist()
-        }
-        else {
+        },
+        error: function (xhr, status, error) {
             console.log("cannot fetch party");
         }
-    }
-
-    // At last send the request
-    xhr.send();
+    });
 }
 
 function onChangeType(){
@@ -60,16 +58,13 @@ function prevPage() {
 }
 
 function checkNextPageNotExist() {
-    // Instantiate an new XHR Object
-    const xhr = new XMLHttpRequest();
 
-    // Open an obejct (GET/POST, PATH,
-    // ASYN-TRUE/FALSE)
+    const xhr = new XMLHttpRequest();
     xhr.open("GET", `http://localhost:9000/assure/parties?pageNumber=${pageNumber + 1}`, true);
-    // When response is ready
+
     xhr.onload = function () {
         if (this.status === 200) {
-            // Changing string data into JSON Object
+
             obj = JSON.parse(this.responseText);
             console.log(obj, obj.length === 0);
             if (obj.length === 0) {
@@ -86,7 +81,6 @@ function checkNextPageNotExist() {
         }
     }
 
-    // At last send the request
     xhr.send();
 }
 

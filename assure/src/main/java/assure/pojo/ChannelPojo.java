@@ -6,13 +6,12 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-import static assure.pojo.TableConstants.SEQ_CHANNEL;
-import static assure.pojo.TableConstants.SEQ_INITIAL_VALUE;
+import static assure.pojo.TableConstants.*;
 
 @Getter
 @Setter
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"name"}, name = UK_CHANNEL)})
 public class ChannelPojo extends AbstractPojo {
     @Id
     @TableGenerator(name = SEQ_CHANNEL, initialValue = SEQ_INITIAL_VALUE)

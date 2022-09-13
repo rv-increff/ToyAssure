@@ -30,19 +30,11 @@ public class ChannelListingController {
     @RequestMapping(path = "/channel-listings", method = RequestMethod.GET)
     public List<ChannelListingData> getChannelListings(@RequestParam(required = false) Integer pageNumber,
                                                        @RequestParam(required = false) Long channelId,
-                                                       @RequestParam(required = false) Long clientId ) throws ApiException {
-        if(!isNull(pageNumber))
+                                                       @RequestParam(required = false) Long clientId) throws ApiException {
+        if (!isNull(pageNumber))
             return channelListingDto.select(pageNumber);
-
-        return channelListingDto.selectByChannelIdAndClientId(channelId,clientId);
+        return channelListingDto.selectByChannelIdAndClientId(channelId, clientId);
 
     }
-
-//    @ApiOperation(value = "Get ChannelListings By ChannelId And ClientId")
-//    @RequestMapping(path = "/channel-listings", method = RequestMethod.GET)
-//    public List<ChannelListingData> getChannelListingByChannelIdAndClientId(@RequestParam Long channelId, @RequestParam Long clientId ) {
-//
-//    }
-
 
 }

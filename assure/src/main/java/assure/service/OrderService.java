@@ -22,9 +22,9 @@ public class OrderService {
 
     //TODO DEV_REVIEW add access specifiers
     @Autowired
-    OrderDao orderDao;
+    private OrderDao orderDao;
     @Autowired
-    OrderItemDao orderItemDao;
+    private OrderItemDao orderItemDao;
 
     public void add(OrderPojo orderPojo, List<OrderItemPojo> orderItemPojoList) throws ApiException {
         orderPojo.setStatus(OrderStatus.CREATED);

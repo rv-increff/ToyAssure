@@ -1,7 +1,8 @@
 package assure.service;
 
 import assure.config.QaConfig;
-import assure.util.AbstractTest;
+import assure.util.BaseTest;
+import assure.util.TestData;
 import assure.pojo.OrderItemPojo;
 import assure.pojo.OrderPojo;
 import assure.spring.ApiException;
@@ -25,21 +26,19 @@ import static java.lang.Math.min;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = QaConfig.class, loader = AnnotationConfigWebContextLoader.class)
-@WebAppConfiguration("src/test/webapp")
-@Transactional
-public class OrderServiceTest extends AbstractTest {
+public class OrderServiceTest extends BaseTest {
 
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private TestData testData;
 
     @Test
     public void addTest() throws ApiException {
-        OrderPojo orderPojo = getOrder();
+        OrderPojo orderPojo = testData.getOrder();
         List<OrderItemPojo> orderItemPojoList = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            orderItemPojoList.add(orderItemAdd(orderPojo.getId()));
+            orderItemPojoList.add(testData.orderItemAdd(orderPojo.getId()));
         }
         orderService.add(orderPojo, orderItemPojoList);
     }
@@ -48,24 +47,24 @@ public class OrderServiceTest extends AbstractTest {
     public void selectOrderTest() {
         List<OrderPojo> orderPojoList = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            orderPojoList.add(orderAdd());
+            orderPojoList.add(testData.orderAdd());
         }
         Assert.assertEquals(new HashSet<>(orderPojoList), new HashSet<>(orderService.selectOrder(0, 5)));
     }
 
     @Test
     public void selectOrderItemTest() {
-        OrderPojo orderPojo = orderAdd();
+        OrderPojo orderPojo = testData.orderAdd();
         List<OrderItemPojo> orderItemPojoList = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            orderItemPojoList.add(orderItemAdd(orderPojo.getId()));
+            orderItemPojoList.add(testData.orderItemAdd(orderPojo.getId()));
         }
         Assert.assertEquals(new HashSet<>(orderItemPojoList),new HashSet<>(orderService.selectOrderItem(orderPojo.getId())));
     }
 
     @Test
     public void selectByChannelIdAndChannelOrderIdTest() {
-        OrderPojo orderPojo = orderAdd();
+        OrderPojo orderPojo = testData.orderAdd();
         OrderPojo actualPojo = orderService.selectByChannelIdAndChannelOrderId(orderPojo.getChannelId(),
                 orderPojo.getChannelOrderId());
         Assert.assertEquals(orderPojo, actualPojo);
@@ -74,7 +73,7 @@ public class OrderServiceTest extends AbstractTest {
 
     @Test
     public void allocateOrderItemQtyTest() {
-        OrderItemPojo orderItemPojo = orderItemAdd(getRandomNumberLong());
+        OrderItemPojo orderItemPojo = testData.orderItemAdd(getRandomNumberLong());
         Long invQty = getRandomNumberLong();
         Long orderedQty = orderItemPojo.getOrderedQuantity();
         Long allocatedQtyPrev = orderItemPojo.getAllocatedQuantity();
@@ -93,9 +92,9 @@ public class OrderServiceTest extends AbstractTest {
             case 2:
                 orderStatus = OrderStatus.FULFILLED;
         }
-        OrderPojo orderPojo = orderAdd();
+        OrderPojo orderPojo = testData.orderAdd();
         orderService.updateStatus(orderPojo.getId(), orderStatus);
-        Assert.assertEquals(orderStatus, orderSelect().get(0).getStatus());
+        Assert.assertEquals(orderStatus, testData.orderSelect().get(0).getStatus());
     }
 
     @Test
@@ -107,13 +106,13 @@ public class OrderServiceTest extends AbstractTest {
             Assert.assertEquals("order does not exist", e.getMessage());
         }
 
-        OrderPojo orderPojo = orderAdd();
+        OrderPojo orderPojo = testData.orderAdd();
         Assert.assertEquals(orderService.getCheck(orderPojo.getId()), orderPojo);
     }
 
     @Test
     public void fulfillQtyTest() {
-        OrderItemPojo orderItemPojo = orderItemAdd(getRandomNumberLong());
+        OrderItemPojo orderItemPojo = testData.orderItemAdd(getRandomNumberLong());
         Long allocatedQty = orderItemPojo.getAllocatedQuantity();
         orderService.fulfillQty(orderItemPojo);
         Assert.assertEquals(allocatedQty, orderItemPojo.getFulfilledQuantity());
@@ -122,7 +121,7 @@ public class OrderServiceTest extends AbstractTest {
 
     @Test
     public void setUrl() throws ApiException {
-        OrderPojo orderPojo = orderAdd();
+        OrderPojo orderPojo = testData.orderAdd();
         String url = getRandomString();
         orderService.updateUrl(orderPojo.getId(), url);
         assertEquals(url, orderPojo.getInvoiceUrl());

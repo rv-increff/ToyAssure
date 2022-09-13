@@ -1,7 +1,6 @@
 package assure.dao;
 
 import assure.pojo.OrderItemPojo;
-import assure.util.InvoiceType;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
@@ -15,11 +14,11 @@ public class OrderItemDao extends AbstractDao<OrderItemPojo> {
 
     public List<OrderItemPojo> selectByOrderId(Long orderId) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery cr = cr();
-        Root<OrderItemPojo> root = cr.from(this.clazz);
-        cr = cr.select(root);
-        cr.where(cb.equal(root.get("orderId"), orderId));
-        TypedQuery<OrderItemPojo> query = em.createQuery(cr);
+        CriteriaQuery criteriaQuery = criteriaQuery();
+        Root<OrderItemPojo> root = criteriaQuery.from(this.clazz);
+        criteriaQuery = criteriaQuery.select(root);
+        criteriaQuery.where(cb.equal(root.get("orderId"), orderId));
+        TypedQuery<OrderItemPojo> query = em.createQuery(criteriaQuery);
         return query.getResultList();
     }
 

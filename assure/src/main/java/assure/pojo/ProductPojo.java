@@ -10,9 +10,8 @@ import static assure.pojo.TableConstants.*;
 @Getter
 @Setter
 @Entity
-@Table(indexes = {@Index(name = INDEX_CLIENT_ID, columnList = "clientId"),
-        @Index(name = INDEX_CLIENT_SKU_ID, columnList = "clientSkuId")},
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"clientSkuId", "clientId"})})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"clientSkuId", "clientId"}, name = UK_PRODUCT)})
+//TODO read and add uk name
 public class ProductPojo extends AbstractPojo {
 
     @Id

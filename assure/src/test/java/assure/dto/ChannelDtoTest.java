@@ -1,7 +1,8 @@
 package assure.dto;
 
 import assure.config.QaConfig;
-import assure.util.AbstractTest;
+import assure.util.BaseTest;
+import assure.util.TestData;
 import assure.model.ChannelForm;
 import assure.pojo.ChannelPojo;
 import assure.spring.ApiException;
@@ -15,17 +16,17 @@ import org.springframework.test.context.web.AnnotationConfigWebContextLoader;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = QaConfig.class, loader = AnnotationConfigWebContextLoader.class)
-@WebAppConfiguration("src/test/webapp")
-@Transactional
-public class ChannelDtoTest extends AbstractTest {
+
+public class ChannelDtoTest extends BaseTest {
+
     @Autowired
     private ChannelDto channelDto;
+    @Autowired
+    private TestData testData;
 
     @Test
     public void selectTest(){
-        ChannelPojo channelPojo = channelAdd();
+        ChannelPojo channelPojo = testData.channelAdd();
         Assert.assertEquals(channelPojo.getName(),channelDto.select().get(1).getName());
     }
 
@@ -37,7 +38,7 @@ public class ChannelDtoTest extends AbstractTest {
 
     @Test
     public void addTest() throws ApiException {
-        ChannelForm channelForm = getChannelForm();
+        ChannelForm channelForm = testData.getChannelForm();
         Assert.assertEquals(channelForm,channelDto.add(channelForm));
     }
 }

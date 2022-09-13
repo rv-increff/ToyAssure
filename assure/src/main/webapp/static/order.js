@@ -477,10 +477,13 @@ ${customerDropDown}
 function getClientDropDown(){
     return new Promise(function(resolve,reject){
         $.ajax({
-            type: "GET",
+            type: "POST",
             contentType: 'application/json',
-            url: `http://localhost:9000/assure/parties/partyType/CLIENT`,
+            url: `http://localhost:9000/assure/parties/search`,
             processData: false,
+            data: JSON.stringify([{
+                type: "CLIENT",
+            }]),
             dataType: 'json',
             success: function (result) {
                 console.log(result,"result drop down")
@@ -597,11 +600,14 @@ function getClientSkuIdDropDown(){
 function getCustomerDropDown(){
     return new Promise(function(resolve,reject){
         $.ajax({
-            type: "GET",
+            type: "POST",
             contentType: 'application/json',
-            url: `http://localhost:9000/assure/parties/partyType/CUSTOMER`,
+            url: `http://localhost:9000/assure/parties/search`,
             processData: false,
             dataType: 'json',
+            data: JSON.stringify([{
+                type: "CUSTOMER",
+            }]),
             success: function (result) {
                 console.log(result,"result drop down")
                 obj  = result

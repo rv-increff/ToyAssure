@@ -1,7 +1,9 @@
 package assure.dto;
 
 import assure.config.QaConfig;
-import assure.util.AbstractTest;
+import assure.dao.BinDao;
+import assure.util.BaseTest;
+import assure.util.TestData;
 import assure.spring.ApiException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,16 +21,21 @@ import static org.junit.Assert.fail;
 @ContextConfiguration(classes = QaConfig.class, loader = AnnotationConfigWebContextLoader.class)
 @WebAppConfiguration("src/test/webapp")
 @Transactional
-public class BinDtoTest extends AbstractTest {
+public class BinDtoTest extends BaseTest {
 
     @Autowired
-    BinDto binDto;
+    private BinDto binDto;
+    @Autowired
+    private BinDao binDao;
+    @Autowired
+    private TestData testData;
+
 
     @Test
     public void add() throws ApiException {
-        int n = 5;
-        binDto.add(n);
-        Assert.assertEquals(n,binDao.select(0,n).size());
+        int numberOfBins = 5;
+        binDto.add(numberOfBins);
+        Assert.assertEquals(numberOfBins, binDao.select(0, numberOfBins).size());
     }
 
     @Test
@@ -54,11 +61,11 @@ public class BinDtoTest extends AbstractTest {
 
     @Test
     public void selectTest(){
-        int n =5 ;
-        for (int i = 0; i < n; i++) {
-            binAdd();
+        int numberOfBins = 5 ;
+        for (int i = 0; i < numberOfBins; i++) {
+            testData.binAdd();
         }
-        Assert.assertEquals(n,binDto.select(0).size());
+        Assert.assertEquals(numberOfBins, binDto.select(0).size());
     }
 
 

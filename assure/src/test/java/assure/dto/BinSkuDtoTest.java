@@ -1,22 +1,16 @@
 package assure.dto;
 
-import assure.config.QaConfig;
-import assure.util.AbstractTest;
 import assure.model.BinSkuForm;
 import assure.model.BinSkuItemForm;
 import assure.model.BinSkuUpdateForm;
 import assure.pojo.BinSkuPojo;
 import assure.pojo.PartyPojo;
 import assure.spring.ApiException;
+import assure.util.BaseTest;
+import assure.util.TestData;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.AnnotationConfigWebContextLoader;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +19,13 @@ import static assure.util.RandomUtil.getRandomNumberLong;
 import static assure.util.RandomUtil.getRandomString;
 import static org.junit.Assert.fail;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = QaConfig.class, loader = AnnotationConfigWebContextLoader.class)
-@WebAppConfiguration("src/test/webapp")
-@Transactional
-public class BinSkuDtoTest extends AbstractTest {
+
+public class BinSkuDtoTest extends BaseTest { //TODO extend baseTest with all annotations
 
     @Autowired
     private BinSkuDto binSkuDto;
+    @Autowired
+    private TestData testData;
 
     @Test
     public void addValidationEmptyListErrorTest() {
@@ -96,8 +89,8 @@ public class BinSkuDtoTest extends AbstractTest {
 
         List<BinSkuItemForm> binSkuItemFormList = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            BinSkuItemForm binSkuItemForm = new BinSkuItemForm();
-            binSkuItemForm.setBinId(binAdd().getBinId());
+            BinSkuItemForm binSkuItemForm = new BinSkuItemForm(); //TODO shift to private methord
+            binSkuItemForm.setBinId(testData.binAdd().getBinId());
             binSkuItemForm.setClientSkuId(getRandomString());
             binSkuItemForm.setQuantity(getRandomNumberLong());
             binSkuItemFormList.add(binSkuItemForm);
@@ -117,11 +110,11 @@ public class BinSkuDtoTest extends AbstractTest {
         BinSkuForm binSkuForm = new BinSkuForm();
 
         List<BinSkuItemForm> binSkuItemFormList = new ArrayList<>();
-        PartyPojo partyPojo = partyAdd();
+        PartyPojo partyPojo = testData.partyAdd();
 
         for (int i = 0; i < 5; i++) {
             BinSkuItemForm binSkuItemForm = new BinSkuItemForm();
-            binSkuItemForm.setBinId(binAdd().getBinId());
+            binSkuItemForm.setBinId(testData.binAdd().getBinId());
             binSkuItemForm.setClientSkuId(getRandomString());
             binSkuItemForm.setQuantity(getRandomNumberLong());
             binSkuItemFormList.add(binSkuItemForm);
@@ -136,16 +129,15 @@ public class BinSkuDtoTest extends AbstractTest {
     @Test
     public void addTest() throws ApiException {
         BinSkuForm binSkuForm = new BinSkuForm();
-        PartyPojo partyPojo = partyAdd();
+        PartyPojo partyPojo = testData.partyAdd();
         List<BinSkuItemForm> binSkuItemFormList = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             BinSkuItemForm binSkuItemForm = new BinSkuItemForm();
-            binSkuItemForm.setBinId(binAdd().getBinId());
-            binSkuItemForm.setClientSkuId(productAdd(partyPojo.getId()).getClientSkuId());
+            binSkuItemForm.setBinId(testData.binAdd().getBinId());
+            binSkuItemForm.setClientSkuId(testData.productAdd(partyPojo.getId()).getClientSkuId());
             binSkuItemForm.setQuantity(getRandomNumberLong());
             binSkuItemFormList.add(binSkuItemForm);
         }
-
         binSkuForm.setBinSkuItemFormList(binSkuItemFormList);
         binSkuForm.setClientId(partyPojo.getId());
         binSkuDto.add(binSkuForm);
@@ -155,19 +147,19 @@ public class BinSkuDtoTest extends AbstractTest {
     public void selectTest() {
         int n = 5;
         for (int i = 0; i < 5; i++) {
-            binSkuAdd(productAdd().getGlobalSkuId());
+            testData.binSkuAdd(testData.productAdd().getGlobalSkuId());
         }
         Assert.assertEquals(n, binSkuDto.select(0).size());
     }
 
     @Test
     public void updateTest() throws ApiException {
-        BinSkuPojo binSkuPojo = binSkuAdd();
+        BinSkuPojo binSkuPojo = testData.binSkuAdd();
         BinSkuUpdateForm binSkuUpdateForm = new BinSkuUpdateForm();
         Long newQty = getRandomNumberLong();
         binSkuUpdateForm.setQuantity(newQty);
         binSkuDto.update(binSkuUpdateForm, binSkuPojo.getId());
-        Assert.assertEquals(newQty, binSkuSelect().get(0).getQuantity());
+        Assert.assertEquals(newQty, testData.binSkuSelect().get(0).getQuantity());
 
     }
 

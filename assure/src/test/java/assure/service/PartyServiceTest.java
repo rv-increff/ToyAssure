@@ -1,7 +1,8 @@
 package assure.service;
 
 import assure.config.QaConfig;
-import assure.util.AbstractTest;
+import assure.util.BaseTest;
+import assure.util.TestData;
 import assure.pojo.PartyPojo;
 import assure.spring.ApiException;
 import assure.util.PartyType;
@@ -23,26 +24,24 @@ import java.util.List;
 import static assure.util.RandomUtil.getRandomString;
 import static org.junit.Assert.fail;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = QaConfig.class, loader = AnnotationConfigWebContextLoader.class)
-@WebAppConfiguration("src/test/webapp")
-@Transactional
-public class PartyServiceTest extends AbstractTest {
+public class PartyServiceTest extends BaseTest {
     @Autowired
-    public PartyService partyService;
+    private PartyService partyService;
+    @Autowired
+    private TestData testData;
 
     @Test
     public void addTest() throws ApiException {
-        List<PartyPojo> partyPojoList = getPartyList(5);
+        List<PartyPojo> partyPojoList = testData.getPartyList(5);
         partyService.add(partyPojoList);
 
-        Assert.assertEquals(partyPojoList,partySelect());
+        Assert.assertEquals(partyPojoList,testData.partySelect());
     }
 
     @Test
     public void addPairExistsErrorTest(){
-        PartyPojo partyPojo = partyAdd();
-        List<PartyPojo> partyPojoList = getPartyList(5);
+        PartyPojo partyPojo = testData.partyAdd();
+        List<PartyPojo> partyPojoList = testData.getPartyList(5);
         partyPojoList.add(partyPojo);
         try{
             partyService.add(partyPojoList);
@@ -55,7 +54,7 @@ public class PartyServiceTest extends AbstractTest {
 
     @Test
     public void selectByIdTest() throws ApiException {
-        PartyPojo partyPojo = partyAdd();
+        PartyPojo partyPojo = testData.partyAdd();
         partyService.selectById(partyPojo.getId());
     }
 
@@ -71,13 +70,13 @@ public class PartyServiceTest extends AbstractTest {
 
     @Test
     public void checkByIdAndTypeTest() throws ApiException {
-        PartyPojo partyPojo = partyAdd();
+        PartyPojo partyPojo = testData.partyAdd();
         Assert.assertEquals(partyPojo.getId(),partyService.checkByIdAndType(partyPojo.getId(), partyPojo.getType()));
     }
 
     @Test
     public void checkByIdAndTypeWrongTypeTest() throws ApiException {
-        PartyPojo partyPojo = partyAdd(getRandomString(), PartyType.CLIENT);
+        PartyPojo partyPojo = testData.partyAdd(getRandomString(), PartyType.CLIENT);
         try{
             partyService.checkByIdAndType(partyPojo.getId(), PartyType.CUSTOMER);
             fail("error not thrown");
@@ -90,7 +89,7 @@ public class PartyServiceTest extends AbstractTest {
     public void select(){
         List<PartyPojo> partyPojoList = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            partyPojoList.add(partyAdd());
+            partyPojoList.add(testData.partyAdd());
         }
         Assert.assertEquals(new HashSet<>(partyPojoList),
                 new HashSet<>(partyService.select(0, 5)));

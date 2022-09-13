@@ -6,7 +6,10 @@ import assure.spring.ApiException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -16,8 +19,8 @@ public class BinController {
     @Autowired
     private BinDto binDto;
 
-    @ApiOperation(value = "Create N bins")  //TODO RequestParam add check description standard
-    @RequestMapping(path = "/bins", method = RequestMethod.POST) //TODO check if request params allowed
+    @ApiOperation(value = "Create bins")
+    @RequestMapping(path = "/bins", method = RequestMethod.POST)
     public List<BinData> addBins(@RequestParam(name = "numberOfBins") Integer numberOfBins) throws ApiException {
         return binDto.add(numberOfBins);
     }

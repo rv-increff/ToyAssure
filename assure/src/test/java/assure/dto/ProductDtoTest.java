@@ -1,7 +1,8 @@
 package assure.dto;
 
 import assure.config.QaConfig;
-import assure.util.AbstractTest;
+import assure.util.BaseTest;
+import assure.util.TestData;
 import assure.model.ProductForm;
 import assure.model.ProductUpdateForm;
 import assure.pojo.ProductPojo;
@@ -21,13 +22,11 @@ import java.util.List;
 
 import static assure.util.RandomUtil.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = QaConfig.class, loader = AnnotationConfigWebContextLoader.class)
-@WebAppConfiguration("src/test/webapp")
-@Transactional
-public class ProductDtoTest extends AbstractTest {
+public class ProductDtoTest extends BaseTest {
     @Autowired
     private ProductDto productDto;
+    @Autowired
+    private TestData testData;
 
     @Test
     public void addNullListErrorTest() {
@@ -89,23 +88,24 @@ public class ProductDtoTest extends AbstractTest {
             productForm.setDescription(getRandomString());
             productForm.setName(getRandomString());
             productForm.setClientSkuId(getRandomString());
+            productForm.setMrp(getRandomNumberDouble());
             productFormList.add(productForm);
         }
-        productDto.add(productFormList, partyAdd().getId());
+        productDto.add(productFormList, testData.partyAdd().getId());
     }
 
     @Test
     public void selectTest() {
         int n = 5;
         for (int i = 0; i < n; i++) {
-            productAdd();
+            testData.productAdd();
         }
         Assert.assertEquals(n, productDto.select(0).size());
     }
 
     @Test
     public void selectByIdTest() throws ApiException {
-        ProductPojo productPojo = productAdd();
+        ProductPojo productPojo = testData.productAdd();
         Assert.assertEquals(productPojo.getGlobalSkuId(), productDto.selectById(productPojo.getGlobalSkuId()).getGlobalSkuId());
     }
 
@@ -117,7 +117,7 @@ public class ProductDtoTest extends AbstractTest {
 
     @Test
     public void updateTest() throws ApiException {
-        ProductPojo productPojo = productAdd();
+        ProductPojo productPojo = testData.productAdd();
         ProductUpdateForm productUpdateForm = new ProductUpdateForm();
         productUpdateForm.setBrandId(getRandomString());
         productUpdateForm.setClientSkuId(getRandomString());
@@ -128,6 +128,6 @@ public class ProductDtoTest extends AbstractTest {
         Double newMrp = getRandomNumberDouble();
         productUpdateForm.setMrp(newMrp);
         productDto.update(productUpdateForm, productPojo.getGlobalSkuId());
-        Assert.assertEquals(newMrp, productSelect().get(0).getMrp());
+        Assert.assertEquals(newMrp, testData.productSelect().get(0).getMrp());
     }
 }

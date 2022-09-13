@@ -3,6 +3,7 @@ package assure.controller;
 import assure.dto.PartyDto;
 import assure.model.PartyData;
 import assure.model.PartyForm;
+import assure.model.PartySearchForm;
 import assure.spring.ApiException;
 import assure.util.PartyType;
 import io.swagger.annotations.Api;
@@ -18,16 +19,17 @@ public class PartyController {
     @Autowired
     private PartyDto partyDto;
 
-    @ApiOperation(value = "Get Party")  //TODO change name swagger api naming convention
-    @RequestMapping(path = "/parties", method = RequestMethod.GET) //TODO 3 modules assure, commons, channels
+    @ApiOperation(value = "Get Party")
+    @RequestMapping(path = "/parties", method = RequestMethod.GET)
     public List<PartyData> getParty(@RequestParam(name = "pageNumber") Integer pageNumber) {
         return partyDto.select(pageNumber);
     }
 
-     @ApiOperation(value = "Get Party By Type")  //TODO change name swagger api naming convention
-    @RequestMapping(path = "/parties/partyType/{partyType}", method = RequestMethod.GET) //TODO 3 modules assure, commons, channels
-    public List<PartyData> getPartyByPartyType(@PathVariable PartyType partyType) {
-        return partyDto.selectByPartyType(partyType);
+    @ApiOperation(value = "Search Party")
+    @RequestMapping(path = "/parties/search", method = RequestMethod.POST)
+    //TODO club these two send POST request and /party/search
+    public List<PartyData> searchParty(@RequestBody PartySearchForm partySearchForm) {
+        return partyDto.partySearch(partySearchForm);
     }
 
     @ApiOperation(value = "Get Party by id")
@@ -41,6 +43,4 @@ public class PartyController {
     public Integer addParty(@RequestBody List<PartyForm> partyFormList) throws ApiException {
         return partyDto.add(partyFormList);
     }
-
-
 }

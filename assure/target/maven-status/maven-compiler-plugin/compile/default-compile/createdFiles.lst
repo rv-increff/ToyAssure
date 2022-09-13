@@ -54,7 +54,7 @@ assure/util/OrderStatus.class
 assure/model/ChannelListingForm.class
 assure/dto/ProductDto.class
 assure/controller/PartyController.class
-assure/spring/PostConstructAssure.class
+assure/spring/PostConstructConfig.class
 assure/model/ChannelData.class
 assure/dao/ProductDao.class
 assure/controller/BinSkuController.class

@@ -1,48 +1,47 @@
 package assure.dao;
 
-import assure.config.QaConfig;
 import assure.pojo.OrderPojo;
-import assure.util.AbstractTest;
+import assure.util.BaseTest;
+import assure.util.TestData;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.AnnotationConfigWebContextLoader;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = QaConfig.class, loader = AnnotationConfigWebContextLoader.class)
-@WebAppConfiguration("src/test/webapp")
-@Transactional
-public class OrderDaoTest extends AbstractTest {
+
+public class OrderDaoTest extends BaseTest {
+
+    @Autowired
+    private TestData testData;
+    @Autowired
+    private OrderDao orderDao;
+
     @Test
     public void addTest() {
-        orderAdd();
+        testData.orderAdd();
     }
 
     @Test
-    public void selectTest(){
+    public void selectTest() {
         List<OrderPojo> orderPojoList = new ArrayList<>();
-        for(int i=0;i<5;i++)orderPojoList.add(orderAdd());
+        for (int i = 0; i < 5; i++) orderPojoList.add(testData.orderAdd());
 
-        Assert.assertEquals(orderPojoList,orderSelect());
+        Assert.assertEquals(orderPojoList, testData.orderSelect());
     }
 
     @Test
-    public void selectByChannelIdAndChannelOrderIdTest(){
-        OrderPojo orderPojo = orderAdd();
-        Assert.assertEquals(orderPojo,orderDao.selectByChannelIdAndChannelOrderId(orderPojo.getChannelId(), orderPojo.getChannelOrderId()));
+    public void selectByChannelIdAndChannelOrderIdTest() {
+        OrderPojo orderPojo = testData.orderAdd();
+        Assert.assertEquals(orderPojo, orderDao.selectByChannelIdAndChannelOrderId(orderPojo.getChannelId(), orderPojo.getChannelOrderId()));
 
     }
- @Test
-    public void selectByIdTest(){
-        OrderPojo orderPojo = orderAdd();
-        Assert.assertEquals(orderPojo,orderDao.selectById(orderPojo.getId()));
+
+    @Test
+    public void selectByIdTest() {
+        OrderPojo orderPojo = testData.orderAdd();
+        Assert.assertEquals(orderPojo, orderDao.selectById(orderPojo.getId()));
 
     }
 

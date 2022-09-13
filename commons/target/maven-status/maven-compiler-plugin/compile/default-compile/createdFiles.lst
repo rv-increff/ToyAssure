@@ -1,4 +1,3 @@
-commons/model/OrderFormChannel.class
 commons/requests/Requests.class
 commons/model/OrderItemChannelData.class
 commons/model/OrderForm.class
@@ -7,3 +6,4 @@ commons/model/InvoiceDataChannel.class
 commons/model/OrderItemFormChannel.class
 commons/util/pdfUtil.class
 commons/model/OrderItemForm.class
+commons/model/ChannelOrderForm.class

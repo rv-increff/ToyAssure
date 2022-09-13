@@ -13,11 +13,12 @@ public class BinDao extends AbstractDao<BinPojo> {
 
     public BinPojo selectById(Long binId) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery cr = cr();
-        Root<BinPojo> root = cr.from(this.clazz);
-        cr = cr.select(root);
-        cr.where(cb.equal(root.get("binId"), binId));
-        TypedQuery<BinPojo> query = em.createQuery(cr);
+        CriteriaQuery criteriaQuery = criteriaQuery(); //TODO criteriaQuery to criteriaQuery
+        Root<BinPojo> root = criteriaQuery.from(this.clazz);
+        criteriaQuery = criteriaQuery.select(root);
+
+        criteriaQuery.where(cb.equal(root.get("binId"), binId));
+        TypedQuery<BinPojo> query = em.createQuery(criteriaQuery);
         return getSingle(query);
     }
 }

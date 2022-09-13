@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>parent</artifactId>
-        <groupId>toyassure</groupId>
+        <groupId>toy-assure</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -22,6 +22,7 @@
 
         <!-- Project dependencies -->
         <spring.version>4.3.6.RELEASE</spring.version>
+        <spring-security.version>4.2.13.RELEASE</spring-security.version>
         <swagger.version>2.4.0</swagger.version>
         <jackson.version>2.9.8</jackson.version>
         <thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
@@ -65,12 +66,12 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
-            <version>4.2.13.RELEASE</version>
+            <version>${spring-security.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
-            <version>4.2.13.RELEASE</version>
+            <version>${spring-security.version}</version>
         </dependency>
 
 

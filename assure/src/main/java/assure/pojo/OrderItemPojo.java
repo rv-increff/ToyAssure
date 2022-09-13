@@ -10,8 +10,8 @@ import static assure.pojo.TableConstants.*;
 @Getter
 @Setter
 @Entity
-//@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"OrderId","globalSkuId"})})
-public class OrderItemPojo extends AbstractPojo{
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"orderId", "globalSkuId"}, name = UK_ORDER_ITEM)})
+public class OrderItemPojo extends AbstractPojo {
 
     @Id
     @TableGenerator(name = SEQ_ORDER_ITEM, initialValue = SEQ_INITIAL_VALUE)

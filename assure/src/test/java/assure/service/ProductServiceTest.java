@@ -1,7 +1,9 @@
 package assure.service;
 
 import assure.config.QaConfig;
-import assure.util.AbstractTest;
+import assure.dao.ProductDao;
+import assure.util.BaseTest;
+import assure.util.TestData;
 import assure.pojo.ProductPojo;
 import assure.spring.ApiException;
 import org.junit.Assert;
@@ -22,20 +24,20 @@ import static assure.util.RandomUtil.getRandomNumberLong;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = QaConfig.class, loader = AnnotationConfigWebContextLoader.class)
-@WebAppConfiguration("src/test/webapp")
-@Transactional
-public class ProductServiceTest extends AbstractTest {
+public class ProductServiceTest extends BaseTest {
     @Autowired
     private ProductService productService;
+    @Autowired
+    private TestData testData;
+    @Autowired
+    private ProductDao productDao;
 
     @Test
     public void addTest() throws ApiException {
         List<ProductPojo> productPojoList = new ArrayList<>();
         Long clientId = getRandomNumberLong();
         for (int i = 0; i < 5; i++) {
-            productPojoList.add(getProduct(clientId, i + ""));
+            productPojoList.add(testData.getProduct(clientId, i + ""));
         }
         productService.add(productPojoList);
     }
@@ -43,9 +45,9 @@ public class ProductServiceTest extends AbstractTest {
     @Test
     public void addClientSkuIdDuplicateErrorTest() {
         List<ProductPojo> productPojoList = new ArrayList<>();
-        ProductPojo productPojo = productAdd();
+        ProductPojo productPojo = testData.productAdd();
         for (int i = 0; i < 5; i++) {
-            productPojoList.add(getProduct(productPojo.getClientId(), productPojo.getClientSkuId()));
+            productPojoList.add(testData.getProduct(productPojo.getClientId(), productPojo.getClientSkuId()));
         }
         try {
             productService.add(productPojoList);
@@ -57,19 +59,19 @@ public class ProductServiceTest extends AbstractTest {
 
     @Test
     public void selectTest() {
-        ProductPojo productPojo = productAdd();
+        ProductPojo productPojo = testData.productAdd();
         Assert.assertEquals(productPojo, productService.select(0, 1).get(0));
     }
 
     @Test
     public void selectByIdTest() throws ApiException {
-        ProductPojo productPojo = productAdd();
+        ProductPojo productPojo = testData.productAdd();
         Assert.assertEquals(productPojo, productService.selectById(productPojo.getGlobalSkuId()));
     }
 
     @Test
     public void selectByIdErrorTest() {
-        ProductPojo productPojo = productAdd();
+        ProductPojo productPojo = testData.productAdd();
         try {
             Assert.assertEquals(productPojo, productService.selectById(productPojo.getGlobalSkuId() + 1));
             fail("error not thrown");
@@ -81,10 +83,10 @@ public class ProductServiceTest extends AbstractTest {
     @Test
     public void selectByClientIdTest() {
         List<ProductPojo> productPojoList = new ArrayList<>();
-        ProductPojo productPojo = productAdd();
+        ProductPojo productPojo = testData.productAdd();
         productPojoList.add(productPojo);
         for (int i = 0; i < 5; i++) {
-            ProductPojo productPojo1 = getProduct(productPojo.getClientId(), i + "");
+            ProductPojo productPojo1 = testData.getProduct(productPojo.getClientId(), i + "");
             productPojoList.add(productDao.add(productPojo1));
         }
         Assert.assertEquals(productPojoList, productService.selectByClientId(productPojo.getClientId()));
@@ -92,7 +94,7 @@ public class ProductServiceTest extends AbstractTest {
 
     @Test
     public void updateTest() throws ApiException {
-        ProductPojo productPojo = productAdd();
+        ProductPojo productPojo = testData.productAdd();
         Double mrp = getRandomNumberDouble();
         productPojo.setMrp(mrp);
         productService.update(productPojo);
@@ -100,10 +102,10 @@ public class ProductServiceTest extends AbstractTest {
 
     @Test
     public void updateErrorTest() {
-        ProductPojo productPojo1 = productAdd();
-        ProductPojo productPojo = productAdd();
+        ProductPojo productPojo1 = testData.productAdd();
+        ProductPojo productPojo = testData.productAdd();
         Double mrp = getRandomNumberDouble();
-        ProductPojo newProductPojo = getProduct(productPojo1.getClientId(),productPojo1.getClientSkuId());
+        ProductPojo newProductPojo = testData.getProduct(productPojo1.getClientId(),productPojo1.getClientSkuId());
         newProductPojo.setGlobalSkuId(productPojo.getGlobalSkuId());
         try {
             productService.update(newProductPojo);
@@ -115,14 +117,14 @@ public class ProductServiceTest extends AbstractTest {
 
     @Test
     public void selectByClientSkuIdAndClientIdTest() {
-        ProductPojo productPojo = productAdd();
+        ProductPojo productPojo = testData.productAdd();
         Assert.assertEquals(productPojo, productService.selectByClientSkuIdAndClientId
                 (productPojo.getClientSkuId(), productPojo.getClientId()));
     }
 
     @Test
     public void selectByGlobalSkuId(){
-        ProductPojo productPojo = productAdd();
+        ProductPojo productPojo = testData.productAdd();
         Assert.assertEquals(productPojo, productService.selectByGlobalSkuId(productPojo.getGlobalSkuId()));
     }
 }

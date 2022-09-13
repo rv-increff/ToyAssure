@@ -6,13 +6,12 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-import static assure.pojo.TableConstants.SEQ_INITIAL_VALUE;
-import static assure.pojo.TableConstants.SEQ_ORDER;
+import static assure.pojo.TableConstants.*;
 
 @Getter
 @Setter
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"channelId","channelOrderId"})})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"channelId", "channelOrderId"}, name = UK_ORDER)})
 public class OrderPojo extends AbstractPojo {
 
     @Id

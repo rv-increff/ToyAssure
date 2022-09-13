@@ -5,13 +5,13 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-import static assure.pojo.TableConstants.SEQ_INITIAL_VALUE;
-import static assure.pojo.TableConstants.SEQ_INVENTORY;
+import static assure.pojo.TableConstants.*;
 
 @Getter
 @Setter
 @Entity
-public class InventoryPojo extends AbstractPojo{
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"globalSkuId"}, name = UK_INV)})
+public class InventoryPojo extends AbstractPojo {
     @Id
     @TableGenerator(name = SEQ_INVENTORY, initialValue = SEQ_INITIAL_VALUE)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = SEQ_INVENTORY)

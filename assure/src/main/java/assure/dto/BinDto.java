@@ -7,9 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
-import static assure.util.ConversionUtil.convertListBinPojoToData;
+import static assure.util.ConversionUtil.convertBinPojoListToData;
 
 @Service
 public class BinDto {
@@ -20,17 +19,17 @@ public class BinDto {
     private BinService binService;
 
     public List<BinData> add(Integer numberOfBins) throws ApiException {
-        if(numberOfBins <= 0)
+        if (numberOfBins <= 0)
             throw new ApiException("Number of bins should be greater than 0");
 
-        if (numberOfBins > MAX_BIN_LIMIT)
+        if (numberOfBins > MAX_BIN_LIMIT) //TODO combine these two if in one
             throw new ApiException("Number of bins to create cannot exceed the limit : " + MAX_BIN_LIMIT);
 
-        return convertListBinPojoToData(binService.add(numberOfBins)); //TODO short name
+        return convertBinPojoListToData(binService.add(numberOfBins)); //TODO add CollectsUtils.isEmpty() in all conversion
     }
 
     public List<BinData> select(Integer pageNumber) {
-        return convertListBinPojoToData(binService.select(pageNumber, PAGE_SIZE));
+        return convertBinPojoListToData(binService.select(pageNumber, PAGE_SIZE));
     }
 
 }

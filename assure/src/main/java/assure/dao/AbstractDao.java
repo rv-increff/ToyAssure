@@ -1,67 +1,64 @@
 package assure.dao;
 
-import assure.pojo.ProductPojo;
-import javafx.util.Pair;
-import org.hibernate.exception.SQLGrammarException;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
 import java.util.List;
+
 @Repository
-public abstract class AbstractDao <T> {
-	
-	@PersistenceContext
-	protected EntityManager em;
+public abstract class AbstractDao<T> {
 
-	Class<T> clazz;
-	public AbstractDao(){
-		this.clazz = (Class)((ParameterizedType)this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-	}
+    @PersistenceContext
+    protected EntityManager em;
 
-	public <T> T add(T pojoObject){
-		em.persist(pojoObject);
-		return pojoObject;
-	}
-	public List<T> select(Integer pageNumber, Integer pageSize){
-		CriteriaQuery<T> cr = cr();
-		Root<T> root = (Root<T>) cr.from(this.clazz);
-		cr.select(root);
-		TypedQuery<T> query =  em.createQuery(cr);
+    Class<T> clazz;
 
-		query.setFirstResult(pageNumber * pageSize);
-		query.setMaxResults(pageSize);
-		return query.getResultList();
-	}
+    public AbstractDao() {
+        this.clazz = (Class) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    }
 
-public List<T> select(){
-		CriteriaQuery<T> cr = cr();
-		Root<T> root = (Root<T>) cr.from(this.clazz);
-		cr.select(root);
-		TypedQuery<T> query =  em.createQuery(cr);
+    public <T> T add(T pojoObject) {
+        em.persist(pojoObject);
+        return pojoObject;
+    }
 
-		return query.getResultList();
-	}
+    public List<T> select(Integer pageNumber, Integer pageSize) {
+        CriteriaQuery<T> criteriaQuery = criteriaQuery();
+        Root<T> root = criteriaQuery.from(this.clazz);
+        criteriaQuery.select(root);
+        TypedQuery<T> query = em.createQuery(criteriaQuery);
+        //TODO add sorting by id  (sortBY,sortType(asc,desc), pageNumber,pageSize)
+        query.setFirstResult(pageNumber * pageSize);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
+    }
 
+    public List<T> select() {
+        CriteriaQuery<T> criteriaQuery = criteriaQuery();
+        Root<T> root = criteriaQuery.from(this.clazz);
+        criteriaQuery.select(root);
+        TypedQuery<T> query = em.createQuery(criteriaQuery);
 
-	public void update(){}
+        return query.getResultList();
+    }
 
-	protected  T getSingle(TypedQuery<T> query) {
-		return query.getResultList().stream().findFirst().orElse(null);
-	}
+    public void update() {
+    }
 
-	protected  CriteriaQuery cr(){
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<T> cr = cb.createQuery(this.clazz);
-		return cr;
-	}
+    protected T getSingle(TypedQuery<T> query) {
+        return query.getResultList().stream().findFirst().orElse(null);
+    }
+
+    protected CriteriaQuery criteriaQuery() {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = cb.createQuery(this.clazz);
+        return criteriaQuery;
+    }
 
 }

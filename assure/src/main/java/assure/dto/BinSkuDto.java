@@ -8,7 +8,6 @@ import assure.pojo.BinSkuPojo;
 import assure.pojo.ProductPojo;
 import assure.service.*;
 import assure.spring.ApiException;
-import commons.model.ErrorData;
 import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,13 +18,12 @@ import java.util.stream.Collectors;
 
 import static assure.util.ConversionUtil.*;
 import static assure.util.DataUtil.checkClientSkuIdExist;
-import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
 import static assure.util.ValidationUtil.validateList;
 
 @Service
 public class BinSkuDto {
 
-    private static final Long MAX_BIN_LIMIT = 100L; //TODO move all to common file
+    private static final Long MAX_LIMIT = 100L; //TODO move all to common file
     private static final Integer PAGE_SIZE = 10;
     @Autowired
     private BinSkuService binSkuService;
@@ -41,15 +39,14 @@ public class BinSkuDto {
     @Transactional(rollbackFor = ApiException.class)
     public Integer add(BinSkuForm binSkuForm) throws ApiException {
         List<BinSkuItemForm> binSkuFormList = binSkuForm.getBinSkuItemFormList();
-        validateList("BinSku", binSkuFormList, MAX_BIN_LIMIT);
+        validateList("BinSku", binSkuFormList, MAX_LIMIT);
 
-        checkBinIdExists(binSkuFormList);
         Long clientId = binSkuForm.getClientId();
         partyService.getCheck(clientId);
+
         List<String> clientSkuIdList = binSkuFormList.stream().map(BinSkuItemForm::getClientSkuId)
                 .collect(Collectors.toList());
         Map<String, Long> clientToGlobalSkuIdMap = productService.getCheckClientSkuId(clientSkuIdList, clientId);
-        checkClientSkuIdExist(clientToGlobalSkuIdMap, binSkuFormList);
 
         List<BinSkuPojo> binSkuPojoList = binSkuService.add(convertListBinSkuFormToPojo(binSkuFormList, clientToGlobalSkuIdMap));
         inventoryService.add(convertListBinSkuFormToInventoryPojo(binSkuPojoList));
@@ -62,27 +59,12 @@ public class BinSkuDto {
 
     @Transactional(rollbackFor = ApiException.class)
     public BinSkuUpdateForm update(BinSkuUpdateForm binSkuUpdateForm, Long id) throws ApiException {
-        Pair<Long, Long> dataPair = binSkuService.update(convertBinSkuUpdateFormToPojo(binSkuUpdateForm, id));
+        Pair<Long, Long> dataPair = binSkuService.update(convertBinSkuUpdateFormToPojo(binSkuUpdateForm, id));//TODO
         inventoryService.add(convertBinSkuUpdateFormToInventoryPojo(binSkuUpdateForm, dataPair));
         return binSkuUpdateForm;
-    }
-
-
-    //TODO DEV_REVIEW: Fetch once and for all from DB the binIds that exists and collect them in SET and then compare -done
-    private void checkBinIdExists(List<BinSkuItemForm> binSkuItemFormList) throws ApiException {
-        List<ErrorData> errorFormList = new ArrayList<>();
-        List<Long> binIds = binSkuItemFormList.stream().map(BinSkuItemForm::getBinId).distinct().collect(Collectors.toList());
-        Set<Long> existingBinIds = binSkuService.selectForBinIds(binIds).stream().map(BinSkuPojo::getBinId)
-                .collect(Collectors.toSet());
-
-        Integer row = 1;
-        for (BinSkuItemForm binSkuForm : binSkuItemFormList) {
-            if (existingBinIds.contains(binSkuForm.getBinId())) {
-                errorFormList.add(new ErrorData(row, "Bin id doesn't exist, binId : " + binSkuForm.getBinId()));
-            }
-            row++;
-        }
-        throwErrorIfNotEmpty(errorFormList);
+        //TODO change to negative and positive increase and decrease and not pair get pojo first
+        //doing same id call in one transaction is same wont cause extra
+        //TODO make 2 inventory update increase and decrease;
     }
 
     private BinSkuData convertBinSkuPojoToData(BinSkuPojo binSkuPojo, String clientSkuId) {

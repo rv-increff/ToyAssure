@@ -10,13 +10,13 @@ import java.util.List;
 @Setter
 @Getter
 public class OrderForm {
-    @PositiveOrZero
+    @NotNull
     Long clientId;
 
     @NotBlank
     String channelOrderId;
 
-    @PositiveOrZero
+    @NotNull
     Long customerId;
 
     @NotEmpty

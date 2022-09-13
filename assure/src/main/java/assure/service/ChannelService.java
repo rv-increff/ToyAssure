@@ -26,9 +26,8 @@ public class ChannelService {
 
     public void add(ChannelPojo channelPojo) throws ApiException {
         normalizeChannelPojo(channelPojo);
-        if (!isNull(channelDao.selectByName(channelPojo.getName()))) {
+        if (!isNull(channelDao.selectByName(channelPojo.getName())))
             throw new ApiException("Channel already exists");
-        }
 
         channelDao.add(channelPojo);
     }
@@ -39,9 +38,9 @@ public class ChannelService {
 
     public ChannelPojo getCheck(Long id) throws ApiException {
         ChannelPojo channelPojo = channelDao.selectById(id);
-        if (isNull(channelPojo)) {
+        if (isNull(channelPojo))
             throw new ApiException("channel does not exist");
-        }
+
         return channelPojo;
     }
 
