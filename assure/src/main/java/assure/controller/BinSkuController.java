@@ -27,7 +27,7 @@ public class BinSkuController {
 
     @ApiOperation(value = "Get binSkus")
     @RequestMapping(path = "/bin-skus", method = RequestMethod.GET)
-    public List<BinSkuData> getBinSku(@RequestParam(name = "pageNumber") Integer pageNumber) {
+    public List<BinSkuData> getBinSku(@RequestParam Integer pageNumber) {
         return binSkuDto.select(pageNumber);
     }
 

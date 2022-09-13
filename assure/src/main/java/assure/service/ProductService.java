@@ -67,7 +67,6 @@ public class ProductService {
         exists.setDescription(productPojo.getDescription());
         exists.setMrp(productPojo.getMrp());
         exists.setName(productPojo.getName());
-        exists.setClientSkuId(productPojo.getClientSkuId());
 
         productDao.update();
 

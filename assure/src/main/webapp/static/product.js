@@ -231,11 +231,10 @@ function productUploadCall(parsedata) {
 function editProductModal(globalSkuId, clientSkuId, name, brandId, mrp, description) {
     $('#productEditModal').modal('show');
     $('#modalTitle').text('Edit Product');
-    $('#productModalbody').html(getProductUpdateModal(globalSkuId, clientSkuId, name, brandId, mrp, description));
+    $('#productModalbody').html(getProductUpdateModal(globalSkuId,name, brandId, mrp, description));
 
 }
 function editProductModalCall(globalSkuId) {
-    let clientSkuId = $('#clientSkuId').val(); 
     let name = $('#name').val(); 
     let brandId = $('#brandId').val(); 
     let mrp = $('#mrp').val(); 
@@ -257,7 +256,6 @@ console.log({
         contentType: 'application/json',
         url: `http://localhost:9000/assure/products/${globalSkuId}`,
         data: JSON.stringify({
-            clientSkuId : clientSkuId,
             name : name,
             brandId : brandId,
             mrp : mrp,
@@ -290,10 +288,6 @@ console.log({
 function getProductUpdateModal(globalSkuId, clientSkuId, name, brandId, mrp, description) {
     return `<form id="editProductForm" >
     <div id="modalFormDataDiv" class="row">
-        <div class="form-group col-12">
-            <label for="clientSkuId" class="required">Client SKU ID</label>
-            <input type="text" class="form-control" id="clientSkuId" name="clientSkuId" aria-describedby="text" placeholder="Enter Client SKU ID" autocomplete="off" minlength="1" maxlength="20" value="${clientSkuId}">
-        </div>
         <div class="form-group col-12">
             <label for="name" class="required">Name</label>
             <input type="text" class="form-control" id="name" name="name" aria-describedby="text" placeholder="Enter name" autocomplete="off" minlength="1" maxlength="20" value="${name}">

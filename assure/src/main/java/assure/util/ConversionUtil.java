@@ -1,20 +1,25 @@
 package assure.util;
 
-import assure.model.*;
 import assure.model.OrderForm;
+import assure.model.*;
 import assure.pojo.*;
 import assure.spring.ApiException;
 import commons.model.*;
 import javafx.util.Pair;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
 import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.summingLong;
 
 public class ConversionUtil {
     public static PartyPojo convertClientFormToPojo(PartyForm partyForm) {
+        if (isNull(partyForm))
+            return new PartyPojo();
+
         PartyPojo clientPojo = new PartyPojo();
         clientPojo.setName(partyForm.getName());
         clientPojo.setType(partyForm.getType());
@@ -22,41 +27,55 @@ public class ConversionUtil {
         return clientPojo;
     }
 
-    public static PartyData convertPartyPojoToData(PartyPojo clientPojo) {
+    public static PartyData convertPartyPojoToData(PartyPojo partyPojo) {
+        if (isNull(partyPojo))
+            return new PartyData();
+
         PartyData partyData = new PartyData();
-        partyData.setName(clientPojo.getName());
-        partyData.setType(clientPojo.getType());
-        partyData.setId(clientPojo.getId());
+        partyData.setName(partyPojo.getName());
+        partyData.setType(partyPojo.getType());
+        partyData.setId(partyPojo.getId());
+
         return partyData;
     }
 
-    public static List<PartyData> convertListPartyPojoToData(List<PartyPojo> clientPojoList) {
+    public static List<PartyData> convertListPartyPojoToData(List<PartyPojo> partyPojoList) {
+        if (CollectionUtils.isEmpty(partyPojoList))
+            return new ArrayList<>();
+
         List<PartyData> partyDataList = new ArrayList<>();
-        for (PartyPojo clientPojo : clientPojoList) {
+        for (PartyPojo clientPojo : partyPojoList)
             partyDataList.add(convertPartyPojoToData(clientPojo));
-        }
 
         return partyDataList;
     }
 
     public static List<PartyPojo> convertListPartyFormToPojo(List<PartyForm> partyFormList) {
+        if (CollectionUtils.isEmpty(partyFormList))
+            return new ArrayList<>();
+
         List<PartyPojo> clientPojoList = new ArrayList<>();
-        for (PartyForm partyForm : partyFormList) {
+        for (PartyForm partyForm : partyFormList)
             clientPojoList.add(convertClientFormToPojo(partyForm));
-        }
 
         return clientPojoList;
     }
 
     public static List<ProductPojo> convertListProductFormToPojo(List<ProductForm> productFormList, Long consumerId) {
+        if (CollectionUtils.isEmpty(productFormList))
+            return new ArrayList<>();
+
         List<ProductPojo> productPojoList = new ArrayList<>();
-        for (ProductForm productForm : productFormList) {
+        for (ProductForm productForm : productFormList)
             productPojoList.add(convertProductFormToPojo(productForm, consumerId));
-        }
+
         return productPojoList;
     }
 
     public static ProductData convertProductPojoToData(ProductPojo productPojo) {
+        if (isNull(productPojo))
+            return new ProductData();
+
         ProductData productData = new ProductData();
         productData.setBrandId(productPojo.getBrandId());
         productData.setDescription(productPojo.getDescription());
@@ -70,6 +89,9 @@ public class ConversionUtil {
     }
 
     public static List<ProductData> convertListProductPojoToData(List<ProductPojo> productPojoList) {
+        if (CollectionUtils.isEmpty(productPojoList))
+            return new ArrayList<>();
+
         List<ProductData> productDataList = new ArrayList<>();
         for (ProductPojo productPojo : productPojoList) {
             productDataList.add(convertProductPojoToData(productPojo));
@@ -78,6 +100,9 @@ public class ConversionUtil {
     }
 
     public static ProductPojo convertProductFormToPojo(ProductForm productForm, Long clientId) {
+        if (isNull(productForm))
+            return new ProductPojo();
+
         ProductPojo productPojo = new ProductPojo();
         productPojo.setClientId(clientId);
         productPojo.setBrandId(productForm.getBrandId());
@@ -90,9 +115,11 @@ public class ConversionUtil {
 
 
     public static ProductPojo convertProductUpdateFormToPojo(ProductUpdateForm productUpdateForm, Long globalSkuId, Long clientId) {
+        if (isNull(productUpdateForm))
+            return new ProductPojo();
+
         ProductPojo productPojo = new ProductPojo();
         productPojo.setGlobalSkuId(globalSkuId);
-        productPojo.setClientSkuId(productUpdateForm.getClientSkuId());
         productPojo.setMrp(productUpdateForm.getMrp());
         productPojo.setName(productUpdateForm.getName());
         productPojo.setDescription(productUpdateForm.getDescription());
@@ -103,6 +130,9 @@ public class ConversionUtil {
     }
 
     public static BinData convertBinPojoToData(BinPojo binPojo) {
+        if (isNull(binPojo))
+            return new BinData();
+
         BinData binData = new BinData();
         binData.setId(binPojo.getBinId());
 
@@ -110,6 +140,9 @@ public class ConversionUtil {
     }
 
     public static List<BinData> convertBinPojoListToData(List<BinPojo> binPojoList) {
+        if (CollectionUtils.isEmpty(binPojoList))
+            return new ArrayList<>();
+
         List<BinData> binDataList = new ArrayList<>();
         for (BinPojo binPojo : binPojoList) {
             binDataList.add(convertBinPojoToData(binPojo));
@@ -118,6 +151,8 @@ public class ConversionUtil {
     }
 
     public static BinSkuPojo convertBinSkuFormToPojo(BinSkuItemForm binSkuItemForm, Long globalSkuId) {
+        if (isNull(binSkuItemForm))
+            return new BinSkuPojo();
 
         BinSkuPojo binSkuPojo = new BinSkuPojo();
         binSkuPojo.setBinId(binSkuItemForm.getBinId());
@@ -130,17 +165,21 @@ public class ConversionUtil {
 
     public static List<BinSkuPojo> convertListBinSkuFormToPojo(List<BinSkuItemForm> binSkuItemFormList,
                                                                Map<String, Long> clientToGlobalSkuIdMap) {
+        if (CollectionUtils.isEmpty(binSkuItemFormList))
+            return new ArrayList<>();
+
         List<BinSkuPojo> binSkuPojoList = new ArrayList<>();
-        for (BinSkuItemForm binSkuItemForm : binSkuItemFormList) {
+        for (BinSkuItemForm binSkuItemForm : binSkuItemFormList)
             binSkuPojoList.add(convertBinSkuFormToPojo(binSkuItemForm, clientToGlobalSkuIdMap.get(binSkuItemForm.getClientSkuId())));
-        }
 
         return binSkuPojoList;
     }
 
 
-
     public static BinSkuPojo convertBinSkuUpdateFormToPojo(BinSkuUpdateForm binSkuUpdateForm, Long id) {
+        if (isNull(binSkuUpdateForm))
+            return new BinSkuPojo();
+
         BinSkuPojo binSkuPojo = new BinSkuPojo();
         binSkuPojo.setQuantity(binSkuUpdateForm.getQuantity());
         binSkuPojo.setId(id);
@@ -149,6 +188,9 @@ public class ConversionUtil {
     }
 
     public static ChannelData convertChannelPojoToData(ChannelPojo channelPojo) {
+        if (isNull(channelPojo))
+            return new ChannelData();
+
         ChannelData channelData = new ChannelData();
         channelData.setName(channelPojo.getName());
         channelData.setInvoiceTypes(channelPojo.getInvoiceType());
@@ -158,6 +200,9 @@ public class ConversionUtil {
     }
 
     public static List<ChannelData> convertChannelPojoListToData(List<ChannelPojo> channelPojoList) {
+        if (CollectionUtils.isEmpty(channelPojoList))
+            return new ArrayList<>();
+
         List<ChannelData> channelDataList = new ArrayList<>();
         for (ChannelPojo channelPojo : channelPojoList) {
             channelDataList.add(convertChannelPojoToData(channelPojo));
@@ -167,6 +212,9 @@ public class ConversionUtil {
     }
 
     public static ChannelPojo convertChannelFormToPojo(ChannelForm channelForm) {
+        if (isNull(channelForm))
+            return new ChannelPojo();
+
         ChannelPojo channelPojo = new ChannelPojo();
         channelPojo.setName(channelForm.getName());
         channelPojo.setInvoiceType(channelForm.getInvoiceType());
@@ -175,6 +223,9 @@ public class ConversionUtil {
     }
 
     public static void checkDuplicateChannelListingFormList(List<ChannelListingForm> channelListingFormList) throws ApiException {
+        if (CollectionUtils.isEmpty(channelListingFormList))
+            throw new ApiException("Empty form list");
+
         HashSet<String> setChannelSkuId = new HashSet<>();
         HashSet<String> setClientSkuId = new HashSet<>();
         List<ErrorData> errorFormList = new ArrayList<>();
@@ -195,6 +246,9 @@ public class ConversionUtil {
     }
 
     public static void checkDuplicateClientSkuIds(List<OrderItemForm> orderItemFormList) throws ApiException {
+        if (CollectionUtils.isEmpty(orderItemFormList))
+            throw new ApiException("Empty form list");
+
         Set<String> clientSkuIdSet = new HashSet<>();
         List<ErrorData> errorFormList = new ArrayList<>();
         Integer row = 1;
@@ -208,7 +262,11 @@ public class ConversionUtil {
         }
         throwErrorIfNotEmpty(errorFormList);
     }
- public static void checkDuplicateChannelSkuIds(List<OrderItemFormChannel> orderItemFormChannelList) throws ApiException {
+
+    public static void checkDuplicateChannelSkuIds(List<OrderItemFormChannel> orderItemFormChannelList) throws ApiException {
+        if (CollectionUtils.isEmpty(orderItemFormChannelList))
+            throw new ApiException("Empty form list");
+
         Set<String> clientSkuIdSet = new HashSet<>();
         List<ErrorData> errorFormList = new ArrayList<>();
         Integer row = 1;
@@ -223,39 +281,11 @@ public class ConversionUtil {
         throwErrorIfNotEmpty(errorFormList);
     }
 
-    public static OrderPojo createOrderPojo(Long clientId, Long customerId, Long channelId, String channelOrderId) {
-        OrderPojo orderPojo = new OrderPojo();
-        orderPojo.setChannelOrderId(channelOrderId);
-        orderPojo.setClientId(clientId);
-        orderPojo.setChannelId(channelId);
-        orderPojo.setCustomerId(customerId);
-        orderPojo.setStatus(OrderStatus.CREATED);
-
-        return orderPojo;
-    }
-
-    public static List<OrderItemPojo> transformAndConvertOrderItemFormToPojo(Long orderId,
-                                                                             List<OrderItemForm> orderItemFormList,
-                                                                             Map<String, Long> clientSkuIdToGlobalSkuIdMap) {
-        List<OrderItemPojo> orderItemPojoList = new ArrayList<>();
-        for (OrderItemForm orderItemForm : orderItemFormList) {
-            OrderItemPojo orderItemPojo = new OrderItemPojo();
-
-            orderItemPojo.setOrderId(orderId);
-            orderItemPojo.setOrderedQuantity(orderItemForm.getQuantity());
-            orderItemPojo.setGlobalSkuId(clientSkuIdToGlobalSkuIdMap.get(orderItemForm.getClientSkuId()));
-            orderItemPojo.setSellingPricePerUnit(orderItemForm.getSellingPricePerUnit());
-            orderItemPojo.setAllocatedQuantity(0L); //TODO move to service
-            orderItemPojo.setFulfilledQuantity(0L);
-
-            orderItemPojoList.add(orderItemPojo);
-        }
-        return orderItemPojoList;
-    }
-
     public static OrderPojo convertOrderFormToOrderPojo(OrderForm orderForm, Long channelId) {
-        OrderPojo orderPojo = new OrderPojo();
+        if (isNull(orderForm))
+            return new OrderPojo();
 
+        OrderPojo orderPojo = new OrderPojo();
         orderPojo.setChannelOrderId(orderForm.getChannelOrderId());
         orderPojo.setCustomerId(orderForm.getCustomerId());
         orderPojo.setClientId(orderForm.getClientId());
@@ -263,9 +293,12 @@ public class ConversionUtil {
 
         return orderPojo;
     }
- public static OrderPojo convertOrderFormChannelToOrderPojo(ChannelOrderForm channelOrderForm, Long channelId) {
-        OrderPojo orderPojo = new OrderPojo();
 
+    public static OrderPojo convertOrderFormChannelToOrderPojo(ChannelOrderForm channelOrderForm, Long channelId) {
+        if (isNull(channelOrderForm))
+            return new OrderPojo();
+
+        OrderPojo orderPojo = new OrderPojo();
         orderPojo.setChannelOrderId(channelOrderForm.getChannelOrderId());
         orderPojo.setCustomerId(channelOrderForm.getCustomerId());
         orderPojo.setClientId(channelOrderForm.getClientId());
@@ -276,6 +309,9 @@ public class ConversionUtil {
 
     public static List<OrderItemPojo> convertOrderItemListToOrderItemPojo(List<OrderItemForm> orderItemFormList,
                                                                           Map<String, Long> clientSkuIdToGlobalSkuIdMap) {
+        if (CollectionUtils.isEmpty(orderItemFormList))
+            return new ArrayList<>();
+
         List<OrderItemPojo> orderItemPojoList = new ArrayList<>();
         for (OrderItemForm orderItemForm : orderItemFormList) {
             OrderItemPojo orderItemPojo = new OrderItemPojo();
@@ -287,8 +323,12 @@ public class ConversionUtil {
         }
         return orderItemPojoList;
     }
- public static List<OrderItemPojo> convertOrderItemListChannelToOrderItemPojo(List<OrderItemFormChannel> orderItemFormChannelList,
-                                                                              Map<String, Long> channelSkuIdToGlobalSkuIdMap) {
+
+    public static List<OrderItemPojo> convertOrderItemListChannelToOrderItemPojo(List<OrderItemFormChannel> orderItemFormChannelList,
+                                                                                 Map<String, Long> channelSkuIdToGlobalSkuIdMap) {
+        if (CollectionUtils.isEmpty(orderItemFormChannelList))
+            return new ArrayList<>();
+
         List<OrderItemPojo> orderItemPojoList = new ArrayList<>();
         for (OrderItemFormChannel orderItemFormChannel : orderItemFormChannelList) {
             OrderItemPojo orderItemPojo = new OrderItemPojo();
@@ -302,6 +342,9 @@ public class ConversionUtil {
     }
 
     public static List<InventoryPojo> convertListBinSkuFormToInventoryPojo(List<BinSkuPojo> binSkuPojoList) {
+        if (CollectionUtils.isEmpty(binSkuPojoList))
+            return new ArrayList<>();
+
         List<InventoryPojo> inventoryPojoList = new ArrayList<>();
         Map<Long, Long> GSkuIdToQuantityMap = binSkuPojoList.stream()
                 .collect(groupingBy(BinSkuPojo::getGlobalSkuId, summingLong(BinSkuPojo::getQuantity)));
@@ -315,7 +358,10 @@ public class ConversionUtil {
         return inventoryPojoList;
     }
 
-    public static List<InventoryPojo> convertBinSkuUpdateFormToInventoryPojo(BinSkuUpdateForm binSkuUpdateForm, Pair<Long,Long> dataPair){
+    public static List<InventoryPojo> convertBinSkuUpdateFormToInventoryPojo(BinSkuUpdateForm binSkuUpdateForm, Pair<Long, Long> dataPair) {
+        if (isNull(binSkuUpdateForm))
+            return new ArrayList<>();
+
         List<InventoryPojo> inventoryPojoList = new ArrayList<>();
         InventoryPojo inventoryPojo = new InventoryPojo();
         inventoryPojo.setAvailableQuantity(dataPair.getKey() - binSkuUpdateForm.getQuantity());
@@ -323,7 +369,11 @@ public class ConversionUtil {
         inventoryPojoList.add(inventoryPojo);
         return inventoryPojoList;
     }
-    public static OrderItemInvoiceData convertPojoOrderItemToData(OrderItemPojo orderItemPojo, String clientSkuId, String channelOrderId){
+
+    public static OrderItemInvoiceData convertPojoOrderItemToData(OrderItemPojo orderItemPojo, String clientSkuId, String channelOrderId) {
+        if (isNull(orderItemPojo))
+            return new OrderItemInvoiceData();
+
         OrderItemInvoiceData orderItemInvoiceData = new OrderItemInvoiceData();
         orderItemInvoiceData.setChannelOrderId(channelOrderId);
         orderItemInvoiceData.setOrderedQuantity(orderItemPojo.getOrderedQuantity());
@@ -332,8 +382,12 @@ public class ConversionUtil {
 
         return orderItemInvoiceData;
     }
-     public static OrderItemChannelData convertPojoOrderItemChannelToData(OrderItemPojo orderItemPojo,
-                                                                          String channelSkuId, String channelOrderId){
+
+    public static OrderItemChannelData convertPojoOrderItemChannelToData(OrderItemPojo orderItemPojo,
+                                                                         String channelSkuId, String channelOrderId) {
+        if (isNull(orderItemPojo))
+            return new OrderItemChannelData();
+
         OrderItemChannelData orderItemChannelData = new OrderItemChannelData();
         orderItemChannelData.setChannelOrderId(channelOrderId);
         orderItemChannelData.setOrderedQuantity(orderItemPojo.getOrderedQuantity());
@@ -343,7 +397,10 @@ public class ConversionUtil {
         return orderItemChannelData;
     }
 
-    public static ChannelListingData convertChannelListingPojoToData(ChannelListingPojo channelListingPojo){
+    public static ChannelListingData convertChannelListingPojoToData(ChannelListingPojo channelListingPojo) {
+        if (isNull(channelListingPojo))
+            return new ChannelListingData();
+
         ChannelListingData channelListingData = new ChannelListingData();
         channelListingData.setChannelId(channelListingPojo.getChannelId());
         channelListingData.setChannelSkuId(channelListingPojo.getChannelSkuId());
@@ -353,14 +410,21 @@ public class ConversionUtil {
         return channelListingData;
     }
 
-    public static List<ChannelListingData> convertChannelListingPojoListToData(List<ChannelListingPojo> channelListingPojoList){
+    public static List<ChannelListingData> convertChannelListingPojoListToData(List<ChannelListingPojo> channelListingPojoList) {
+        if (CollectionUtils.isEmpty(channelListingPojoList))
+            return new ArrayList<>();
+
         List<ChannelListingData> channelListingDataList = new ArrayList<>();
         for (ChannelListingPojo channelListingPojo : channelListingPojoList) {
             channelListingDataList.add(convertChannelListingPojoToData(channelListingPojo));
         }
         return channelListingDataList;
     }
-    public static OrderData convertOrderPojoToData(OrderPojo orderPojo){
+
+    public static OrderData convertOrderPojoToData(OrderPojo orderPojo) {
+        if (isNull(orderPojo))
+            return new OrderData();
+
         OrderData orderData = new OrderData();
         orderData.setChannelOrderId(orderPojo.getChannelOrderId());
         orderData.setInvoiceUrl(orderPojo.getInvoiceUrl());
@@ -373,7 +437,10 @@ public class ConversionUtil {
         return orderData;
     }
 
-    public static List<OrderData> convertOrderPojoListToData(List<OrderPojo> orderPojoList){
+    public static List<OrderData> convertOrderPojoListToData(List<OrderPojo> orderPojoList) {
+        if (CollectionUtils.isEmpty(orderPojoList))
+            return new ArrayList<>();
+
         List<OrderData> orderDataList = new ArrayList<>();
         for (OrderPojo orderPojo : orderPojoList) {
             orderDataList.add(convertOrderPojoToData(orderPojo));
@@ -381,7 +448,10 @@ public class ConversionUtil {
         return orderDataList;
     }
 
-    public static OrderItemData convertOrderItemPojToData(OrderItemPojo orderItemPojo, String clientSkuId){
+    public static OrderItemData convertOrderItemPojToData(OrderItemPojo orderItemPojo, String clientSkuId) {
+        if (isNull(orderItemPojo))
+            return new OrderItemData();
+
         OrderItemData orderItemData = new OrderItemData();
         orderItemData.setOrderId(orderItemPojo.getOrderId());
         orderItemData.setId(orderItemPojo.getId());

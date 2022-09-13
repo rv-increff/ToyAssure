@@ -522,7 +522,7 @@ function getClientSkuIdDropDownUpdate(){
         $.ajax({
             type: "GET",
             contentType: 'application/json',
-            url: `http://localhost:9000/assure/products/client-id/${clientId}`,
+            url: `http://localhost:9000/assure/products/client-id?clinetId=${clientId}`,
             processData: false,
             dataType: 'json',
             success: function (result) {
@@ -565,7 +565,7 @@ function getClientSkuIdDropDown(){
         $.ajax({
             type: "GET",
             contentType: 'application/json',
-            url: `http://localhost:9000/assure/products/client-id/${clientId}`,
+            url: `http://localhost:9000/assure/products/client-id?clinetId=${clientId}`,
             processData: false,
             dataType: 'json',
             success: function (result) {

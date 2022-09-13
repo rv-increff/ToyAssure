@@ -19,15 +19,9 @@ public class PartyController {
     @Autowired
     private PartyDto partyDto;
 
-    @ApiOperation(value = "Get Party")
-    @RequestMapping(path = "/parties", method = RequestMethod.GET)
-    public List<PartyData> getParty(@RequestParam(name = "pageNumber") Integer pageNumber) {
-        return partyDto.select(pageNumber);
-    }
-
     @ApiOperation(value = "Search Party")
     @RequestMapping(path = "/parties/search", method = RequestMethod.POST)
-    //TODO club these two send POST request and /party/search
+    //TODO club these two send POST request and /party/search done
     public List<PartyData> searchParty(@RequestBody PartySearchForm partySearchForm) {
         return partyDto.partySearch(partySearchForm);
     }

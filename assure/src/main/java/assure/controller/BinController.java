@@ -21,13 +21,13 @@ public class BinController {
 
     @ApiOperation(value = "Create bins")
     @RequestMapping(path = "/bins", method = RequestMethod.POST)
-    public List<BinData> addBins(@RequestParam(name = "numberOfBins") Integer numberOfBins) throws ApiException {
+    public List<BinData> addBins(@RequestParam Integer numberOfBins) throws ApiException {
         return binDto.add(numberOfBins);
     }
 
     @ApiOperation(value = "Get bins")
     @RequestMapping(path = "/bins", method = RequestMethod.GET)
-    public List<BinData> getBins(@RequestParam(name = "pageNumber") Integer pageNumber) {
+    public List<BinData> getBins(@RequestParam Integer pageNumber) {
         return binDto.select(pageNumber);
     }
 

@@ -19,11 +19,8 @@ public class BinDto {
     private BinService binService;
 
     public List<BinData> add(Integer numberOfBins) throws ApiException {
-        if (numberOfBins <= 0)
-            throw new ApiException("Number of bins should be greater than 0");
-
-        if (numberOfBins > MAX_BIN_LIMIT) //TODO combine these two if in one
-            throw new ApiException("Number of bins to create cannot exceed the limit : " + MAX_BIN_LIMIT);
+        if (numberOfBins <= 0 || numberOfBins > MAX_BIN_LIMIT)
+            throw new ApiException("Number of bins should be between 1 and " + MAX_BIN_LIMIT); //TODO combine these two if in one
 
         return convertBinPojoListToData(binService.add(numberOfBins)); //TODO add CollectsUtils.isEmpty() in all conversion
     }

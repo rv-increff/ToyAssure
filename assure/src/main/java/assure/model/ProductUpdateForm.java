@@ -12,8 +12,6 @@ import javax.validation.constraints.PositiveOrZero;
 @Setter
 public class ProductUpdateForm {
     @NotBlank
-    private String clientSkuId;
-    @NotBlank
     private String name;
     @NotBlank
     private String brandId;
