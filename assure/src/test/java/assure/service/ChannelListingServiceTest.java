@@ -2,7 +2,7 @@ package assure.service;
 
 import assure.pojo.ChannelListingPojo;
 import assure.spring.ApiException;
-import assure.util.BaseTest;
+import assure.config.BaseTest;
 import assure.util.TestData;
 import org.junit.Assert;
 import org.junit.Test;

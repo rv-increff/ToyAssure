@@ -19,7 +19,7 @@ import static java.util.Objects.isNull;
 @Service
 public class PartyDto {
 
-    private static final Integer PAGE_SIZE = 10;
+    private static final Integer PAGE_SIZE = 5;
     @Autowired
     private PartyService partyService;
 

@@ -19,14 +19,13 @@ import static assure.util.ValidationUtil.*;
 public class ProductDto {
 
     private static final Long MAX_LIST_SIZE = 1000L;
-    private static final Integer PAGE_SIZE = 10;
+    private static final Integer PAGE_SIZE = 5;
     @Autowired
     private ProductService productService;
     @Autowired
     private PartyService partyService;
 
     public Integer add(List<ProductForm> productFormList, Long clientId) throws ApiException {
-
         validateList("Product Form", productFormList, MAX_LIST_SIZE);
         checkDuplicateProductsProductForm(productFormList);
         partyService.getCheck(clientId);
@@ -49,7 +48,6 @@ public class ProductDto {
         List<ProductPojo> productPojo = productService.selectByClientId(clientId);
         return convertListProductPojoToData(productPojo);
     }
-
 
     public ProductUpdateForm update(ProductUpdateForm productUpdateForm, Long globalSkuId) throws ApiException {
         validateForm(productUpdateForm);

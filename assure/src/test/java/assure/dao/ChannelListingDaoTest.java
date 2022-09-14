@@ -1,7 +1,7 @@
 package assure.dao;
 
 import assure.pojo.ChannelListingPojo;
-import assure.util.BaseTest;
+import assure.config.BaseTest;
 import assure.util.TestData;
 import org.junit.Assert;
 import org.junit.Test;
@@ -35,7 +35,7 @@ public class ChannelListingDaoTest extends BaseTest {
     public void selectByAllFieldsTest() {
         ChannelListingPojo channelListingPojo = testData.channelListAdd();
         ChannelListingPojo selectPojo = channelListingDao.selectByAllFields(channelListingPojo.getClientId(),
-                channelListingPojo.getChannelId(), channelListingPojo.getChannelSkuId(), channelListingPojo.getGlobalSkuId());
+                channelListingPojo.getChannelId(), channelListingPojo.getChannelSkuId());
         Assert.assertEquals(channelListingPojo, selectPojo);
     }
 

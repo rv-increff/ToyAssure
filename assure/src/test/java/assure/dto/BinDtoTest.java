@@ -2,7 +2,7 @@ package assure.dto;
 
 import assure.config.QaConfig;
 import assure.dao.BinDao;
-import assure.util.BaseTest;
+import assure.config.BaseTest;
 import assure.util.TestData;
 import assure.spring.ApiException;
 import org.junit.Assert;
@@ -45,7 +45,7 @@ public class BinDtoTest extends BaseTest {
             binDto.add(n);
             fail("error should be thrown");
         } catch (ApiException e) {
-            Assert.assertEquals(e.getMessage(), "Number of bins should be greater than 0");
+            Assert.assertEquals(e.getMessage(), "Number of bins should be between 1 and 100");
         }
     }
 
@@ -55,7 +55,7 @@ public class BinDtoTest extends BaseTest {
             binDto.add(1000);
             fail("error should be thrown");
         } catch (ApiException e) {
-            Assert.assertEquals(e.getMessage(), "Number of bins to create cannot exceed the limit : 100");
+            Assert.assertEquals(e.getMessage(), "Number of bins should be between 1 and 100");
         }
     }
 

@@ -6,12 +6,13 @@ import assure.model.PartyForm;
 import assure.pojo.*;
 import commons.model.OrderItemForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static assure.util.RandomUtil.*;
-
+@Service
 public class TestData {
     private static final Integer PAGE_SIZE = 100;
     @Autowired

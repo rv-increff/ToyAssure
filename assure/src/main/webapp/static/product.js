@@ -24,7 +24,7 @@ function loadProduct() {
                                       <td>${obj[i]['brandId']}</td>
                                       <td>${obj[i]['mrp']}</td>
                                       <td>${obj[i]['description']}</td>
-                                      <td><button type='button' class='btn btn-primary' onclick='editProductModal(${obj[i]['globalSkuId']},"${obj[i]['clientSkuId']}","${obj[i]['name']}","${obj[i]['brandId']}","${obj[i]['mrp']}","${obj[i]['description']}")'>Edit</button></td>
+                                      <td><button type='button' class='btn btn-primary' onclick='editProductModal(${obj[i]['globalSkuId']},"${obj[i]['name']}","${obj[i]['brandId']}","${obj[i]['mrp']}","${obj[i]['description']}")'>Edit</button></td>
                                     </tr>`;
             }
             body.innerHTML = str;
@@ -71,12 +71,9 @@ function checkNextPageNotExist() {
             obj = JSON.parse(this.responseText);
             console.log(obj, obj.length === 0);
             if (obj.length === 0) {
-                document.getElementById("prevLi").className = "page-item";
                 document.getElementById("nextLi").className = "page-item disabled";
                 console.log("in next check")
-            } else {
-                document.getElementById("prevLi").className = "page-item";
-            }
+            } 
 
         }
         else {
@@ -113,9 +110,12 @@ async function uploadProducts() {
 function getClientDropDown(){
     return new Promise(function(resolve,reject){
         $.ajax({
-            type: "GET",
+            type: "POST",
             contentType: 'application/json',
-            url: `http://localhost:9000/assure/parties/partyType/CLIENT`,
+            url: `http://localhost:9000/assure/parties/search`,
+            data: JSON.stringify({
+                type: "CLIENT"
+            }),
             processData: false,
             dataType: 'json',
             success: function (result) {
@@ -228,7 +228,7 @@ function productUploadCall(parsedata) {
     });
 }
 
-function editProductModal(globalSkuId, clientSkuId, name, brandId, mrp, description) {
+function editProductModal(globalSkuId, name, brandId, mrp, description) {
     $('#productEditModal').modal('show');
     $('#modalTitle').text('Edit Product');
     $('#productModalbody').html(getProductUpdateModal(globalSkuId,name, brandId, mrp, description));
@@ -245,7 +245,6 @@ function editProductModalCall(globalSkuId) {
         return;
     }
 console.log({
-    clientSkuId : clientSkuId,
     name : name,
     brandId : brandId,
     mrp : mrp,
@@ -285,7 +284,7 @@ console.log({
 }
 
 
-function getProductUpdateModal(globalSkuId, clientSkuId, name, brandId, mrp, description) {
+function getProductUpdateModal(globalSkuId, name, brandId, mrp, description) {
     return `<form id="editProductForm" >
     <div id="modalFormDataDiv" class="row">
         <div class="form-group col-12">

@@ -4,9 +4,9 @@ import assure.dto.OrderDto;
 import assure.model.OrderData;
 import assure.model.OrderForm;
 import assure.model.OrderItemData;
-import assure.model.OrderStatusUpdateForm;
 import assure.spring.ApiException;
 import assure.util.InvoiceType;
+import assure.util.OrderStatus;
 import commons.model.ChannelOrderForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,10 +37,16 @@ public class OrderController {
         return orderDto.addChannelOrder(channelOrderForm);
     }
 
-    @ApiOperation(value = "Update order status")
-    @RequestMapping(path = "/orders", method = RequestMethod.PATCH)
-    public OrderStatusUpdateForm updateStatus(@RequestBody OrderStatusUpdateForm orderStatusUpdateForm) throws ApiException {
-        return orderDto.updateStatus(orderStatusUpdateForm);
+    @ApiOperation(value = "Allocate order")
+    @RequestMapping(path = "/orders/{orderId}/allocate", method = RequestMethod.PATCH)
+    public OrderStatus allocateOrder(@PathVariable Long orderId) throws ApiException {
+        return orderDto.allocateOrder(orderId);
+    }
+
+    @ApiOperation(value = "Fulfill order")
+    @RequestMapping(path = "/orders/{orderId}/fulfill", method = RequestMethod.PATCH)
+    public OrderStatus fulfillOrder(@PathVariable Long orderId) throws ApiException {
+        return orderDto.fulfillOrder(orderId);
     }
 
     @ApiOperation(value = "Get invoice")
@@ -60,7 +66,7 @@ public class OrderController {
     public List<OrderData> getOrders(@RequestParam(required = false) InvoiceType type, @RequestParam Integer pageNumber) {
         if (isNull(type) && !isNull(pageNumber))
             return orderDto.selectOrder(pageNumber);
-        if(!isNull(pageNumber))
+        if (!isNull(pageNumber))
             return orderDto.selectOrderItemsByInvoiceType(pageNumber, type);
         return new ArrayList<>();
     }

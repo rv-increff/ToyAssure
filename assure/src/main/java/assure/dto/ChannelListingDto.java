@@ -26,7 +26,7 @@ import static java.util.Objects.isNull;
 @Service
 public class ChannelListingDto {
     private static final Long MAX_LIST_SIZE = 1000L;
-    private static final Integer PAGE_SIZE = 10;
+    private static final Integer PAGE_SIZE = 5;
     @Autowired
     private ChannelListingService channelListingService;
     @Autowired
@@ -37,7 +37,7 @@ public class ChannelListingDto {
     private ChannelService channelService;
 
     //TODO DEV_REVIEW: transactional is not required
-    @Transactional(rollbackFor = ApiException.class)//TODO only if more than one update/add
+    //TODO only if more than one update/add
     public Integer add(ChannelListingUploadForm channelListingUploadForm) throws ApiException {
 
         validateForm(channelListingUploadForm);   //TODO club all three fns
@@ -62,10 +62,10 @@ public class ChannelListingDto {
     public List<ChannelListingData> selectByChannelIdAndClientId(Long channelId, Long clientId) throws ApiException {
         if(isNull(channelId) || isNull(clientId))
             throw new ApiException("channel Id or client Id are NULL");
+
         return convertChannelListingPojoListToData(channelListingService.selectByChannelIdAndClientId(channelId, clientId));
     }
 
-    //TODO DEV_REVIEW: method name could have been ConvertToChannleListingPojo
     private List<ChannelListingPojo> convertChannelListingFormToPojo(Long clientId, Long channelId,
                                                                      List<ChannelListingForm> channelListingFormList)
             throws ApiException {

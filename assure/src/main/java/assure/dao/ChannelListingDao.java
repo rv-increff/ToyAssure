@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public class ChannelListingDao extends AbstractDao<ChannelListingPojo> {
 
-    public ChannelListingPojo selectByAllFields(Long clientId, Long channelId, String channelSkuId, Long globalSkuId) {
+    public ChannelListingPojo selectByAllFields(Long clientId, Long channelId, String channelSkuId) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery criteriaQuery = criteriaQuery();
         Root<ChannelListingPojo> root = criteriaQuery.from(this.clazz);
@@ -22,8 +22,7 @@ public class ChannelListingDao extends AbstractDao<ChannelListingPojo> {
         criteriaQuery.where(cb.and(
                 cb.equal(root.get("clientId"), clientId),
                 cb.equal(root.get("channelId"), channelId),
-                cb.equal(root.get("channelSkuId"), channelSkuId),
-                cb.equal(root.get("globalSkuId"), globalSkuId)
+                cb.equal(root.get("channelSkuId"), channelSkuId)
         ));
         TypedQuery<ChannelListingPojo> query = em.createQuery(criteriaQuery);
         return getSingle(query);

@@ -13,7 +13,7 @@ import static assure.util.ConversionUtil.convertBinPojoListToData;
 @Service
 public class BinDto {
     private static final Long MAX_BIN_LIMIT = 100L;
-    private static final Integer PAGE_SIZE = 10;
+    private static final Integer PAGE_SIZE = 5;
 
     @Autowired
     private BinService binService;
@@ -22,7 +22,7 @@ public class BinDto {
         if (numberOfBins <= 0 || numberOfBins > MAX_BIN_LIMIT)
             throw new ApiException("Number of bins should be between 1 and " + MAX_BIN_LIMIT); //TODO combine these two if in one
 
-        return convertBinPojoListToData(binService.add(numberOfBins)); //TODO add CollectsUtils.isEmpty() in all conversion
+        return convertBinPojoListToData(binService.add(numberOfBins)); //TODO add CollectsUtils.isEmpty() in all conversion done
     }
 
     public List<BinData> select(Integer pageNumber) {

@@ -17,10 +17,6 @@ import static assure.util.ValidationUtil.validateForm;
 public class ChannelDto {
     @Autowired
     private ChannelService channelService;
-
-
-    //TODO DEV_REVIEW: PageNumber is not required. Channel list can never be that big to require a page number. Do not overoptimise.
-    //done
     public List<ChannelData> select() {
         return convertChannelPojoListToData(channelService.select());
     }

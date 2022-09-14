@@ -5,6 +5,7 @@ import assure.pojo.BinSkuPojo;
 import assure.spring.ApiException;
 import commons.model.ErrorData;
 import org.apache.fop.apps.*;
+import org.springframework.util.CollectionUtils;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -54,5 +55,15 @@ public class DataUtil {
         return null;
     }
 
+    public static <T> String getKey(List<Object> list) {
+        if(CollectionUtils.isEmpty(list))
+            return null;
+
+        List<String> strings = new ArrayList<>();
+        for (Object o : list) {
+            strings.add(o.toString());
+        }
+        return String.join("_@!#$(!", strings);
+    }
 }
 

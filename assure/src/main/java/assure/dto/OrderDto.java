@@ -20,32 +20,25 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static assure.util.ConversionUtil.*;
+import static assure.util.DataUtil.getKey;
 import static assure.util.DataUtil.returnFileStream;
-import static assure.util.OrderStatus.ALLOCATED;
-import static assure.util.OrderStatus.FULFILLED;
+import static assure.util.OrderStatus.*;
 import static assure.util.ValidationUtil.validateForm;
 import static assure.util.ValidationUtil.validateList;
 import static commons.util.pdfUtil.convertToPDF;
 import static commons.util.pdfUtil.jaxbObjectToXML;
+import static java.lang.Math.min;
 import static java.util.Objects.isNull;
 
 @Service
 public class OrderDto {
     private static final Long MAX_LIST_SIZE = 1000L;
-    private static final Integer PAGE_SIZE = 10;
+    private static final Integer PAGE_SIZE = 5;
     private static final String INTERNAL_CHANNEL = "INTERNAL";
-
-    private static final Map<OrderStatus, OrderStatus> validStatusUpdateMap =
-            ImmutableMap.<OrderStatus, OrderStatus>builder()
-                    .put(OrderStatus.CREATED, ALLOCATED)
-                    .put(ALLOCATED, FULFILLED)
-                    .build();
 
 
     @Autowired
@@ -119,30 +112,47 @@ public class OrderDto {
 
         return orderItemFormChannelList.size();
     }
-
-    //TODO DEV_REVIEW:not the correct way of doing this. Two different API's should be there. allocateOrder and FulfillOrder.
     @Transactional(rollbackFor = ApiException.class)
-    public OrderStatusUpdateForm updateStatus(OrderStatusUpdateForm orderStatusUpdateForm) throws ApiException {
-        validateForm(orderStatusUpdateForm);
-        OrderPojo orderPojo = orderService.getCheck(orderStatusUpdateForm.getOrderId());
-        //TODO split functions
-        //TODO DEV_REVIEW:Invalid and not "invalid"
-        if (validStatusUpdateMap.get(orderPojo.getStatus()) != orderStatusUpdateForm.getUpdateStatusTo()) {
-            throw new ApiException("Invalid order update status");
+    public OrderStatus allocateOrder(Long id) throws ApiException {
+        OrderPojo orderPojo = orderService.getCheck(id);
+        // move this to API
+        orderService.checkOrderStatusValid(orderPojo.getStatus(), ALLOCATED);
+
+        List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItem(orderPojo.getId());
+        List<InventoryPojo> inventoryPojoList = inventoryService.getAllForGskus(orderItemPojoList.stream().
+                map(OrderItemPojo::getGlobalSkuId).collect(Collectors.toList()));
+        Map<Long, InventoryPojo> gskuToInv = inventoryService.getGskuToInventory(inventoryPojoList);
+
+        Long countOfFullyAllocatedOrderItems = 0L;
+        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
+            Long invQty = gskuToInv.get(orderItemPojo.getGlobalSkuId()).getAvailableQuantity();
+            Long qtyToAllocateMore = min(invQty, orderItemPojo.getOrderedQuantity() - orderItemPojo.getAllocatedQuantity());
+
+            Long allocatedQty = orderService.increaseAllocateQtyForOrderItem(orderItemPojo, qtyToAllocateMore);
+
+            inventoryService.allocateQty(qtyToAllocateMore, orderItemPojo.getGlobalSkuId());
+            binSkuService.allocateQty(allocatedQty, orderItemPojo.getGlobalSkuId());
+
+            if (Objects.equals(orderItemPojo.getOrderedQuantity(), orderItemPojo.getAllocatedQuantity()))
+                countOfFullyAllocatedOrderItems++;
         }
-        OrderStatus orderStatus = validStatusUpdateMap.get(orderPojo.getStatus());
-        switch (orderStatus) {
+        if (countOfFullyAllocatedOrderItems == orderItemPojoList.size())
+            return orderService.updateStatus(id, ALLOCATED);
 
-            case ALLOCATED:
-                allocateOrder(orderStatusUpdateForm.getOrderId());
-                return orderStatusUpdateForm;
+        return CREATED;
+    }
 
-            case FULFILLED:
-                fulfillOrder(orderStatusUpdateForm.getOrderId());
-                return orderStatusUpdateForm;
+    @Transactional(rollbackFor = ApiException.class)
+    public OrderStatus fulfillOrder(Long id) throws ApiException {
+        OrderPojo orderPojo = orderService.getCheck(id);
+        orderService.checkOrderStatusValid(orderPojo.getStatus(), FULFILLED);
+
+        List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItem(orderPojo.getId());
+        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
+            Long fulfilledQty = orderService.fulfillQty(orderItemPojo);
+            inventoryService.fulfillQty(fulfilledQty, orderItemPojo.getGlobalSkuId());
         }
-
-        return orderStatusUpdateForm;
+        return orderService.updateStatus(id, FULFILLED);
     }
 
     public List<OrderData> selectOrder(Integer pageNumber) {
@@ -174,7 +184,7 @@ public class OrderDto {
             byte[] pdfByteArray = java.util.Base64.getDecoder().decode(encoded);
 
             String pdfName = orderId + "_invoice.pdf";
-            File pdfFile = new File("src", pdfName);
+            File pdfFile = new File("src/invoice", pdfName);
             OutputStream out = Files.newOutputStream(pdfFile.getAbsoluteFile().toPath());
             out.write(pdfByteArray);
             out.close();
@@ -193,39 +203,6 @@ public class OrderDto {
                     globalSkuIdToPojo.getOrDefault(orderItemPojo.getGlobalSkuId(), new ProductPojo()).getClientSkuId()));
         }
         return orderItemInvoiceDataList;
-    }
-
-    @Transactional(rollbackFor = ApiException.class)
-    private void allocateOrder(Long id) throws ApiException {
-        OrderPojo orderPojo = orderService.getCheck(id);
-
-        List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItem(orderPojo.getId());
-        Map<OrderItemPojo, InventoryPojo> orderItemPojoInvQtyMap = inventoryService.getOrderItemPojoInvQtyMap(orderItemPojoList);
-        Long countOfFullyAllocatedOrderItems = 0L;
-        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
-            Long invQty = orderItemPojoInvQtyMap.get(orderItemPojo).getAvailableQuantity();
-            Long allocatedQty = orderService.allocateOrderItemQty(orderItemPojo, invQty);
-            inventoryService.allocateQty(allocatedQty, orderItemPojo.getGlobalSkuId());
-            binSkuService.allocateQty(allocatedQty, orderItemPojo.getGlobalSkuId());
-
-            if (orderItemPojo.getOrderedQuantity() == orderItemPojo.getAllocatedQuantity())
-                countOfFullyAllocatedOrderItems++;
-        }
-        if (countOfFullyAllocatedOrderItems == orderItemPojoList.size())
-            orderService.updateStatus(id, ALLOCATED);
-
-    }
-
-    //TODO DEV_REVIEW: order should move to fulfilled on invoice genration
-    @Transactional(rollbackFor = ApiException.class)
-    private void fulfillOrder(Long id) throws ApiException {
-        OrderPojo orderPojo = orderService.getCheck(id);
-        List<OrderItemPojo> orderItemPojoList = orderService.selectOrderItem(orderPojo.getId());
-        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
-            Long fulfilledQty = orderService.fulfillQty(orderItemPojo);
-            inventoryService.fulfillQty(fulfilledQty, orderItemPojo.getGlobalSkuId());
-        }
-        orderService.updateStatus(id, FULFILLED);
     }
 
     private String createPdfAndGetUrl(Long orderId) throws ApiException, IOException, TransformerException {
@@ -256,10 +233,6 @@ public class OrderDto {
         return url;
     }
 
-
-
-
-
     private void checkChannelIdAndChannelOrderIdPairNotExist(Long channelId, String channelOrderId) throws ApiException {
         if (!isNull(orderService.selectByChannelIdAndChannelOrderId(channelId, channelOrderId))) {
             throw new ApiException("channel order id exists for the channel");
@@ -276,7 +249,7 @@ public class OrderDto {
                 getGlobalSkuIdAndChannelIdAndClientIdToPojo(gSkuList, orderPojo.getChannelId(), orderPojo.getClientId());
 
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
-            String key = orderItemPojo.getGlobalSkuId() + "_" + orderPojo.getChannelId() + "_" + orderPojo.getClientId();
+            String key = getKey(Arrays.asList(orderItemPojo.getGlobalSkuId(),orderPojo.getChannelId(), orderPojo.getClientId()));
             String channelSkuId = globalSkuIdAndChannelIdAndClientIdToPojo.get(key).getChannelSkuId();
             OrderItemChannelData orderItemChannelData = convertPojoOrderItemChannelToData(orderItemPojo, channelSkuId,
                     orderPojo.getChannelOrderId());

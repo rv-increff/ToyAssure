@@ -1,7 +1,6 @@
 package assure.service;
 
-import assure.config.QaConfig;
-import assure.util.BaseTest;
+import assure.config.BaseTest;
 import assure.util.TestData;
 import assure.pojo.OrderItemPojo;
 import assure.pojo.OrderPojo;
@@ -9,13 +8,7 @@ import assure.spring.ApiException;
 import assure.util.OrderStatus;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.AnnotationConfigWebContextLoader;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -71,16 +64,6 @@ public class OrderServiceTest extends BaseTest {
 
     }
 
-    @Test
-    public void allocateOrderItemQtyTest() {
-        OrderItemPojo orderItemPojo = testData.orderItemAdd(getRandomNumberLong());
-        Long invQty = getRandomNumberLong();
-        Long orderedQty = orderItemPojo.getOrderedQuantity();
-        Long allocatedQtyPrev = orderItemPojo.getAllocatedQuantity();
-        Long allocatedQty = orderService.allocateOrderItemQty(orderItemPojo, invQty);
-        Assert.assertEquals((long) allocatedQty, min(invQty, orderedQty - allocatedQtyPrev));
-        Assert.assertEquals(allocatedQty, orderItemPojo.getAllocatedQuantity());
-    }
 
     @Test
     public void updateStatusTest() throws ApiException {

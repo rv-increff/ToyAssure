@@ -1,7 +1,6 @@
 package assure.dto;
 
-import assure.config.QaConfig;
-import assure.util.BaseTest;
+import assure.config.BaseTest;
 import assure.util.TestData;
 import assure.model.ProductForm;
 import assure.model.ProductUpdateForm;
@@ -9,13 +8,7 @@ import assure.pojo.ProductPojo;
 import assure.spring.ApiException;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.AnnotationConfigWebContextLoader;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,7 +113,6 @@ public class ProductDtoTest extends BaseTest {
         ProductPojo productPojo = testData.productAdd();
         ProductUpdateForm productUpdateForm = new ProductUpdateForm();
         productUpdateForm.setBrandId(getRandomString());
-        productUpdateForm.setClientSkuId(getRandomString());
         productUpdateForm.setDescription(getRandomString());
         productUpdateForm.setName(getRandomString());
 

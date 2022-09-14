@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static assure.util.NormalizeUtil.normalizeChannelPojo;
+import static assure.util.NormalizeUtil.normalizeString;
 import static java.util.Objects.isNull;
 
 @Service
@@ -18,7 +19,6 @@ import static java.util.Objects.isNull;
 public class ChannelService {
     @Autowired
     private ChannelDao channelDao;
-
 
     public List<ChannelPojo> select() {
         return channelDao.select();
@@ -33,7 +33,7 @@ public class ChannelService {
     }
 
     public ChannelPojo selectByName(String name) {
-        return channelDao.selectByName(name.toUpperCase());
+        return channelDao.selectByName(normalizeString(name));
     }
 
     public ChannelPojo getCheck(Long id) throws ApiException {

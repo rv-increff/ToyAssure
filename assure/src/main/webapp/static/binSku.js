@@ -41,6 +41,7 @@ function nextPage() {
     pageNumber += 1;
     console.log(document.getElementById("page"))
     document.getElementById("page").innerText = pageNumber + 1;
+    document.getElementById("prevLi").className = "page-item";
     loadBinSku()
 
 }
@@ -69,12 +70,9 @@ function checkNextPageNotExist() {
             obj = JSON.parse(this.responseText);
             console.log(obj, obj.length === 0);
             if (obj.length === 0) {
-                document.getElementById("prevLi").className = "page-item";
                 document.getElementById("nextLi").className = "page-item disabled";
                 console.log("in next check")
-            } else {
-                document.getElementById("prevLi").className = "page-item";
-            }
+            } 
 
         }
         else {
@@ -136,9 +134,12 @@ function uploadBinSkus() {
 
 function getClientDropDown(){
     $.ajax({
-        type: "GET",
+        type: "POST",
         contentType: 'application/json',
-        url: `http://localhost:9000/assure/parties/partyType/CLIENT`,
+        url: `http://localhost:9000/assure/parties/search`,
+        data: JSON.stringify({
+            type: "CLIENT"
+        }),
         processData: false,
         dataType: 'json',
         success: function (result) {

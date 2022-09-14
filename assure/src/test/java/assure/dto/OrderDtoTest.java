@@ -1,12 +1,11 @@
 package assure.dto;
 
 import assure.model.OrderForm;
-import assure.model.OrderStatusUpdateForm;
+import assure.pojo.OrderItemPojo;
 import assure.pojo.OrderPojo;
 import assure.pojo.ProductPojo;
 import assure.spring.ApiException;
-import assure.util.BaseTest;
-import assure.util.OrderStatus;
+import assure.config.BaseTest;
 import assure.util.PartyType;
 import assure.util.TestData;
 import commons.model.OrderItemForm;
@@ -76,43 +75,6 @@ public class OrderDtoTest extends BaseTest {
         } catch (ApiException e) {
             Assert.assertEquals("channel order id exists for the channel", e.getMessage());
         }
-    }
-
-    @Test
-    public void updateStatusErrorTest() {
-        OrderPojo orderPojo = testData.orderAdd();
-        orderPojo.setStatus(OrderStatus.CREATED);
-        OrderStatusUpdateForm orderStatusUpdateForm = new OrderStatusUpdateForm();
-        orderStatusUpdateForm.setOrderId(orderPojo.getId());
-        orderStatusUpdateForm.setUpdateStatusTo(OrderStatus.CREATED);
-        try {
-            orderDto.updateStatus(orderStatusUpdateForm);
-            fail("error should have occurred");
-        } catch (ApiException e) {
-            Assert.assertEquals("Invalid order update status", e.getMessage());
-        }
-    }
-
-    @Test
-    public void updateStatusTest() throws ApiException {
-        OrderPojo orderPojo = testData.orderAdd();
-        orderPojo.setStatus(OrderStatus.CREATED);
-        OrderStatusUpdateForm orderStatusUpdateForm = new OrderStatusUpdateForm();
-        orderStatusUpdateForm.setOrderId(orderPojo.getId());
-        orderStatusUpdateForm.setUpdateStatusTo(OrderStatus.ALLOCATED);
-        orderDto.updateStatus(orderStatusUpdateForm);
-
-    }
-
-    @Test
-    public void updateStatusAllocatedTest() throws ApiException {
-        OrderPojo orderPojo = testData.orderAdd();
-        orderPojo.setStatus(OrderStatus.ALLOCATED);
-        OrderStatusUpdateForm orderStatusUpdateForm = new OrderStatusUpdateForm();
-        orderStatusUpdateForm.setOrderId(orderPojo.getId());
-        orderStatusUpdateForm.setUpdateStatusTo(OrderStatus.FULFILLED);
-        orderDto.updateStatus(orderStatusUpdateForm);
-
     }
 
 }

@@ -7,19 +7,29 @@ import assure.pojo.OrderPojo;
 import assure.spring.ApiException;
 import assure.util.InvoiceType;
 import assure.util.OrderStatus;
+import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import static java.lang.Math.min;
+import static assure.util.OrderStatus.ALLOCATED;
+import static assure.util.OrderStatus.FULFILLED;
 import static java.util.Objects.isNull;
 
 @Service
 @Transactional(rollbackFor = ApiException.class)
 public class OrderService {
 
+    private static final Map<OrderStatus, OrderStatus> validStatusUpdateMap =
+            ImmutableMap.<OrderStatus, OrderStatus>builder()
+                    .put(OrderStatus.CREATED, ALLOCATED)
+                    .put(ALLOCATED, FULFILLED)
+                    .build();
     //TODO DEV_REVIEW add access specifiers
     @Autowired
     private OrderDao orderDao;
@@ -27,13 +37,14 @@ public class OrderService {
     private OrderItemDao orderItemDao;
 
     public void add(OrderPojo orderPojo, List<OrderItemPojo> orderItemPojoList) throws ApiException {
+        checkDuplicateGlobalSkuIdNotExits(orderItemPojoList);
+
         orderPojo.setStatus(OrderStatus.CREATED);
         orderDao.add(orderPojo);
         Long orderId = orderPojo.getId();
 
-
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
-            add(orderItemPojo,orderId);
+            add(orderItemPojo, orderId);
         }
     }
 
@@ -61,16 +72,25 @@ public class OrderService {
         return orderPojo;
     }
 
-    public Long allocateOrderItemQty(OrderItemPojo orderItemPojo, Long invQty) {
-        Long allocatedQty = min(invQty, orderItemPojo.getOrderedQuantity() - orderItemPojo.getAllocatedQuantity());
-        orderItemPojo.setAllocatedQuantity(allocatedQty);
-        return allocatedQty;
+    public Long increaseAllocateQtyForOrderItem(OrderItemPojo orderItemPojo, Long qtyToIncrease) throws ApiException {
+        if (qtyToIncrease < 0)
+            throw new ApiException("Quantity to increase should be greater than 0");
+
+        orderItemPojo.setAllocatedQuantity(orderItemPojo.getAllocatedQuantity() + qtyToIncrease);
+        return orderItemPojo.getAllocatedQuantity();
     }
 
-    public void updateStatus(Long id, OrderStatus orderStatus) throws ApiException {
+    public void checkOrderStatusValid(OrderStatus initialStatus, OrderStatus finalStatus) throws ApiException {
+        if (validStatusUpdateMap.get(initialStatus) != finalStatus) {
+            throw new ApiException("Invalid order update status");
+        }
+    }
+
+    public OrderStatus updateStatus(Long id, OrderStatus orderStatus) throws ApiException {
         OrderPojo orderPojo = getCheck(id);
         orderPojo.setStatus(orderStatus);
         orderDao.update();
+        return orderStatus;
     }
 
     public Long fulfillQty(OrderItemPojo orderItemPojo) {
@@ -87,11 +107,18 @@ public class OrderService {
         orderPojo.setInvoiceUrl(url);
         orderDao.update();
     }
+
     //TODO DEV_REVIEW make this a separate private method
-    private void add(OrderItemPojo orderItemPojo, Long orderId){
+    private void add(OrderItemPojo orderItemPojo, Long orderId) {
         orderItemPojo.setOrderId(orderId);
         orderItemPojo.setFulfilledQuantity(0L);
         orderItemPojo.setAllocatedQuantity(0L);
         orderItemDao.add(orderItemPojo);
+    }
+
+    private void checkDuplicateGlobalSkuIdNotExits(List<OrderItemPojo> orderItemPojoList) throws ApiException {
+        Set<Long> globalSkuIdSet = orderItemPojoList.stream().map(OrderItemPojo::getGlobalSkuId).collect(Collectors.toSet());
+        if (globalSkuIdSet.size() != orderItemPojoList.size())
+            throw new ApiException("Duplicate global SKU ID present in list");
     }
 }

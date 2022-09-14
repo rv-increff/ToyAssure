@@ -17,7 +17,7 @@ public class InventoryPojo extends AbstractPojo {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = SEQ_INVENTORY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private Long globalSkuId;
 
     @Column(nullable = false)

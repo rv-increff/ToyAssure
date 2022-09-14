@@ -36,6 +36,7 @@ function nextPage() {
     pageNumber += 1;
     console.log(document.getElementById("page"))
     document.getElementById("page").innerText = pageNumber + 1;
+    document.getElementById("prevLi").className = "page-item";
     loadChannelList()
 }
 
@@ -60,12 +61,9 @@ function checkNextPageNotExist() {
             obj = JSON.parse(this.responseText);
             console.log(obj, obj.length === 0);
             if (obj.length === 0) {
-                document.getElementById("prevLi").className = "page-item";
                 document.getElementById("nextLi").className = "page-item disabled";
                 console.log("in next check")
-            } else {
-                document.getElementById("prevLi").className = "page-item";
-            }
+            } 
         }
         else {
             console.log("cannot fetch channel listings");
@@ -215,9 +213,12 @@ console.log(clientDropDown, channelDropDown)
 function getClientDropDown(){
     return new Promise(function(resolve,reject){
         $.ajax({
-            type: "GET",
+            type: "POST",
             contentType: 'application/json',
-            url: `http://localhost:9000/assure/parties/partyType/CLIENT`,
+            url: `http://localhost:9000/assure/parties/search`,
+            data: JSON.stringify({
+                type: "CLIENT"
+            }),
             processData: false,
             dataType: 'json',
             success: function (result) {

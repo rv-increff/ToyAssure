@@ -24,7 +24,7 @@ import static assure.util.ValidationUtil.validateList;
 public class BinSkuDto {
 
     private static final Long MAX_LIMIT = 100L; //TODO move all to common file
-    private static final Integer PAGE_SIZE = 10;
+    private static final Integer PAGE_SIZE = 5;
     @Autowired
     private BinSkuService binSkuService;
     @Autowired
@@ -59,8 +59,17 @@ public class BinSkuDto {
 
     @Transactional(rollbackFor = ApiException.class)
     public BinSkuUpdateForm update(BinSkuUpdateForm binSkuUpdateForm, Long id) throws ApiException {
-        Pair<Long, Long> dataPair = binSkuService.update(convertBinSkuUpdateFormToPojo(binSkuUpdateForm, id));//TODO
-        inventoryService.add(convertBinSkuUpdateFormToInventoryPojo(binSkuUpdateForm, dataPair));
+        BinSkuPojo exists = binSkuService.getCheck(id);
+        Long existsQty = exists.getQuantity();
+        Long globalSkuId = exists.getGlobalSkuId();
+
+        binSkuService.update(convertBinSkuUpdateFormToPojo(binSkuUpdateForm, id));
+
+        if(existsQty < binSkuUpdateForm.getQuantity())
+            inventoryService.increaseInventory(globalSkuId, binSkuUpdateForm.getQuantity() - existsQty);
+        else
+            inventoryService.decreaseInventory(globalSkuId, existsQty - binSkuUpdateForm.getQuantity());
+
         return binSkuUpdateForm;
         //TODO change to negative and positive increase and decrease and not pair get pojo first
         //doing same id call in one transaction is same wont cause extra

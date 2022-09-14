@@ -9,6 +9,9 @@ public class NormalizeUtil {
     public static void normalizeChannelPojo(ChannelPojo channelPojo) {
         channelPojo.setName(channelPojo.getName().toUpperCase().trim());
     }
+    public static String normalizeString(String name) {
+        return name.toUpperCase().trim();
+    }
     public static void normalizeChannelListingPojo(ChannelListingPojo channelListingPojo) {
         channelListingPojo.setChannelSkuId(channelListingPojo.getChannelSkuId().toUpperCase().trim());
     }

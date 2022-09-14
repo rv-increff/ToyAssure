@@ -35,6 +35,7 @@ assure/model/ProductForm.class
 assure/model/OrderItemInvoiceData.class
 assure/model/PartyForm.class
 assure/dao/PartyDao.class
+assure/model/PartySearchForm.class
 assure/model/OrderData.class
 assure/service/BinService.class
 assure/pojo/TableConstants.class
@@ -66,7 +67,6 @@ assure/model/OrderItemData.class
 assure/util/DataUtil.class
 assure/pojo/AbstractPojo.class
 assure/dto/BinDto.class
-assure/dto/OrderDto$1.class
 assure/util/NormalizeUtil.class
 assure/dao/OrderDao.class
 assure/model/BinSkuData.class

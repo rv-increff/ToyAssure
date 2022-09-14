@@ -3,7 +3,7 @@ package assure.service;
 import assure.dao.InventoryDao;
 import assure.pojo.InventoryPojo;
 import assure.spring.ApiException;
-import assure.util.BaseTest;
+import assure.config.BaseTest;
 import assure.util.TestData;
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,7 +27,7 @@ public class InventoryServiceTest extends BaseTest {
     private InventoryDao inventoryDao;
 
     @Test
-    public void addTest() {
+    public void addTest() throws ApiException {
         int n = 5;
         List<InventoryPojo> inventoryPojoList = new ArrayList<>();
         for (int i = 0; i < n; i++) {

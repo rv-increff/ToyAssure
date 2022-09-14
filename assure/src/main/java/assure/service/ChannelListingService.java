@@ -10,10 +10,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static assure.util.DataUtil.getKey;
 import static assure.util.NormalizeUtil.normalizeChannelListingPojo;
 import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
 import static java.util.Objects.isNull;
@@ -53,10 +55,9 @@ public class ChannelListingService {
                                                                                        Long clientId) {
         List<ChannelListingPojo> channelListingPojoList = channelListingDao.selectForGlobalSkuIdAndChannelIdAndClientId(
                 gSkuList, channelId, clientId);
-        return channelListingPojoList.stream().collect(Collectors.toMap(pojo -> pojo.getGlobalSkuId() + "_"
-                + pojo.getChannelId() + "_" + pojo.getClientId(), pojo -> pojo));
+        return channelListingPojoList.stream().collect(Collectors.toMap(pojo -> getKey(Arrays.asList(pojo.getGlobalSkuId(),
+                pojo.getChannelId(), pojo.getClientId())), pojo -> pojo));
     }
-
 
     public List<ChannelListingPojo> selectByChannelIdAndClientId(Long channelId, Long clientId) {
         return channelListingDao.selectByChannelIdAndClientId(channelId, clientId);
@@ -81,18 +82,16 @@ public class ChannelListingService {
     }
 
     private void checkDataNotExist(List<ChannelListingPojo> channelListingPojoList) throws ApiException {
+
         for (ChannelListingPojo channelListing : channelListingPojoList) {
+            //TODO in memory
             normalizeChannelListingPojo(channelListing);
             ChannelListingPojo channelListingPojo = channelListingDao.selectByAllFields(
                     channelListing.getClientId(), channelListing.getChannelId(),
-                    channelListing.getChannelSkuId(), channelListing.getGlobalSkuId());//TODO check constraints loop hole
-            //(f,ck1,p,1)
-            //(f,ck1,p,2)
-            //(a,ck1,p,1)
-            //(a,ck2,p,2) -> logic correct
+                    channelListing.getChannelSkuId());
             if (!isNull(channelListingPojo)) {
                 throw new ApiException("Channel Listing data already exists");
-            }//TODO remove row error logic in service
+            }
 
         }
     }

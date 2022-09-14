@@ -1,7 +1,7 @@
 package assure.service;
 
 import assure.pojo.BinPojo;
-import assure.util.BaseTest;
+import assure.config.BaseTest;
 import assure.util.TestData;
 import org.junit.Assert;
 import org.junit.Test;

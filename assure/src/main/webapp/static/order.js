@@ -54,6 +54,7 @@ function nextPage() {
     pageNumber += 1;
     console.log(document.getElementById("page"))
     document.getElementById("page").innerText = pageNumber + 1;
+    document.getElementById("prevLi").className = "page-item";
     loadOrder()
 
 }
@@ -82,11 +83,8 @@ function checkNextPageNotExist() {
             obj = JSON.parse(this.responseText);
             console.log(obj, obj.length === 0);
             if (obj.length === 0) {
-                document.getElementById("prevLi").className = "page-item";
                 document.getElementById("nextLi").className = "page-item disabled";
                 console.log("in next check")
-            } else {
-                document.getElementById("prevLi").className = "page-item";
             }
 
         }
@@ -97,20 +95,16 @@ function checkNextPageNotExist() {
     xhr.send();
 }
 
-function allocateOrder(id) {
+function allocateOrder(orderId) {
     $.ajax({
         type: "PATCH",
         contentType: 'application/json',
-        url: `http://localhost:9000/assure/orders`,
-        data: JSON.stringify({
-            "orderId": id,
-            "updateStatusTo": "ALLOCATED"
-        }),
+        url: `http://localhost:9000/assure/orders/${orderId}/allocate`,
         processData: false,
         dataType: 'json',
         success: function (result) {
             console.log(result, "order allocated")
-            $.notify(`Order ${id} allocated`, "success");
+            $.notify(`Order ${orderId} allocated`, "success");
             $('#uploadModal').modal('hide');
             loadOrder();
         },
@@ -129,15 +123,11 @@ function allocateOrder(id) {
     });
 }
 
-function fullfillOrder(id) {
+function fullfillOrder(orderId) {
     $.ajax({
         type: "PATCH",
         contentType: 'application/json',
-        url: `http://localhost:9000/assure/orders`,
-        data: JSON.stringify({
-            "orderId": id,
-            "updateStatusTo": "FULFILLED"
-        }),
+        url: `http://localhost:9000/assure/orders/${orderId}/fulfill`,
         processData: false,
         dataType: 'json',
         success: function (result) {
@@ -481,9 +471,9 @@ function getClientDropDown(){
             contentType: 'application/json',
             url: `http://localhost:9000/assure/parties/search`,
             processData: false,
-            data: JSON.stringify([{
+            data: JSON.stringify({
                 type: "CLIENT",
-            }]),
+            }),
             dataType: 'json',
             success: function (result) {
                 console.log(result,"result drop down")
@@ -522,7 +512,7 @@ function getClientSkuIdDropDownUpdate(){
         $.ajax({
             type: "GET",
             contentType: 'application/json',
-            url: `http://localhost:9000/assure/products/client-id?clinetId=${clientId}`,
+            url: `http://localhost:9000/assure/products/client-id?clientId=${clientId}`,
             processData: false,
             dataType: 'json',
             success: function (result) {
@@ -565,7 +555,7 @@ function getClientSkuIdDropDown(){
         $.ajax({
             type: "GET",
             contentType: 'application/json',
-            url: `http://localhost:9000/assure/products/client-id?clinetId=${clientId}`,
+            url: `http://localhost:9000/assure/products/client-id?clientId=${clientId}`,
             processData: false,
             dataType: 'json',
             success: function (result) {
@@ -605,9 +595,9 @@ function getCustomerDropDown(){
             url: `http://localhost:9000/assure/parties/search`,
             processData: false,
             dataType: 'json',
-            data: JSON.stringify([{
+            data: JSON.stringify({
                 type: "CUSTOMER",
-            }]),
+            }),
             success: function (result) {
                 console.log(result,"result drop down")
                 obj  = result

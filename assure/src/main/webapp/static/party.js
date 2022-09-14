@@ -4,14 +4,14 @@ function loadParty() {
         type: "POST",
         contentType: 'application/json',
         url: `http://localhost:9000/assure/parties/search`,
-        data: JSON.stringify([{
-            pageNumber: pageNumber,
-        }]),
+        data: JSON.stringify({
+            pageNumber: pageNumber
+        }),
         processData: false,
         dataType: 'json',
         success: function (result) {
             
-            obj = JSON.parse(this.responseText);
+            obj = result
             console.log(obj, "inLoadfuntion");
            
             let body = document.getElementById("partyTbody");
@@ -43,6 +43,7 @@ function nextPage() {
     pageNumber += 1;
     console.log(document.getElementById("page"))
     document.getElementById("page").innerText = pageNumber + 1;
+    document.getElementById("prevLi").className = "page-item";
     loadParty()
 
 }
@@ -58,30 +59,28 @@ function prevPage() {
 }
 
 function checkNextPageNotExist() {
-
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", `http://localhost:9000/assure/parties?pageNumber=${pageNumber + 1}`, true);
-
-    xhr.onload = function () {
-        if (this.status === 200) {
-
-            obj = JSON.parse(this.responseText);
+    $.ajax({
+        type: "POST",
+        contentType: 'application/json',
+        url: `http://localhost:9000/assure/parties/search`,
+        data: JSON.stringify({
+            pageNumber: pageNumber+1
+        }),
+        processData: false,
+        dataType: 'json',
+        success: function (result) {
+            
+            obj = result;
             console.log(obj, obj.length === 0);
             if (obj.length === 0) {
-                document.getElementById("prevLi").className = "page-item";
                 document.getElementById("nextLi").className = "page-item disabled";
                 console.log("in next check")
-            } else {
-                document.getElementById("prevLi").className = "page-item";
-            }
-
+            } 
+        },
+        error: function (xhr, status, error) {
+            console.log("cannot fetch party");
         }
-        else {
-            console.log("cannot fetch binSku");
-        }
-    }
-
-    xhr.send();
+    });
 }
 
 function addParty(){

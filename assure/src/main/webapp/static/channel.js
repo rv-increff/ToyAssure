@@ -69,7 +69,7 @@ function checkNextPageNotExist() {
                 document.getElementById("prevLi").className = "page-item";
                 document.getElementById("nextLi").className = "page-item disabled";
                 console.log("in next check")
-            } else {
+            } else if(pageNumber>0){
                 document.getElementById("prevLi").className = "page-item";
             }
 

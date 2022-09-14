@@ -1,6 +1,7 @@
-package assure.util;
+package assure.config;
 
 import assure.config.QaConfig;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -13,4 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 @WebAppConfiguration("src/test/webapp")
 @Transactional
 public class BaseTest {
+
+    @Test
+    public void test(){
+
+    }
 }

@@ -1,8 +1,9 @@
 package assure.service;
 
+import assure.pojo.BinPojo;
 import assure.pojo.BinSkuPojo;
 import assure.spring.ApiException;
-import assure.util.BaseTest;
+import assure.config.BaseTest;
 import assure.util.TestData;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,23 +22,25 @@ public class BinSkuServiceTest extends BaseTest {
     @Autowired
     private TestData testData;
 
-    @Test
-    public void add() throws ApiException {
-        List<BinSkuPojo> binSkuPojoList = new ArrayList<>();
-        Long binId = testData.binAdd().getBinId();
-        for (int i = 0; i < 5; i++) {
-            BinSkuPojo binSkuPojo = testData.getBinSku();
-            binSkuPojo.setId(binId);
-            binSkuPojoList.add(testData.getBinSku());
-        }
-        binSkuService.add(binSkuPojoList);
-    }
+//    @Test
+//    public void add() throws ApiException {
+//        List<BinSkuPojo> binSkuPojoList = new ArrayList<>();
+//        Long binId = testData.binAdd().getBinId();
+//        for (int i = 0; i < 5; i++) {
+//            BinSkuPojo binSkuPojo = testData.getBinSku();
+//            binSkuPojo.setId(binId);
+//            binSkuPojoList.add(testData.getBinSku());
+//        }
+//        binSkuService.add(binSkuPojoList);
+//    }
 
     @Test
     public void addDuplicateError() {
         List<BinSkuPojo> binSkuPojoList = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            binSkuPojoList.add(testData.getBinSku());
+            BinSkuPojo binSkuPojo = testData.getBinSku();
+            binSkuPojo.setBinId(testData.binSkuAdd().getBinId());
+            binSkuPojoList.add(binSkuPojo);
         }
         binSkuPojoList.add(binSkuPojoList.get(0));
         try {

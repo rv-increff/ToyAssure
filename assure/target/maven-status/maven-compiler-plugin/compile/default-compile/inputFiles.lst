@@ -54,6 +54,7 @@
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/dao/OrderDao.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/model/ProductUpdateForm.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/controller/RestControllerAdvice.java
+/Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/model/PartySearchForm.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/model/BinData.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/spring/CustomPhysicalNamingStrategy.java
 /Users/rahulverma/Downloads/toyassure/assure/src/main/java/assure/pojo/ChannelPojo.java
