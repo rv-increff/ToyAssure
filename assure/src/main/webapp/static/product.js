@@ -17,12 +17,11 @@ function loadProduct() {
             str = ""
             for (var i = 0; i < obj.length; i++) {
                 str += `<tr>
-                                      <td>${obj[i]['globalSkuId']}</td>
-                                      <td>${obj[i]['clientSkuId']}</td>
+                                      <td id="${obj[i]['globalSkuId']}_clientSkuId">${obj[i]['clientSkuId']}</td>
                                       <td>${obj[i]['clientId']}</td>
                                       <td>${obj[i]['name']}</td>
                                       <td>${obj[i]['brandId']}</td>
-                                      <td>${obj[i]['mrp']}</td>
+                                      <td>${obj[i]['mrp'].toFixed(2)}</td>
                                       <td>${obj[i]['description']}</td>
                                       <td><button type='button' class='btn btn-primary' onclick='editProductModal(${obj[i]['globalSkuId']},"${obj[i]['name']}","${obj[i]['brandId']}","${obj[i]['mrp']}","${obj[i]['description']}")'>Edit</button></td>
                                     </tr>`;
@@ -101,7 +100,8 @@ function uploadProductFile() {
 }
 
 async function uploadProducts() {
-    $('#uploadModal').modal('show');
+    $('.close').css('visibility', 'hidden');
+    $('#uploadModal').modal({backdrop: 'static', keyboard: false}, 'show');
     let clientDropDown = await getClientDropDown();
     $('#uploadModalBody').html(getUploadModalBody(clientDropDown));
 
@@ -229,7 +229,8 @@ function productUploadCall(parsedata) {
 }
 
 function editProductModal(globalSkuId, name, brandId, mrp, description) {
-    $('#productEditModal').modal('show');
+    $('.close').css('visibility', 'hidden');
+    $('#productEditModal').modal({backdrop: 'static', keyboard: false}, 'show');
     $('#modalTitle').text('Edit Product');
     $('#productModalbody').html(getProductUpdateModal(globalSkuId,name, brandId, mrp, description));
 
@@ -285,23 +286,28 @@ console.log({
 
 
 function getProductUpdateModal(globalSkuId, name, brandId, mrp, description) {
+    let clienSkuId = $(`#${globalSkuId}_clientSkuId`).text();
     return `<form id="editProductForm" >
     <div id="modalFormDataDiv" class="row">
         <div class="form-group col-12">
-            <label for="name" class="required">Name</label>
-            <input type="text" class="form-control" id="name" name="name" aria-describedby="text" placeholder="Enter name" autocomplete="off" minlength="1" maxlength="20" value="${name}">
+            <label class="col-6">Client SKU ID</label>
+            <label >${clienSkuId}</label>
         </div>
         <div class="form-group col-12">
-            <label for="brandId" class="required">Brand ID</label>
-            <input type="text" class="form-control" id="brandId" name="brandId" aria-describedby="text" placeholder="Enter brand ID" autocomplete="off" minlength="1" maxlength="20" value="${brandId}">
+            <label for="name" class="required col-6">Name</label>
+            <input type="text" class="form-control col-6" id="name" name="name" aria-describedby="text" placeholder="Enter name" autocomplete="off" minlength="1" maxlength="20" value="${name}">
         </div>
         <div class="form-group col-12">
-            <label for="mrp" class="required">MRP</label>
-            <input type="number" class="form-control" id="mrp" name="mrp" aria-describedby="text" placeholder="Enter MRP" autocomplete="off" minlength="1" value="${mrp}" max="1000000">
+            <label for="brandId" class="required col-6">Brand ID</label>
+            <input type="text" class="form-control col-6" id="brandId" name="brandId" aria-describedby="text" placeholder="Enter brand ID" autocomplete="off" minlength="1" maxlength="20" value="${brandId}">
+        </div>
+        <div class="form-group col-12">
+            <label for="mrp" class="required col-6">MRP</label>
+            <input type="number" class="form-control col-6" id="mrp" name="mrp" aria-describedby="text" placeholder="Enter MRP" autocomplete="off" minlength="1" value="${mrp}" max="1000000">
             </div>
         <div class="form-group col-12">
-            <label for="description" class="required">Description</label>
-            <input type="text" class="form-control" id="description" name="description" aria-describedby="text" placeholder="Enter description" autocomplete="off" minlength="1" maxlength="40" value="${description}">
+            <label for="description" class="required col-6">Description</label>
+            <input type="text" class="form-control col-6" id="description" name="description" aria-describedby="text" placeholder="Enter description" autocomplete="off" minlength="1" maxlength="40" value="${description}">
         </div>
     </div>
     <div style="float:right; padding-top:8px">

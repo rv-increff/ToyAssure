@@ -5,7 +5,7 @@ import assure.util.TestData;
 import assure.pojo.OrderItemPojo;
 import assure.pojo.OrderPojo;
 import assure.spring.ApiException;
-import assure.util.OrderStatus;
+import commons.util.OrderStatus;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

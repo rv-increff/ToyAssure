@@ -86,7 +86,8 @@ function checkNextPageNotExist() {
 
 
 function generateBins() {
-    $('#binSkuEditModal').modal('show');
+    $('.close').css('visibility', 'hidden');
+    $('#binSkuEditModal').modal({backdrop: 'static', keyboard: false}, 'show');
     $('#modalTitle').text('Generate Bins');
     $('#binSkuModalbody').html(getBinModalBody());
 
@@ -126,7 +127,8 @@ function uploadBinSkuFile() {
 }
 
 function uploadBinSkus() {
-    $('#uploadModal').modal('show');
+    $('.close').css('visibility', 'hidden');
+    $('#uploadModal').modal({backdrop: 'static', keyboard: false}, 'show');
     getClientDropDown();
     
 
@@ -256,7 +258,8 @@ function binSkuUploadCall(parsedata) {
 }
 
 function editBinSKuModal(id, binId, globalSkuId, clientSkuId, qty) {
-    $('#binSkuEditModal').modal('show');
+    $('.close').css('visibility', 'hidden');
+    $('#binSkuEditModal').modal({backdrop: 'static', keyboard: false}, 'show');
     $('#modalTitle').text('Update Bin SKU');
     $('#binSkuModalbody').html(getBinSkuUpdateModal(id, qty, binId, globalSkuId, clientSkuId));
 

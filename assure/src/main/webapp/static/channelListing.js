@@ -15,9 +15,9 @@ function loadChannelList() {
             str = ""
             for (var i = 0; i < obj.length; i++) {
                 str += `<tr>
-                                      <th scope="row">${obj[i]['channelId']}</th>
+                                      <td>${obj[i]['channelName']}</td>
                                       <td>${obj[i]['channelSkuId']}</td>
-                                      <td>${obj[i]['clientId']}</td>
+                                      <td>${obj[i]['clientName']}</td>
                                       <td>${obj[i]['globalSkuId']}</td>
                                     </tr>`;
             }
@@ -89,7 +89,8 @@ function uploadChannelListFile() {
 }
 
 async function uploadChannelList() {
-    $('#uploadModal').modal('show');
+    $('.close').css('visibility', 'hidden');
+    $('#uploadModal').modal({backdrop: 'static', keyboard: false}, 'show');
     let clientDropDown = await getClientDropDown();
     let channelDropDown = await getChannelDropDown();
     $('#uploadModalBody').html(getUploadModalBody(clientDropDown,channelDropDown));

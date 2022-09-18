@@ -1,11 +1,11 @@
 package assure.dto;
 
-import assure.model.ChannelListingData;
+import assure.pojo.ChannelPojo;
+import assure.pojo.PartyPojo;
+import commons.model.ChannelListingData;
 import assure.model.ChannelListingForm;
 import assure.model.ChannelListingUploadForm;
-import commons.model.ErrorData;
 import assure.pojo.ChannelListingPojo;
-import assure.pojo.ProductPojo;
 import assure.service.ChannelListingService;
 import assure.service.ChannelService;
 import assure.service.PartyService;
@@ -13,13 +13,14 @@ import assure.service.ProductService;
 import assure.spring.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import static assure.util.ConversionUtil.checkDuplicateChannelListingFormList;
-import static assure.util.ConversionUtil.convertChannelListingPojoListToData;
+import static assure.util.ConversionUtil.*;
 import static assure.util.ValidationUtil.*;
 import static java.util.Objects.isNull;
 
@@ -36,11 +37,9 @@ public class ChannelListingDto {
     @Autowired
     private ChannelService channelService;
 
-    //TODO DEV_REVIEW: transactional is not required
-    //TODO only if more than one update/add
     public Integer add(ChannelListingUploadForm channelListingUploadForm) throws ApiException {
 
-        validateForm(channelListingUploadForm);   //TODO club all three fns
+        validateForm(channelListingUploadForm);
         validateList("Channel Listing Upload",channelListingUploadForm.getChannelListingFormList(), MAX_LIST_SIZE);
         checkDuplicateChannelListingFormList(channelListingUploadForm.getChannelListingFormList());
 
@@ -55,7 +54,7 @@ public class ChannelListingDto {
         return channelListingUploadForm.getChannelListingFormList().size();
     }
 
-    public List<ChannelListingData> select(Integer pageNumber){
+    public List<ChannelListingData> select(Integer pageNumber) throws ApiException {
         return convertChannelListingPojoListToData(channelListingService.select(pageNumber,PAGE_SIZE));
     }
 
@@ -72,27 +71,42 @@ public class ChannelListingDto {
 
         List<ChannelListingPojo> channelListingPojoList = new ArrayList<>();
 
-        List<ErrorData> errorFormList = new ArrayList<>();
-        Integer row = 1;
-        for (ChannelListingForm channelListingForm : channelListingFormList) {
-            ChannelListingPojo channelListingPojo = new ChannelListingPojo();
+        List<String> clientSkuIdList = channelListingFormList.stream().map(ChannelListingForm::getClientSkuId).distinct()
+                .collect(Collectors.toList());
+        Map<String, Long> clientSkuIdToGsku = productService.getCheckClientSkuId(
+                clientSkuIdList, clientId);
 
-            ProductPojo productPojo = productService.selectByClientSkuIdAndClientId(channelListingForm.getClientSkuId(),
-                    clientId);
-            if (isNull(productPojo)) {
-                errorFormList.add(new ErrorData(row, "client skuId does not exists"));
-                continue;
-            }
-            channelListingPojo.setGlobalSkuId(productPojo.getGlobalSkuId());
+        for (ChannelListingForm channelListingForm : channelListingFormList) {
+
+            ChannelListingPojo channelListingPojo = new ChannelListingPojo();
+            channelListingPojo.setGlobalSkuId(clientSkuIdToGsku.get(channelListingForm.getClientSkuId()));
             channelListingPojo.setChannelId(channelId);
             channelListingPojo.setClientId(clientId);
-            channelListingPojo.setChannelSkuId(channelListingForm.getChannelSkuId().toLowerCase());
+            channelListingPojo.setChannelSkuId(channelListingForm.getChannelSkuId());
 
             channelListingPojoList.add(channelListingPojo);
-            row++;
         }
 
-        throwErrorIfNotEmpty(errorFormList);
         return channelListingPojoList;
     }
+
+    private List<ChannelListingData> convertChannelListingPojoListToData(List<ChannelListingPojo> channelListingPojoList) throws ApiException {
+        if (CollectionUtils.isEmpty(channelListingPojoList))
+            return new ArrayList<>();
+
+        Map<Long, ChannelPojo> channelIdToPojo = channelService.getCheckChannelIdToPojo(channelListingPojoList.stream().
+                map(ChannelListingPojo::getChannelId).distinct().collect(Collectors.toList()));
+        Map<Long, PartyPojo> partyIdToPojo = partyService.getCheckPartyIdToPojo(channelListingPojoList.stream().
+                map(ChannelListingPojo::getClientId).distinct().collect(Collectors.toList()));
+
+        List<ChannelListingData> channelListingDataList = new ArrayList<>();
+        for (ChannelListingPojo channelListingPojo : channelListingPojoList) {
+
+            channelListingDataList.add(convertChannelListingPojoToData(channelListingPojo,
+                    channelIdToPojo.get(channelListingPojo.getChannelId()).getName(),
+                    partyIdToPojo.get(channelListingPojo.getClientId()).getName()));
+        }
+        return channelListingDataList;
+    }
+
 }

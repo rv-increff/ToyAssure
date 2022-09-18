@@ -1,6 +1,6 @@
 package assure.model;
 
-import assure.util.OrderStatus;
+import commons.util.OrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 

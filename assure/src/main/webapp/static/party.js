@@ -84,8 +84,9 @@ function checkNextPageNotExist() {
 }
 
 function addParty(){
-    $('#partyEditModal').modal('show');
+    $('#partyEditModal').modal({backdrop: 'static', keyboard: false}, 'show');
     $('#modalTitle').text('Add Party');
+    $('.close').css('visibility', 'hidden');
     $('#partyModalbody').html(getPartyModal());
 }
 

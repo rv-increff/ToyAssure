@@ -1,6 +1,6 @@
 package assure.model;
 
-import assure.util.PartyType;
+import commons.util.PartyType;
 import lombok.Getter;
 import lombok.Setter;
 

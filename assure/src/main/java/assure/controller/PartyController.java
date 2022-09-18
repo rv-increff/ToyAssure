@@ -1,11 +1,10 @@
 package assure.controller;
 
 import assure.dto.PartyDto;
-import assure.model.PartyData;
+import commons.model.PartyData;
 import assure.model.PartyForm;
-import assure.model.PartySearchForm;
+import commons.model.PartySearchForm;
 import assure.spring.ApiException;
-import assure.util.PartyType;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

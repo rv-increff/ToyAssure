@@ -5,16 +5,15 @@ import lombok.Setter;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 @Getter
 @Setter
 public class OrderItemFormChannel {
     @NotBlank
     private String channelSkuId;
-
-    @PositiveOrZero
+    @NotNull
     private Long quantity;
-
-    @DecimalMin(value = "0")
+    @NotNull
     private Double sellingPricePerUnit;
 }

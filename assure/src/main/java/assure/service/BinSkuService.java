@@ -63,6 +63,8 @@ public class BinSkuService {
         }
         return binSkuPojo;
     }
+
+
     public List<BinSkuPojo> select(Integer pageNumber, Integer pageSize) {
         return binSkuDao.select(pageNumber, pageSize);
     }

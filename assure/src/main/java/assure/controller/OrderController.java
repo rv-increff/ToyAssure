@@ -1,19 +1,17 @@
 package assure.controller;
 
 import assure.dto.OrderDto;
-import assure.model.OrderData;
+import commons.model.OrderData;
 import assure.model.OrderForm;
-import assure.model.OrderItemData;
+import commons.model.OrderItemData;
 import assure.spring.ApiException;
-import assure.util.InvoiceType;
-import assure.util.OrderStatus;
+import commons.util.InvoiceType;
 import commons.model.ChannelOrderForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -39,13 +37,13 @@ public class OrderController {
 
     @ApiOperation(value = "Allocate order")
     @RequestMapping(path = "/orders/{orderId}/allocate", method = RequestMethod.PATCH)
-    public OrderStatus allocateOrder(@PathVariable Long orderId) throws ApiException {
+    public OrderData allocateOrder(@PathVariable Long orderId) throws ApiException {
         return orderDto.allocateOrder(orderId);
     }
 
     @ApiOperation(value = "Fulfill order")
     @RequestMapping(path = "/orders/{orderId}/fulfill", method = RequestMethod.PATCH)
-    public OrderStatus fulfillOrder(@PathVariable Long orderId) throws ApiException {
+    public OrderData fulfillOrder(@PathVariable Long orderId) throws ApiException {
         return orderDto.fulfillOrder(orderId);
     }
 
@@ -63,13 +61,10 @@ public class OrderController {
 
     @ApiOperation(value = "Get orders")
     @RequestMapping(path = "/orders", method = RequestMethod.GET)
-    public List<OrderData> getOrders(@RequestParam(required = false) InvoiceType type, @RequestParam Integer pageNumber) {
-        if (isNull(type) && !isNull(pageNumber))
+    public List<OrderData> getOrders(@RequestParam(required = false) InvoiceType invoiceType, @RequestParam Integer pageNumber) throws ApiException {
+        if (isNull(invoiceType))
             return orderDto.selectOrder(pageNumber);
-        if (!isNull(pageNumber))
-            return orderDto.selectOrderItemsByInvoiceType(pageNumber, type);
-        return new ArrayList<>();
+        return orderDto.selectOrderItemsByInvoiceType(pageNumber, invoiceType);
     }
-
 
 }

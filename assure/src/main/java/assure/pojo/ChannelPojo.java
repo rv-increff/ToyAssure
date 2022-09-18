@@ -1,6 +1,6 @@
 package assure.pojo;
 
-import assure.util.InvoiceType;
+import commons.util.InvoiceType;
 import lombok.Getter;
 import lombok.Setter;
 

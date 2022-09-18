@@ -5,6 +5,7 @@ import assure.model.*;
 import assure.pojo.*;
 import assure.spring.ApiException;
 import commons.model.*;
+import commons.model.ErrorData;
 import javafx.util.Pair;
 import org.springframework.util.CollectionUtils;
 
@@ -397,55 +398,35 @@ public class ConversionUtil {
         return orderItemChannelData;
     }
 
-    public static ChannelListingData convertChannelListingPojoToData(ChannelListingPojo channelListingPojo) {
+    public static ChannelListingData convertChannelListingPojoToData(ChannelListingPojo channelListingPojo,
+                                                                     String channelName, String clientName) {
         if (isNull(channelListingPojo))
             return new ChannelListingData();
 
         ChannelListingData channelListingData = new ChannelListingData();
-        channelListingData.setChannelId(channelListingPojo.getChannelId());
+        channelListingData.setChannelName(channelName);
         channelListingData.setChannelSkuId(channelListingPojo.getChannelSkuId());
         channelListingData.setId(channelListingPojo.getId());
         channelListingData.setGlobalSkuId(channelListingPojo.getGlobalSkuId());
-        channelListingData.setClientId(channelListingPojo.getClientId());
+        channelListingData.setClientName(clientName);
         return channelListingData;
     }
 
-    public static List<ChannelListingData> convertChannelListingPojoListToData(List<ChannelListingPojo> channelListingPojoList) {
-        if (CollectionUtils.isEmpty(channelListingPojoList))
-            return new ArrayList<>();
-
-        List<ChannelListingData> channelListingDataList = new ArrayList<>();
-        for (ChannelListingPojo channelListingPojo : channelListingPojoList) {
-            channelListingDataList.add(convertChannelListingPojoToData(channelListingPojo));
-        }
-        return channelListingDataList;
-    }
-
-    public static OrderData convertOrderPojoToData(OrderPojo orderPojo) {
+    public static OrderData convertOrderPojoToData(OrderPojo orderPojo, String channelName, String clientName,
+                                                   String customerName) {
         if (isNull(orderPojo))
             return new OrderData();
 
         OrderData orderData = new OrderData();
         orderData.setChannelOrderId(orderPojo.getChannelOrderId());
         orderData.setInvoiceUrl(orderPojo.getInvoiceUrl());
-        orderData.setChannelId(orderPojo.getChannelId());
-        orderData.setClientId(orderPojo.getClientId());
-        orderData.setCustomerId(orderPojo.getCustomerId());
+        orderData.setChannelName(channelName);
+        orderData.setClientName(clientName);
+        orderData.setCustomerName(customerName);
         orderData.setStatus(orderPojo.getStatus());
         orderData.setId(orderPojo.getId());
 
         return orderData;
-    }
-
-    public static List<OrderData> convertOrderPojoListToData(List<OrderPojo> orderPojoList) {
-        if (CollectionUtils.isEmpty(orderPojoList))
-            return new ArrayList<>();
-
-        List<OrderData> orderDataList = new ArrayList<>();
-        for (OrderPojo orderPojo : orderPojoList) {
-            orderDataList.add(convertOrderPojoToData(orderPojo));
-        }
-        return orderDataList;
     }
 
     public static OrderItemData convertOrderItemPojToData(OrderItemPojo orderItemPojo, String clientSkuId) {

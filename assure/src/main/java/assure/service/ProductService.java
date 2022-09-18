@@ -83,6 +83,10 @@ public class ProductService {
     public ProductPojo selectByClientSkuIdAndClientId(String clientSkuId, Long clientId) {
         return productDao.selectByClientSkuIdAndClientId(clientSkuId, clientId);
     }
+    public Map<String, ProductPojo> getClientSkuIdToPojoForClientId(List<String>clientSkuIdList, Long clientId){
+        List<ProductPojo> productPojoList = productDao.selectForClientSkuIdAndClientId(clientSkuIdList,clientId);
+        return productPojoList.stream().collect(Collectors.toMap(ProductPojo::getClientSkuId, pojo->pojo));
+    }
 
     public ProductPojo selectByGlobalSkuId(Long globalSkuId) {
         return productDao.selectByGlobalSkuId(globalSkuId);
@@ -104,7 +108,7 @@ public class ProductService {
         for (String clientSkuId : clientSkuIdList) {
             ProductPojo productPojo = clientSkuIdToPojoMap.get(clientSkuId);
             if (isNull(productPojo))
-                throw new ApiException("clientSkuId does not exists");
+                throw new ApiException("Product with clientSkuId does not exists");
             clientSkuIdToGlobalSkuIdMap.put(clientSkuId, productPojo.getGlobalSkuId());
         }
         return clientSkuIdToGlobalSkuIdMap;

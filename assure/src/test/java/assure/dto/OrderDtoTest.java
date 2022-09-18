@@ -1,12 +1,10 @@
 package assure.dto;
 
 import assure.model.OrderForm;
-import assure.pojo.OrderItemPojo;
-import assure.pojo.OrderPojo;
 import assure.pojo.ProductPojo;
 import assure.spring.ApiException;
 import assure.config.BaseTest;
-import assure.util.PartyType;
+import commons.util.PartyType;
 import assure.util.TestData;
 import commons.model.OrderItemForm;
 import org.junit.Assert;

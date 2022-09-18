@@ -1,6 +1,6 @@
 package assure.dto;
 
-import assure.model.ChannelData;
+import commons.model.ChannelData;
 import assure.model.ChannelForm;
 import assure.service.ChannelService;
 import assure.spring.ApiException;

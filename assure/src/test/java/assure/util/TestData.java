@@ -5,6 +5,9 @@ import assure.model.ChannelForm;
 import assure.model.PartyForm;
 import assure.pojo.*;
 import commons.model.OrderItemForm;
+import commons.util.InvoiceType;
+import commons.util.OrderStatus;
+import commons.util.PartyType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static assure.util.RandomUtil.*;
+
+
 @Service
 public class TestData {
     private static final Integer PAGE_SIZE = 100;
@@ -52,7 +57,7 @@ public class TestData {
         return partyPojoList;
     }
 
-    public PartyForm getPartyForm(){
+    public PartyForm getPartyForm() {
         PartyForm partyForm = new PartyForm();
         PartyType type = PartyType.CLIENT;
         switch (getRandomNumber() % 2) {
@@ -63,6 +68,7 @@ public class TestData {
         partyForm.setType(type);
         return partyForm;
     }
+
     public BinPojo binAdd() {
         BinPojo binPojo = new BinPojo();
         return binDao.add(binPojo);
@@ -105,9 +111,10 @@ public class TestData {
         return productDao.add(productPojo);
 
     }
-public ProductPojo productAdd(Long clientId) {
+
+    public ProductPojo productAdd(Long clientId) {
         ProductPojo productPojo = new ProductPojo();
-        productPojo.setClientSkuId(getRandomString());
+        productPojo.setClientSkuId(getRandomString().toUpperCase().trim());
         productPojo.setClientId(clientId);
         productPojo.setBrandId(getRandomString());
         productPojo.setMrp(getRandomNumberDouble());
@@ -143,7 +150,8 @@ public ProductPojo productAdd(Long clientId) {
 
         return binSkuDao.add(binSkuPojo);
     }
-public BinSkuPojo binSkuAdd(Long globalSkuId) {
+
+    public BinSkuPojo binSkuAdd(Long globalSkuId) {
         BinSkuPojo binSkuPojo = new BinSkuPojo();
         binSkuPojo.setBinId(getRandomNumberLong());
         binSkuPojo.setGlobalSkuId(globalSkuId);
@@ -151,7 +159,8 @@ public BinSkuPojo binSkuAdd(Long globalSkuId) {
 
         return binSkuDao.add(binSkuPojo);
     }
-public BinSkuPojo binSkuAddByBinId(Long binId) {
+
+    public BinSkuPojo binSkuAddByBinId(Long binId) {
         BinSkuPojo binSkuPojo = new BinSkuPojo();
         binSkuPojo.setBinId(binId);
         binSkuPojo.setGlobalSkuId(getRandomNumberLong());
@@ -185,7 +194,8 @@ public BinSkuPojo binSkuAddByBinId(Long binId) {
         channelPojo.setName(getRandomString().toUpperCase());
         return channelDao.add(channelPojo);
     }
-  public ChannelForm getChannelForm() {
+
+    public ChannelForm getChannelForm() {
         ChannelForm channelForm = new ChannelForm();
         int ind = getRandomNumber() % 2;
         InvoiceType invoiceType = InvoiceType.SELF;
@@ -250,6 +260,17 @@ public BinSkuPojo binSkuAddByBinId(Long binId) {
 
         return channelListingDao.add(channelListingPojo);
     }
+    public ChannelListingPojo channelListAdd(Long channelId, Long clientId) {
+        ChannelListingPojo channelListingPojo = new ChannelListingPojo();
+
+        channelListingPojo.setChannelId(channelId);
+        channelListingPojo.setChannelSkuId(getRandomString().toLowerCase());
+        channelListingPojo.setClientId(clientId);
+        channelListingPojo.setGlobalSkuId(getRandomNumberLong());
+
+        return channelListingDao.add(channelListingPojo);
+    }
+
 
     public ChannelListingPojo getChannelList() {
         ChannelListingPojo channelListingPojo = new ChannelListingPojo();
@@ -314,7 +335,8 @@ public BinSkuPojo binSkuAddByBinId(Long binId) {
 
         return orderItemDao.add(orderItemPojo);
     }
-public OrderItemPojo getOrderItem(Long orderId) {
+
+    public OrderItemPojo getOrderItem(Long orderId) {
         OrderItemPojo orderItemPojo = new OrderItemPojo();
 
         orderItemPojo.setOrderId(orderId);
@@ -327,12 +349,13 @@ public OrderItemPojo getOrderItem(Long orderId) {
 
         return orderItemPojo;
     }
-public OrderItemForm getOrderItemForm() {
-    OrderItemForm orderItemForm =  new OrderItemForm();
-    orderItemForm.setQuantity(getRandomNumberLong());
-    orderItemForm.setClientSkuId(getRandomString());
-    orderItemForm.setSellingPricePerUnit(getRandomNumberDouble());
-    return orderItemForm;
+
+    public OrderItemForm getOrderItemForm() {
+        OrderItemForm orderItemForm = new OrderItemForm();
+        orderItemForm.setQuantity(getRandomNumberLong());
+        orderItemForm.setClientSkuId(getRandomString());
+        orderItemForm.setSellingPricePerUnit(getRandomNumberDouble());
+        return orderItemForm;
     }
 
 

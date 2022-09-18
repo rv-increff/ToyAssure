@@ -1,6 +1,7 @@
 /Users/rahulverma/Downloads/toyassure/assure/src/test/java/assure/dto/PartyDtoTest.java
 /Users/rahulverma/Downloads/toyassure/assure/src/test/java/assure/dto/ProductDtoTest.java
 /Users/rahulverma/Downloads/toyassure/assure/src/test/java/assure/service/ProductServiceTest.java
+/Users/rahulverma/Downloads/toyassure/assure/src/test/java/assure/dto/ChannelListingDtoTest.java
 /Users/rahulverma/Downloads/toyassure/assure/src/test/java/assure/service/BinSkuServiceTest.java
 /Users/rahulverma/Downloads/toyassure/assure/src/test/java/assure/dao/ProductDaoTest.java
 /Users/rahulverma/Downloads/toyassure/assure/src/test/java/assure/dao/OrderItemTest.java
@@ -20,7 +21,6 @@
 /Users/rahulverma/Downloads/toyassure/assure/src/test/java/assure/dao/BinSkuDaoTest.java
 /Users/rahulverma/Downloads/toyassure/assure/src/test/java/assure/service/ChannelListingServiceTest.java
 /Users/rahulverma/Downloads/toyassure/assure/src/test/java/assure/dto/BinDtoTest.java
-/Users/rahulverma/Downloads/toyassure/assure/src/test/java/assure/dto/ChannelListingTest.java
 /Users/rahulverma/Downloads/toyassure/assure/src/test/java/assure/dao/InventoryDaoTest.java
 /Users/rahulverma/Downloads/toyassure/assure/src/test/java/assure/config/BaseTest.java
 /Users/rahulverma/Downloads/toyassure/assure/src/test/java/assure/config/QaConfig.java

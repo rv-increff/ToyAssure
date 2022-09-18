@@ -1,10 +1,11 @@
-channel/dto/OrderDto.class
+channel/controller/AssureProxyController.class
+channel/dto/AssureProxyDto.class
 channel/controller/UIController.class
 channel/controller/RestControllerAdvice.class
 channel/util/HelperUtil.class
 channel/spring/ControllerConfig.class
-channel/controller/OrderController.class
 channel/spring/WebInitializer.class
 channel/spring/ApiException.class
 channel/spring/SpringConfig.class
 channel/dto/AssureClient.class
+channel/util/HelperUtil$1.class

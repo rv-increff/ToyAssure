@@ -1,7 +1,7 @@
 package assure.dao;
 
 import assure.pojo.OrderPojo;
-import assure.util.InvoiceType;
+import commons.util.InvoiceType;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;

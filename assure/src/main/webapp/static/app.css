@@ -191,9 +191,14 @@ label{
   justify-content: flex-start;
 
 }
-.action-btn{
-  width: 85%;
+.btn{
+  font-size:14px;
 }
+.action-btn {
+  width: 65%;
+  text-align: center;
+}
+
 .required:after {
   content:"*";
   color: rgb(217, 58, 58);

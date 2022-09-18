@@ -3,12 +3,14 @@ package assure.service;
 import assure.dao.ChannelDao;
 import assure.pojo.ChannelPojo;
 import assure.spring.ApiException;
-import assure.util.InvoiceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static assure.util.NormalizeUtil.normalizeChannelPojo;
 import static assure.util.NormalizeUtil.normalizeString;
@@ -42,6 +44,17 @@ public class ChannelService {
             throw new ApiException("channel does not exist");
 
         return channelPojo;
+    }
+
+    public Map<Long, ChannelPojo> getCheckChannelIdToPojo(List<Long> channelIdList) throws ApiException {
+        List<ChannelPojo> channelPojoList = channelDao.selectForChannelIdList(channelIdList);
+        Set<Long> existsChannelId = channelPojoList.stream().map(ChannelPojo::getId).collect(Collectors.toSet());
+        for (Long channelId : channelIdList) {
+            if(!existsChannelId.contains(channelId))
+                throw new ApiException("channel Id "  + channelId + " does not exists");
+        }
+
+        return channelPojoList.stream().collect(Collectors.toMap(ChannelPojo::getId, pojo->pojo));
     }
 
 }

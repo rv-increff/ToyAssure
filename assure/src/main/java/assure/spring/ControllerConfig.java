@@ -11,6 +11,7 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.FileTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -72,10 +73,9 @@ public class ControllerConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public ITemplateResolver templateResolver() {
-        SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
-        resolver.setApplicationContext(applicationContext);
-        resolver.setPrefix("/html/");
-        resolver.setTemplateMode(TemplateMode.HTML);
+        FileTemplateResolver resolver = new FileTemplateResolver();
+        resolver.setPrefix("src/main/webapp/html/");
+        resolver.setCacheable(false);
         return resolver;
     }
 

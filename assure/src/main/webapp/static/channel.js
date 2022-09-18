@@ -84,7 +84,8 @@ function checkNextPageNotExist() {
 }
 
 function addChannel(){
-    $('#channelEditModal').modal('show');
+    $('.close').css('visibility', 'hidden');
+    $('#channelEditModal').modal({backdrop: 'static', keyboard: false}, 'show');
     $('#modalTitle').text('Add Channel');
     $('#channelModalbody').html(getChannelModal());
 }

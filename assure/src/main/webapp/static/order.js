@@ -18,10 +18,10 @@ function loadOrder() {
             str = ""
             for (var i = 0; i < obj.length; i++) {
                 str += `<tr>
-                                      <td>${obj[i]['id']}</td>
-                                      <td>${obj[i]['clientId']}</td>
-                                      <td>${obj[i]['customerId']}</td>
-                                      <td>${obj[i]['channelId']}</td>
+                                      
+                                      <td>${obj[i]['clientName']}</td>
+                                      <td>${obj[i]['customerName']}</td>
+                                      <td>${obj[i]['channelName']}</td>
                                       <td>${obj[i]['channelOrderId']}</td>
                                       <td>${obj[i]['status']}</td>
                                       <td><button type='button' class='btn btn-info' onclick=viewOrder(${obj[i]['id']})>VIEW</button></td>`;
@@ -132,10 +132,10 @@ function fullfillOrder(orderId) {
         dataType: 'json',
         success: function (result) {
             console.log(result, "order fulfilled")
-            $.notify(`Order ${id} fulfilled`, "success");
+            $.notify(`Order ${orderId} fulfilled`, "success");
             $('#uploadModal').modal('hide');
             loadOrder();
-            getInvoice(id);
+            getInvoice(orderId);
         },
         error: function (xhr, status, error) {
             console.log(status, error, xhr)
@@ -184,7 +184,8 @@ async function addOrder() {
     obj = JSON.parse(localStorage.getItem("orderItems"));
     console.log(obj);
     console.log(obj, "inLoadfuntion");
-    $('#orderItemModal').modal('show');
+    $('.close').css('visibility', 'visible');
+    $('#orderItemModal').modal({backdrop: 'static', keyboard: false}, 'show');
     $('#modalTitle').text(`Add order`);
     let clientDropDown = await getClientDropDown();
     let customerDropDown = await getCustomerDropDown();
@@ -195,7 +196,8 @@ async function addOrder() {
 
 function showOrderModal(){
     loadOrderItemCart();
-    $('#orderItemModal').modal('show');
+    $('.close').css('visibility', 'visible');
+    $('#orderItemModal').modal({backdrop: 'static', keyboard: false}, 'show');
 }
 
 function loadOrderItemCart(){
@@ -206,7 +208,7 @@ function loadOrderItemCart(){
         str += `<tr>
                                   <td>${obj[i]['clientSkuId']}</td>
                                   <td>${obj[i]['quantity']}</td>
-                                  <td>${obj[i]['sellingPricePerUnit']}</td>
+                                  <td>${parseFloat(obj[i]['sellingPricePerUnit']).toFixed(2)}</td>
                                   <td><button type="button" class="btn btn-primary" onclick="editOrderItem(${i},${obj[i]['quantity']},${obj[i]['sellingPricePerUnit']})">Edit</button</td>
                                   <td><button type="button" class="btn btn-primary" onclick="deleteOrderItem(${i})">Delete</button</td>
                                   </tr>`;
@@ -219,6 +221,7 @@ function loadOrderItemCart(){
     body.innerHTML = str;
 }
 function placeOrder(){
+
     let channelOrderId = $('#channelOrderId').val().trim();
     let clientId = $('#clientId').val();
     let customerId = $('#customerId').val();
@@ -282,16 +285,18 @@ $.ajax({
 }
 
 async function addOrderItem(){
+    $('.close').css('visibility', 'hidden');
     $('#orderItemModal').modal('hide');
-    $('#orderItemAddModal').modal('show');
+    $('#orderItemAddModal').modal({backdrop: 'static', keyboard: false}, 'show');
     $('#orderItemTitle').text('Add Order Item');
     let clientSkuIdDropDown = await getClientSkuIdDropDown();
     $('#orderItemModalbody').html(getAddOrderItem(clientSkuIdDropDown));
 }
 
 async function editOrderItem(id,qty,price){
+    $('.close').css('visibility', 'hidden');
     $('#orderItemModal').modal('hide');
-    $('#orderItemAddModal').modal('show');
+    $('#orderItemAddModal').modal({backdrop: 'static', keyboard: false}, 'show');
     $('#orderItemTitle').text('Add Order Item');
     let clientSkuIdDropDownUpdate = await getClientSkuIdDropDownUpdate();
     $('#orderItemModalbody').html(getAddOrderItemEdit(id,clientSkuIdDropDownUpdate,qty,price));
@@ -321,7 +326,7 @@ function saveAddEdit(id){
         return;
     }
 
-    $('#orderItemModal').modal('show');
+    $('#orderItemModal').modal({backdrop: 'static', keyboard: false}, 'show');
     $('#orderItemAddModal').modal('hide');
 
     obj[id] = {
@@ -343,7 +348,8 @@ function deleteOrderItem(id){
 }
 
 function cancelAdd(){
-    $('#orderItemModal').modal('show');
+    $('.close').css('visibility', 'visible');
+    $('#orderItemModal').modal({backdrop: 'static', keyboard: false}, 'show');
     $('#orderItemAddModal').modal('hide');
 
 }
@@ -369,7 +375,7 @@ function saveAdd(){
         $.notify("Client SKU  cannot be blank ");
         return;
     }
-    $('#orderItemModal').modal('show');
+    $('#orderItemModal').modal({backdrop: 'static', keyboard: false}, 'show');
     $('#orderItemAddModal').modal('hide');
 
     obj.push({
@@ -629,6 +635,7 @@ function getCustomerDropDown(){
 }
 
 function viewOrder(orderId) {
+    $('.close').css('visibility', 'visible');
     console.log("in view order")
     $.ajax({
         type: "GET",
@@ -641,7 +648,7 @@ function viewOrder(orderId) {
             let obj = result;
             console.log(obj);
             console.log(obj, "inLoadfuntion");
-            $('#orderItemModal').modal('show');
+            $('#orderItemModal').modal({backdrop: 'static', keyboard: false}, 'show');
             $('#orderDetails').html('')
             $('#modalTitle').text(`Order Id - ${orderId}`);
             $('#orderItemModal-body').html(getOrderItemModalBody());
@@ -655,7 +662,7 @@ function viewOrder(orderId) {
                                           <td>${obj[i]['orderedQuantity']}</td>
                                           <td>${obj[i]['allocatedQuantity']}</td>
                                           <td>${obj[i]['fulfilledQuantity']}</td>
-                                          <td>${obj[i]['sellingPricePerUnit']}</td>
+                                          <td>${obj[i]['sellingPricePerUnit'].toFixed(2)}</td>
                                           </tr>`;
             }
         

@@ -70,31 +70,31 @@ public class ChannelListingDao extends AbstractDao<ChannelListingPojo> {
     }
 
     public List<ChannelListingPojo> selectForGlobalSkuIdAndChannelIdAndClientId(List<Long> gSkuList,
-                                                                                 Long channelId,
-                                                                                 Long clientId){
+                                                                                Long channelId,
+                                                                                Long clientId) {
         String queryBuilder = "SELECT c FROM ChannelListingPojo c WHERE (globalSkuId, channelId, clientId) IN ";
         List<String> dataList = new ArrayList<>();
         int n = gSkuList.size();
         for (int i = 0; i < n; i++) {
-            List<String> list = Arrays.asList(gSkuList.get(i).toString(), channelId.toString(), clientId.toString());
-            dataList.add("("+String.join(",", list) + ")");
+            List<String> list = Arrays.asList("'" + gSkuList.get(i) + "'", "'" + channelId.toString() + "'", "'" + clientId.toString() + "'");
+            dataList.add("(" + String.join(",", list) + ")");
         }
-        queryBuilder = queryBuilder +"("+ String.join(",", dataList) + ")";
+        queryBuilder = queryBuilder + "(" + String.join(",", dataList) + ")";
         TypedQuery<ChannelListingPojo> query = em.createQuery(queryBuilder, ChannelListingPojo.class);
         return query.getResultList();
     }
 
     public List<ChannelListingPojo> selectForChannelSkuIdAndChannelIdAndClientId(List<String> channelSkuList,
                                                                                  Long channelId,
-                                                                                 Long clientId){
-        String queryBuilder = "SELECT c FROM ChannelListingPojo c WHERE (globalSkuId, channelSkuId, clientId) IN ";
+                                                                                 Long clientId) {
+        String queryBuilder = "SELECT c FROM ChannelListingPojo c WHERE (channelSkuId, channelId, clientId) IN ";
         List<String> dataList = new ArrayList<>();
         int n = channelSkuList.size();
         for (int i = 0; i < n; i++) {
-            List<String> list = Arrays.asList(channelSkuList.get(i).toString(), channelId.toString(), clientId.toString());
-            dataList.add("("+String.join(",", list) + ")");
+            List<String> list = Arrays.asList("'" + channelSkuList.get(i) + "'", "'" + channelId.toString() + "'", "'" + clientId.toString() + "'");
+            dataList.add("(" + String.join(",", list) + ")");
         }
-        queryBuilder = queryBuilder +"("+ String.join(",", dataList) + ")";
+        queryBuilder = queryBuilder + "(" + String.join(",", dataList) + ")";
         TypedQuery<ChannelListingPojo> query = em.createQuery(queryBuilder, ChannelListingPojo.class);
         return query.getResultList();
     }

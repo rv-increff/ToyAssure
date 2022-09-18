@@ -22,24 +22,6 @@ public class Requests {
         return response.body().string();
 
     }
-//    public static String postData(String url, String body) throws Exception {
-//
-//
-//
-//        OkHttpClient client = new OkHttpClient();
-//        RequestBody requestBody = new MultipartBody.Builder()
-//                .setType(MultipartBody.FORM)
-//                .addFormDataPart("image", "your file name.png",
-//                        RequestBody.create(MEDIA_TYPE_PNG, new File()))
-//                .build();
-//        Request request = new Request.Builder()
-//                .url(url)
-//                .post(requestBody)
-//                .build();
-//        Response response = client.newCall(request).execute();
-//        return response.body().string();
-//
-//    }
 
     public static String get(String url) throws Exception {
 

@@ -257,9 +257,15 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>toyassure</groupId>
+            <groupId>toy-assure</groupId>
             <artifactId>commons</artifactId>
             <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>toy-assure</groupId>
+            <artifactId>commons</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

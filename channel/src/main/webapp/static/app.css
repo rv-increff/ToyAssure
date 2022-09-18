@@ -197,3 +197,10 @@ label{
   font-size: small;
   vertical-align: super;
 }
+.btn{
+  font-size:14px;
+}
+.action-btn {
+  width: 65%;
+  text-align: center;
+}

@@ -1,11 +1,11 @@
 package assure.dto;
 
-import assure.model.PartyData;
+import commons.model.PartyData;
 import assure.model.PartyForm;
-import assure.model.PartySearchForm;
+import commons.model.PartySearchForm;
 import assure.service.PartyService;
 import assure.spring.ApiException;
-import assure.util.PartyType;
+import commons.util.PartyType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

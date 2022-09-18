@@ -2,7 +2,7 @@ package assure.spring;
 
 import assure.pojo.ChannelPojo;
 import assure.service.ChannelService;
-import assure.util.InvoiceType;
+import commons.util.InvoiceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

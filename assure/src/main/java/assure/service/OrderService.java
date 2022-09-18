@@ -5,8 +5,8 @@ import assure.dao.OrderItemDao;
 import assure.pojo.OrderItemPojo;
 import assure.pojo.OrderPojo;
 import assure.spring.ApiException;
-import assure.util.InvoiceType;
-import assure.util.OrderStatus;
+import commons.util.InvoiceType;
+import commons.util.OrderStatus;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,11 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static assure.util.OrderStatus.ALLOCATED;
-import static assure.util.OrderStatus.FULFILLED;
+import static commons.util.OrderStatus.ALLOCATED;
+import static commons.util.OrderStatus.FULFILLED;
 import static java.util.Objects.isNull;
 
 @Service
@@ -86,6 +87,32 @@ public class OrderService {
         }
     }
 
+    public void markStatusAllocated(Long id) throws ApiException {
+        OrderPojo orderPojo = getCheck(id);
+        checkOrderStatusValid(orderPojo.getStatus(), ALLOCATED);
+
+        List<OrderItemPojo> orderItemPojoList = selectOrderItem(id);
+        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
+            if (!Objects.equals(orderItemPojo.getOrderedQuantity(), orderItemPojo.getAllocatedQuantity()))
+                return;
+        }
+        updateStatus(id, ALLOCATED);
+        //move to service as b logic
+        //return order data if single and list then list size
+    }
+
+    public void markStatusFulfilled(Long id) throws ApiException {
+        OrderPojo orderPojo = getCheck(id);
+        checkOrderStatusValid(orderPojo.getStatus(), FULFILLED);
+
+        List<OrderItemPojo> orderItemPojoList = selectOrderItem(id);
+        for (OrderItemPojo orderItemPojo : orderItemPojoList) {
+            if (!Objects.equals(orderItemPojo.getOrderedQuantity(), orderItemPojo.getFulfilledQuantity()))
+                throw new ApiException("Could not fulfill order");
+        }
+        updateStatus(id, FULFILLED);
+    }
+
     public OrderStatus updateStatus(Long id, OrderStatus orderStatus) throws ApiException {
         OrderPojo orderPojo = getCheck(id);
         orderPojo.setStatus(orderStatus);
@@ -101,14 +128,12 @@ public class OrderService {
         return orderItemPojo.getFulfilledQuantity();
     }
 
-    //TODO DEV_REVIEW rename it to update url
     public void updateUrl(Long id, String url) throws ApiException {
         OrderPojo orderPojo = getCheck(id);
         orderPojo.setInvoiceUrl(url);
         orderDao.update();
     }
 
-    //TODO DEV_REVIEW make this a separate private method
     private void add(OrderItemPojo orderItemPojo, Long orderId) {
         orderItemPojo.setOrderId(orderId);
         orderItemPojo.setFulfilledQuantity(0L);

@@ -4,7 +4,7 @@ import assure.config.BaseTest;
 import assure.util.TestData;
 import assure.pojo.PartyPojo;
 import assure.spring.ApiException;
-import assure.util.PartyType;
+import commons.util.PartyType;
 import commons.model.ErrorData;
 import org.junit.Assert;
 import org.junit.Test;

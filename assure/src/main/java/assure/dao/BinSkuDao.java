@@ -58,7 +58,7 @@ public class BinSkuDao extends AbstractDao<BinSkuPojo> {
         List<String> dataList = new ArrayList<>();
         int n = binSkuPojoList.size();
         for (BinSkuPojo binSkuPojo : binSkuPojoList) {
-            List<String> list = Arrays.asList(binSkuPojo.getGlobalSkuId().toString(), binSkuPojo.getBinId().toString());
+            List<String> list = Arrays.asList("'" +binSkuPojo.getGlobalSkuId()+"'" , "'" +binSkuPojo.getBinId()+"'" );
             dataList.add("("+String.join(",", list) + ")");
         }
 

@@ -19,7 +19,7 @@ public class InventoryService {
     @Autowired
     private InventoryDao inventoryDao;
 
-    public static Map<Long, InventoryPojo> getGskuToInventory(List<InventoryPojo> inventoryPojoList) {
+    public static Map<Long, InventoryPojo> getGskuToInventory(List<InventoryPojo> inventoryPojoList) { //TODO ask if right layer
         return inventoryPojoList.stream().collect(Collectors.toMap(InventoryPojo::getGlobalSkuId, inventoryPojo -> inventoryPojo));
     }
 

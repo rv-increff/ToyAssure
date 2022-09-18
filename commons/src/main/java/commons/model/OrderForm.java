@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
@@ -17,12 +18,12 @@ public class OrderForm {
     @NotBlank
     String channelOrderId;
 
-    @PositiveOrZero
+    @NotNull
     Long customerId;
 
-    @PositiveOrZero
+    @NotNull
     Long channelId;
 
     @NotEmpty
-    List<OrderItemForm> orderItemFormList;
+    List< @NotNull OrderItemForm> orderItemFormList;
 }

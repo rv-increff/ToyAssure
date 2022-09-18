@@ -1,7 +1,7 @@
 package assure.controller;
 
 import assure.dto.ChannelListingDto;
-import assure.model.ChannelListingData;
+import commons.model.ChannelListingData;
 import assure.model.ChannelListingUploadForm;
 import assure.spring.ApiException;
 import io.swagger.annotations.Api;
