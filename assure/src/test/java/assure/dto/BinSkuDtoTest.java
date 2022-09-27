@@ -8,6 +8,7 @@ import assure.pojo.PartyPojo;
 import assure.spring.ApiException;
 import assure.config.BaseTest;
 import assure.util.TestData;
+import assure.util.RandomUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +76,7 @@ public class BinSkuDtoTest extends BaseTest { //TODO extend baseTest with all an
         for (int i = 0; i < 5; i++) {
             BinSkuItemForm binSkuItemForm = new BinSkuItemForm();
             binSkuItemForm.setBinId(getRandomNumberLong());
-            binSkuItemForm.setClientSkuId(getRandomString());
+            binSkuItemForm.setClientSkuId(RandomUtil.getRandomString());
             binSkuItemForm.setQuantity(getRandomNumberLong());
             binSkuItemFormList.add(binSkuItemForm);
         }
@@ -91,7 +92,7 @@ public class BinSkuDtoTest extends BaseTest { //TODO extend baseTest with all an
         for (int i = 0; i < 5; i++) {
             BinSkuItemForm binSkuItemForm = new BinSkuItemForm(); //TODO shift to private methord
             binSkuItemForm.setBinId(testData.binAdd().getBinId());
-            binSkuItemForm.setClientSkuId(getRandomString());
+            binSkuItemForm.setClientSkuId(RandomUtil.getRandomString());
             binSkuItemForm.setQuantity(getRandomNumberLong());
             binSkuItemFormList.add(binSkuItemForm);
         }
@@ -115,7 +116,7 @@ public class BinSkuDtoTest extends BaseTest { //TODO extend baseTest with all an
         for (int i = 0; i < 5; i++) {
             BinSkuItemForm binSkuItemForm = new BinSkuItemForm();
             binSkuItemForm.setBinId(testData.binAdd().getBinId());
-            binSkuItemForm.setClientSkuId(getRandomString());
+            binSkuItemForm.setClientSkuId(RandomUtil.getRandomString());
             binSkuItemForm.setQuantity(getRandomNumberLong());
             binSkuItemFormList.add(binSkuItemForm);
         }
@@ -126,22 +127,22 @@ public class BinSkuDtoTest extends BaseTest { //TODO extend baseTest with all an
 
     }
 
-//    @Test
-//    public void addTest() throws ApiException {
-//        BinSkuForm binSkuForm = new BinSkuForm();
-//        PartyPojo partyPojo = testData.partyAdd();
-//        List<BinSkuItemForm> binSkuItemFormList = new ArrayList<>();
-//        for (int i = 0; i < 5; i++) {
-//            BinSkuItemForm binSkuItemForm = new BinSkuItemForm();
-//            binSkuItemForm.setBinId(testData.binAdd().getBinId());
-//            binSkuItemForm.setClientSkuId(testData.productAdd(partyPojo.getId()).getClientSkuId());
-//            binSkuItemForm.setQuantity(getRandomNumberLong());
-//            binSkuItemFormList.add(binSkuItemForm);
-//        }
-//        binSkuForm.setBinSkuItemFormList(binSkuItemFormList);
-//        binSkuForm.setClientId(partyPojo.getId());
-//        binSkuDto.add(binSkuForm);
-//    }
+    @Test
+    public void addTest() throws ApiException {
+        BinSkuForm binSkuForm = new BinSkuForm();
+        PartyPojo partyPojo = testData.partyAdd();
+        List<BinSkuItemForm> binSkuItemFormList = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            BinSkuItemForm binSkuItemForm = new BinSkuItemForm();
+            binSkuItemForm.setBinId(testData.binAdd().getBinId());
+            binSkuItemForm.setClientSkuId(testData.productAdd(partyPojo.getId()).getClientSkuId());
+            binSkuItemForm.setQuantity(getRandomNumberLong());
+            binSkuItemFormList.add(binSkuItemForm);
+        }
+        binSkuForm.setBinSkuItemFormList(binSkuItemFormList);
+        binSkuForm.setClientId(partyPojo.getId());
+        binSkuDto.add(binSkuForm);
+    }
 
     @Test
     public void selectTest() {
@@ -151,16 +152,17 @@ public class BinSkuDtoTest extends BaseTest { //TODO extend baseTest with all an
         }
         Assert.assertEquals(n, binSkuDto.select(0).size());
     }
-//
-//    @Test
-//    public void updateTest() throws ApiException {
-//        BinSkuPojo binSkuPojo = testData.binSkuAdd();
-//        BinSkuUpdateForm binSkuUpdateForm = new BinSkuUpdateForm();
-//        Long newQty = getRandomNumberLong();
-//        binSkuUpdateForm.setQuantity(newQty);
-//        binSkuDto.update(binSkuUpdateForm, binSkuPojo.getId());
-//        Assert.assertEquals(newQty, testData.binSkuSelect().get(0).getQuantity());
-//
-//    }
+
+    @Test
+    public void updateTest() throws ApiException {
+        BinSkuPojo binSkuPojo = testData.binSkuAdd();
+        testData.invAdd(binSkuPojo.getGlobalSkuId(), binSkuPojo.getQuantity(), 0L, 0L);
+        BinSkuUpdateForm binSkuUpdateForm = new BinSkuUpdateForm();
+        Long newQty = getRandomNumberLong();
+        binSkuUpdateForm.setQuantity(newQty);
+        binSkuDto.update(binSkuUpdateForm, binSkuPojo.getId());
+        Assert.assertEquals(newQty, testData.binSkuSelect().get(0).getQuantity());
+
+    }
 
 }

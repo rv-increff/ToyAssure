@@ -21,6 +21,8 @@ public class ValidationUtil {
 
 
     public static void checkDuplicateProductsProductForm(List<ProductForm> productFormList) throws ApiException {
+        if(isNull(productFormList))
+            throw new ApiException("Product Form list is null");
 
         HashSet<String> set = new HashSet<>();
         List<ErrorData> errorFormList = new ArrayList<>();
@@ -35,11 +37,13 @@ public class ValidationUtil {
         throwErrorIfNotEmpty(errorFormList);
     }
 
-    public static void checkDuplicateGlobalSkuAndBinIdPair(List<BinSkuPojo> binSkuItemFormList) throws ApiException {
+    public static void checkDuplicateGlobalSkuAndBinIdPair(List<BinSkuPojo> binSkuPojoList) throws ApiException {
+        if(isNull(binSkuPojoList))
+            throw new ApiException("Bin Sku Pojo list is null");
 
         HashMap<Long, Set<Long>> clientSkuIdToBinId = new HashMap<>(); //TODO change logic to string->set of bin ids
        //TODO use get or default
-        for (BinSkuPojo binSkuPojo : binSkuItemFormList) {
+        for (BinSkuPojo binSkuPojo : binSkuPojoList) {
                 if (clientSkuIdToBinId.getOrDefault(binSkuPojo.getGlobalSkuId(), new HashSet<>()).contains(binSkuPojo.getBinId()))
                     throw new ApiException( "duplicate values of globalSkuId-binId pair");
                 else {

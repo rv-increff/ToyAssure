@@ -1,14 +1,15 @@
 package assure.dto;
 
-import assure.model.OrderForm;
-import assure.model.*;
+import assure.model.InvoiceData;
+import commons.model.OrderForm;
+import assure.model.OrderItemInvoiceData;
 import assure.pojo.*;
 import assure.service.*;
 import assure.spring.ApiException;
 import assure.util.ConversionUtil;
+import commons.model.*;
 import commons.util.InvoiceType;
 import commons.util.PartyType;
-import commons.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,15 +21,18 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static assure.util.ConversionUtil.*;
 import static assure.util.DataUtil.getKey;
 import static assure.util.DataUtil.returnFileStream;
-import static commons.util.OrderStatus.*;
 import static assure.util.ValidationUtil.validateForm;
 import static assure.util.ValidationUtil.validateList;
+import static commons.util.OrderStatus.FULFILLED;
 import static commons.util.pdfUtil.convertToPDF;
 import static commons.util.pdfUtil.jaxbObjectToXML;
 import static java.lang.Math.min;
@@ -39,6 +43,13 @@ public class OrderDto {
     private static final Long MAX_LIST_SIZE = 1000L;
     private static final Integer PAGE_SIZE = 5;
     private static final String INTERNAL_CHANNEL = "INTERNAL";
+    private static final String INVOICE_FILE_NAME_SUFFIX = "_invoice.pdf";
+    private static final String INVOICE_STORAGE_LOCATION = "src/invoice";
+    private static final String INVOICE_TEMPLATE_LOCATION = "src/invoiceTemplate";
+    private static final String INVOICE_XSL = "invoice.xsl";
+    private static final String CHANNEL_GET_INVOICE_URL = "orders/get-invoice";
+
+
 
 
     @Autowired
@@ -84,7 +95,6 @@ public class OrderDto {
         return orderItemFormList.size();
     }
 
-    //TODO DEV_REVIEW:rename to ChannelOrderForm done
     @Transactional(rollbackFor = ApiException.class)
     public Integer addChannelOrder(ChannelOrderForm channelOrderForm) throws ApiException {
 
@@ -112,6 +122,7 @@ public class OrderDto {
 
         return orderItemFormChannelList.size();
     }
+
     @Transactional(rollbackFor = ApiException.class)
     public OrderData allocateOrder(Long id) throws ApiException {
         OrderPojo orderPojo = orderService.getCheck(id);
@@ -146,9 +157,7 @@ public class OrderDto {
             Long fulfilledQty = orderService.fulfillQty(orderItemPojo);
             inventoryService.fulfillQty(fulfilledQty, orderItemPojo.getGlobalSkuId());
         }
-        //check for fulfill === ordered
-        //same for allocated
-        //markOrderAsFulfilled -> checkOrderStatus valid and item wise
+
         orderService.markStatusFulfilled(id);
         return convertOrderPojoToData(orderPojo);
     }
@@ -177,17 +186,21 @@ public class OrderDto {
         orderService.updateUrl(orderId, url);
         return returnFileStream(url);
     }
+
     public List<OrderItemData> convertOrderItemPojoListToData(List<OrderItemPojo> orderItemPojoList) {
         List<OrderItemData> orderItemInvoiceDataList = new ArrayList<>();
-        Map<Long, ProductPojo> globalSkuIdToPojo = productService.getGlobalSkuIdToPojo(orderItemPojoList.stream().
-                map(OrderItemPojo::getGlobalSkuId).collect(Collectors.toSet()));
-
+        List<Long> gskuList = orderItemPojoList.stream().map(OrderItemPojo::getGlobalSkuId).distinct().
+                collect(Collectors.toList());
+        Map<Long, ProductPojo> globalSkuIdToPojo = productService.getGlobalSkuIdToPojo(gskuList);
+        Map<Long, ChannelListingPojo> gskuToChannelListPojo = channelListingService.getGlobalSkuIdToPojo(gskuList);
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             orderItemInvoiceDataList.add(convertOrderItemPojToData(orderItemPojo,
-                    globalSkuIdToPojo.getOrDefault(orderItemPojo.getGlobalSkuId(), new ProductPojo()).getClientSkuId()));
+                    globalSkuIdToPojo.getOrDefault(orderItemPojo.getGlobalSkuId(), new ProductPojo()).getClientSkuId(),
+                    gskuToChannelListPojo.getOrDefault(orderItemPojo.getGlobalSkuId(), new ChannelListingPojo()).getChannelSkuId()));
         }
-        return orderItemInvoiceDataList;
+        return orderItemInvoiceDataList; //TODO populate channelSKuID in channel Order and add channelSkuId in OrderItemDat and null if no listing
     }
+
     private String getInvoiceUrl(OrderPojo orderPojo) throws Exception {
         String url = null;
         Long orderId = orderPojo.getId();
@@ -197,8 +210,8 @@ public class OrderDto {
             byte[] encoded = fetchInvoiceFromChannel(orderId);
             byte[] pdfByteArray = java.util.Base64.getDecoder().decode(encoded);
 
-            String pdfName = orderId + "_invoice.pdf";
-            File pdfFile = new File("src/invoice", pdfName);
+            String pdfName = orderId + INVOICE_FILE_NAME_SUFFIX;
+            File pdfFile = new File(INVOICE_STORAGE_LOCATION, pdfName);
             OutputStream out = Files.newOutputStream(pdfFile.getAbsoluteFile().toPath());
             out.write(pdfByteArray);
             out.close();
@@ -213,7 +226,7 @@ public class OrderDto {
         List<OrderItemInvoiceData> orderItemInvoiceDataList = new ArrayList<>();
 
         Map<Long, ProductPojo> gskuToProductPojo = productService.getGlobalSkuIdToPojo(orderItemPojoList.stream().
-                map(OrderItemPojo::getGlobalSkuId).collect(Collectors.toSet()));
+                map(OrderItemPojo::getGlobalSkuId).distinct().collect(Collectors.toList()));
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             String clientSkuId = gskuToProductPojo.get(orderItemPojo.getGlobalSkuId()).getClientSkuId();
             OrderItemInvoiceData orderItemInvoiceData = convertPojoOrderItemToData(orderItemPojo, clientSkuId, orderPojo.getChannelOrderId());
@@ -226,12 +239,17 @@ public class OrderDto {
         for (OrderItemInvoiceData i : orderItemInvoiceDataList) {
             total += i.getOrderedQuantity() * i.getSellingPricePerUnit();
         }
-        InvoiceData oItem = new InvoiceData(time, orderPojo.getChannelOrderId(), orderItemInvoiceDataList, total);
+
+        String clientName = partyService.getCheck(orderPojo.getClientId()).getName();
+        String customerName = partyService.getCheck(orderPojo.getCustomerId()).getName();
+
+        InvoiceData oItem = new InvoiceData(time, orderPojo.getChannelOrderId(), orderItemInvoiceDataList, total,
+                clientName, customerName);
 
         String xml = jaxbObjectToXML(oItem, InvoiceData.class);
-        String pdfName = orderId + "_invoice.pdf";
-        File xsltFile = new File("src/invoiceTemplate", "invoice.xsl");
-        File pdfFile = new File("src/invoice", pdfName);
+        String pdfName = orderId + INVOICE_FILE_NAME_SUFFIX;
+        File xsltFile = new File(INVOICE_TEMPLATE_LOCATION, INVOICE_XSL); //TODO all string path to static final
+        File pdfFile = new File(INVOICE_STORAGE_LOCATION, pdfName);
         System.out.println(xml);
         convertToPDF(oItem, xsltFile, pdfFile, xml);
         String url = pdfFile.toPath().toAbsolutePath().toString();
@@ -254,7 +272,7 @@ public class OrderDto {
                 getGlobalSkuIdAndChannelIdAndClientIdToPojo(gSkuList, orderPojo.getChannelId(), orderPojo.getClientId());
 
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
-            String key = getKey(Arrays.asList(orderItemPojo.getGlobalSkuId(),orderPojo.getChannelId(), orderPojo.getClientId()));
+            String key = getKey(Arrays.asList(orderItemPojo.getGlobalSkuId(), orderPojo.getChannelId(), orderPojo.getClientId()));
             String channelSkuId = globalSkuIdAndChannelIdAndClientIdToPojo.get(key).getChannelSkuId();
             OrderItemChannelData orderItemChannelData = convertPojoOrderItemChannelToData(orderItemPojo, channelSkuId,
                     orderPojo.getChannelOrderId());
@@ -267,9 +285,14 @@ public class OrderDto {
         for (OrderItemChannelData i : orderItemChannelDataList) {
             total += i.getOrderedQuantity() * i.getSellingPricePerUnit();
         }
-        InvoiceDataChannel invoiceData = new InvoiceDataChannel(time, orderPojo.getChannelOrderId(), orderItemChannelDataList, total);
 
-        return channelClient.post("orders/get-invoice", invoiceData).getBytes();
+        String clientName = partyService.getCheck(orderPojo.getClientId()).getName();
+        String customerName = partyService.getCheck(orderPojo.getCustomerId()).getName();
+
+        InvoiceDataChannel invoiceData = new InvoiceDataChannel(time, orderPojo.getChannelOrderId(),
+                orderItemChannelDataList, total, clientName, customerName);
+
+        return channelClient.post(CHANNEL_GET_INVOICE_URL, invoiceData).getBytes();
     }
 
     private List<OrderData> convertOrderPojoListToData(List<OrderPojo> orderPojoList) throws ApiException {
@@ -293,12 +316,14 @@ public class OrderDto {
         }
         return orderDataList;
     }
+
     private OrderData convertOrderPojoToData(OrderPojo orderPojo) throws ApiException {
         if (isNull(orderPojo))
             return new OrderData();
         String channelName = channelService.getCheck(orderPojo.getChannelId()).getName();
         String clientName = partyService.getCheck(orderPojo.getClientId()).getName();
         String customerName = partyService.getCheck(orderPojo.getClientId()).getName();
+
         OrderData orderData = new OrderData();
         orderData.setChannelOrderId(orderPojo.getChannelOrderId());
         orderData.setInvoiceUrl(orderPojo.getInvoiceUrl());

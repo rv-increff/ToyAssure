@@ -1,6 +1,5 @@
 package assure.config;
 
-import assure.config.QaConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;

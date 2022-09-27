@@ -6,14 +6,13 @@ import assure.model.ProductForm;
 import assure.model.ProductUpdateForm;
 import assure.pojo.ProductPojo;
 import assure.spring.ApiException;
+import assure.util.RandomUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static assure.util.RandomUtil.*;
 
 public class ProductDtoTest extends BaseTest {
     @Autowired
@@ -25,7 +24,7 @@ public class ProductDtoTest extends BaseTest {
     public void addNullListErrorTest() {
         List<ProductForm> productFormList = new ArrayList<>();
         try {
-            productDto.add(productFormList, getRandomNumberLong());
+            productDto.add(productFormList, RandomUtil.getRandomNumberLong());
         } catch (ApiException e) {
             Assert.assertEquals("Product Form List cannot be empty", e.getMessage());
         }
@@ -39,7 +38,7 @@ public class ProductDtoTest extends BaseTest {
             productFormList.add(new ProductForm());
         }
         try {
-            productDto.add(productFormList, getRandomNumberLong());
+            productDto.add(productFormList, RandomUtil.getRandomNumberLong());
         } catch (ApiException e) {
             Assert.assertEquals("Product Form List size more than limit, limit : 1000", e.getMessage());
         }
@@ -52,23 +51,23 @@ public class ProductDtoTest extends BaseTest {
         for (int i = 0; i < n; i++) {
             productFormList.add(new ProductForm());
         }
-        productDto.add(productFormList, getRandomNumberLong());
+        productDto.add(productFormList, RandomUtil.getRandomNumberLong());
     }
 
     @Test(expected = ApiException.class)
     public void addDuplicateErrorTest() throws ApiException {
         List<ProductForm> productFormList = new ArrayList<>();
         int n = 10;
-        String clientSkuId = getRandomString();
+        String clientSkuId = RandomUtil.getRandomString();
         for (int i = 0; i < n; i++) {
             ProductForm productForm = new ProductForm();
-            productForm.setBrandId(getRandomString());
-            productForm.setDescription(getRandomString());
-            productForm.setName(getRandomString());
+            productForm.setBrandId(RandomUtil.getRandomString());
+            productForm.setDescription(RandomUtil.getRandomString());
+            productForm.setName(RandomUtil.getRandomString());
             productForm.setClientSkuId(clientSkuId);
             productFormList.add(productForm);
         }
-        productDto.add(productFormList, getRandomNumberLong());
+        productDto.add(productFormList, RandomUtil.getRandomNumberLong());
     }
 
     @Test
@@ -77,11 +76,11 @@ public class ProductDtoTest extends BaseTest {
         int n = 10;
         for (int i = 0; i < n; i++) {
             ProductForm productForm = new ProductForm();
-            productForm.setBrandId(getRandomString());
-            productForm.setDescription(getRandomString());
-            productForm.setName(getRandomString());
-            productForm.setClientSkuId(getRandomString());
-            productForm.setMrp(getRandomNumberDouble());
+            productForm.setBrandId(RandomUtil.getRandomString());
+            productForm.setDescription(RandomUtil.getRandomString());
+            productForm.setName(RandomUtil.getRandomString());
+            productForm.setClientSkuId(RandomUtil.getRandomString());
+            productForm.setMrp(RandomUtil.getRandomNumberDouble());
             productFormList.add(productForm);
         }
         productDto.add(productFormList, testData.partyAdd().getId());
@@ -105,19 +104,19 @@ public class ProductDtoTest extends BaseTest {
     @Test(expected = ApiException.class)
     public void updateErrorTest() throws ApiException {
         ProductUpdateForm productUpdateForm = new ProductUpdateForm();
-        productDto.update(productUpdateForm, getRandomNumberLong());
+        productDto.update(productUpdateForm, RandomUtil.getRandomNumberLong());
     }
 
     @Test
     public void updateTest() throws ApiException {
         ProductPojo productPojo = testData.productAdd();
         ProductUpdateForm productUpdateForm = new ProductUpdateForm();
-        productUpdateForm.setBrandId(getRandomString());
-        productUpdateForm.setDescription(getRandomString());
-        productUpdateForm.setName(getRandomString());
+        productUpdateForm.setBrandId(RandomUtil.getRandomString());
+        productUpdateForm.setDescription(RandomUtil.getRandomString());
+        productUpdateForm.setName(RandomUtil.getRandomString());
 
 
-        Double newMrp = getRandomNumberDouble();
+        Double newMrp = RandomUtil.getRandomNumberDouble();
         productUpdateForm.setMrp(newMrp);
         productDto.update(productUpdateForm, productPojo.getGlobalSkuId());
         Assert.assertEquals(newMrp, testData.productSelect().get(0).getMrp());

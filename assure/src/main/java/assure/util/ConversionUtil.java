@@ -1,11 +1,9 @@
 package assure.util;
 
-import assure.model.OrderForm;
 import assure.model.*;
 import assure.pojo.*;
 import assure.spring.ApiException;
 import commons.model.*;
-import commons.model.ErrorData;
 import javafx.util.Pair;
 import org.springframework.util.CollectionUtils;
 
@@ -429,7 +427,7 @@ public class ConversionUtil {
         return orderData;
     }
 
-    public static OrderItemData convertOrderItemPojToData(OrderItemPojo orderItemPojo, String clientSkuId) {
+    public static OrderItemData convertOrderItemPojToData(OrderItemPojo orderItemPojo, String clientSkuId, String channelSkuId) {
         if (isNull(orderItemPojo))
             return new OrderItemData();
 
@@ -441,6 +439,7 @@ public class ConversionUtil {
         orderItemData.setAllocatedQuantity(orderItemPojo.getAllocatedQuantity());
         orderItemData.setFulfilledQuantity(orderItemPojo.getFulfilledQuantity());
         orderItemData.setClientSkuId(clientSkuId);
+        orderItemData.setChannelSkuId(channelSkuId);
         return orderItemData;
     }
 

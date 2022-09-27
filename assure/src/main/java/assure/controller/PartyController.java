@@ -20,7 +20,6 @@ public class PartyController {
 
     @ApiOperation(value = "Search Party")
     @RequestMapping(path = "/parties/search", method = RequestMethod.POST)
-    //TODO club these two send POST request and /party/search done
     public List<PartyData> searchParty(@RequestBody PartySearchForm partySearchForm) {
         return partyDto.partySearch(partySearchForm);
     }

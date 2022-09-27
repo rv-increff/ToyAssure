@@ -20,9 +20,9 @@ public class BinDto {
 
     public List<BinData> add(Integer numberOfBins) throws ApiException {
         if (numberOfBins <= 0 || numberOfBins > MAX_BIN_LIMIT)
-            throw new ApiException("Number of bins should be between 1 and " + MAX_BIN_LIMIT); //TODO combine these two if in one
+            throw new ApiException("Number of bins should be between 1 and " + MAX_BIN_LIMIT);
 
-        return convertBinPojoListToData(binService.add(numberOfBins)); //TODO add CollectsUtils.isEmpty() in all conversion done
+        return convertBinPojoListToData(binService.add(numberOfBins));
     }
 
     public List<BinData> select(Integer pageNumber) {

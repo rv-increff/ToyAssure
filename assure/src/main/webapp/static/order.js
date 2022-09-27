@@ -17,8 +17,7 @@ function loadOrder() {
 
             str = ""
             for (var i = 0; i < obj.length; i++) {
-                str += `<tr>
-                                      
+                str += `<tr> 
                                       <td>${obj[i]['clientName']}</td>
                                       <td>${obj[i]['customerName']}</td>
                                       <td>${obj[i]['channelName']}</td>

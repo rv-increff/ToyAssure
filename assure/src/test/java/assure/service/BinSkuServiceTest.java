@@ -1,6 +1,5 @@
 package assure.service;
 
-import assure.pojo.BinPojo;
 import assure.pojo.BinSkuPojo;
 import assure.spring.ApiException;
 import assure.config.BaseTest;

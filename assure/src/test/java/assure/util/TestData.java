@@ -2,9 +2,12 @@ package assure.util;
 
 import assure.dao.*;
 import assure.model.ChannelForm;
+import commons.model.ChannelOrderForm;
+import commons.model.OrderForm;
 import assure.model.PartyForm;
 import assure.pojo.*;
 import commons.model.OrderItemForm;
+import commons.model.OrderItemFormChannel;
 import commons.util.InvoiceType;
 import commons.util.OrderStatus;
 import commons.util.PartyType;
@@ -45,11 +48,11 @@ public class TestData {
             PartyPojo partyPojo = new PartyPojo();
 
             PartyType type = PartyType.CLIENT;
-            switch (getRandomNumber() % 2) {
+            switch (RandomUtil.getRandomNumber() % 2) {
                 case 0:
                     type = PartyType.CUSTOMER;
             }
-            partyPojo.setName(getRandomString());
+            partyPojo.setName(RandomUtil.getRandomString());
             partyPojo.setType(type);
             partyPojoList.add(partyPojo);
         }
@@ -60,11 +63,11 @@ public class TestData {
     public PartyForm getPartyForm() {
         PartyForm partyForm = new PartyForm();
         PartyType type = PartyType.CLIENT;
-        switch (getRandomNumber() % 2) {
+        switch (RandomUtil.getRandomNumber() % 2) {
             case 0:
                 type = PartyType.CUSTOMER;
         }
-        partyForm.setName(getRandomString());
+        partyForm.setName(RandomUtil.getRandomString());
         partyForm.setType(type);
         return partyForm;
     }
@@ -86,13 +89,13 @@ public class TestData {
     }
 
     public PartyPojo partyAdd() {
-        int ind = getRandomNumber() % 2;
+        int ind = RandomUtil.getRandomNumber() % 2;
         PartyType partyType = PartyType.CLIENT;
         if (ind == 0) {
             partyType = PartyType.CUSTOMER;
         }
 
-        return partyAdd(getRandomString(), partyType);
+        return partyAdd(RandomUtil.getRandomString(), partyType);
     }
 
     public List<PartyPojo> partySelect() {
@@ -101,12 +104,12 @@ public class TestData {
 
     public ProductPojo productAdd() {
         ProductPojo productPojo = new ProductPojo();
-        productPojo.setClientSkuId(getRandomString());
-        productPojo.setClientId(getRandomNumberLong());
-        productPojo.setBrandId(getRandomString());
-        productPojo.setMrp(getRandomNumberDouble());
-        productPojo.setDescription(getRandomString());
-        productPojo.setName(getRandomString());
+        productPojo.setClientSkuId(RandomUtil.getRandomString());
+        productPojo.setClientId(RandomUtil.getRandomNumberLong());
+        productPojo.setBrandId(RandomUtil.getRandomString());
+        productPojo.setMrp(RandomUtil.getRandomNumberDouble());
+        productPojo.setDescription(RandomUtil.getRandomString());
+        productPojo.setName(RandomUtil.getRandomString());
 
         return productDao.add(productPojo);
 
@@ -114,12 +117,12 @@ public class TestData {
 
     public ProductPojo productAdd(Long clientId) {
         ProductPojo productPojo = new ProductPojo();
-        productPojo.setClientSkuId(getRandomString().toUpperCase().trim());
+        productPojo.setClientSkuId(RandomUtil.getRandomString().toUpperCase().trim());
         productPojo.setClientId(clientId);
-        productPojo.setBrandId(getRandomString());
-        productPojo.setMrp(getRandomNumberDouble());
-        productPojo.setDescription(getRandomString());
-        productPojo.setName(getRandomString());
+        productPojo.setBrandId(RandomUtil.getRandomString());
+        productPojo.setMrp(RandomUtil.getRandomNumberDouble());
+        productPojo.setDescription(RandomUtil.getRandomString());
+        productPojo.setName(RandomUtil.getRandomString());
 
         return productDao.add(productPojo);
 
@@ -129,10 +132,10 @@ public class TestData {
         ProductPojo productPojo = new ProductPojo();
         productPojo.setClientSkuId(clientSkuID);
         productPojo.setClientId(clientId);
-        productPojo.setBrandId(getRandomString());
-        productPojo.setMrp((double) getRandomNumber());
-        productPojo.setDescription(getRandomString());
-        productPojo.setName(getRandomString());
+        productPojo.setBrandId(RandomUtil.getRandomString());
+        productPojo.setMrp((double) RandomUtil.getRandomNumber());
+        productPojo.setDescription(RandomUtil.getRandomString());
+        productPojo.setName(RandomUtil.getRandomString());
 
         return productPojo;
 
@@ -144,18 +147,18 @@ public class TestData {
 
     public BinSkuPojo binSkuAdd() {
         BinSkuPojo binSkuPojo = new BinSkuPojo();
-        binSkuPojo.setBinId(getRandomNumberLong());
-        binSkuPojo.setGlobalSkuId(getRandomNumberLong());
-        binSkuPojo.setQuantity(getRandomNumberLong());
+        binSkuPojo.setBinId(RandomUtil.getRandomNumberLong());
+        binSkuPojo.setGlobalSkuId(RandomUtil.getRandomNumberLong());
+        binSkuPojo.setQuantity(RandomUtil.getRandomNumberLong());
 
         return binSkuDao.add(binSkuPojo);
     }
 
     public BinSkuPojo binSkuAdd(Long globalSkuId) {
         BinSkuPojo binSkuPojo = new BinSkuPojo();
-        binSkuPojo.setBinId(getRandomNumberLong());
+        binSkuPojo.setBinId(RandomUtil.getRandomNumberLong());
         binSkuPojo.setGlobalSkuId(globalSkuId);
-        binSkuPojo.setQuantity(getRandomNumberLong());
+        binSkuPojo.setQuantity(RandomUtil.getRandomNumberLong());
 
         return binSkuDao.add(binSkuPojo);
     }
@@ -163,17 +166,25 @@ public class TestData {
     public BinSkuPojo binSkuAddByBinId(Long binId) {
         BinSkuPojo binSkuPojo = new BinSkuPojo();
         binSkuPojo.setBinId(binId);
-        binSkuPojo.setGlobalSkuId(getRandomNumberLong());
-        binSkuPojo.setQuantity(getRandomNumberLong());
+        binSkuPojo.setGlobalSkuId(RandomUtil.getRandomNumberLong());
+        binSkuPojo.setQuantity(RandomUtil.getRandomNumberLong());
+
+        return binSkuDao.add(binSkuPojo);
+    }
+ public BinSkuPojo binSkuAdd(Long binId, Long globalSkuId, Long qty) {
+        BinSkuPojo binSkuPojo = new BinSkuPojo();
+        binSkuPojo.setBinId(binId);
+        binSkuPojo.setGlobalSkuId(globalSkuId);
+        binSkuPojo.setQuantity(qty);
 
         return binSkuDao.add(binSkuPojo);
     }
 
     public BinSkuPojo getBinSku() {
         BinSkuPojo binSkuPojo = new BinSkuPojo();
-        binSkuPojo.setBinId(getRandomNumberLong());
-        binSkuPojo.setGlobalSkuId(getRandomNumberLong());
-        binSkuPojo.setQuantity(getRandomNumberLong());
+        binSkuPojo.setBinId(RandomUtil.getRandomNumberLong());
+        binSkuPojo.setGlobalSkuId(RandomUtil.getRandomNumberLong());
+        binSkuPojo.setQuantity(RandomUtil.getRandomNumberLong());
 
         return binSkuPojo;
     }
@@ -185,37 +196,37 @@ public class TestData {
 
     public ChannelPojo channelAdd() {
         ChannelPojo channelPojo = new ChannelPojo();
-        int ind = getRandomNumber() % 2;
+        int ind = RandomUtil.getRandomNumber() % 2;
         InvoiceType invoiceType = InvoiceType.SELF;
         if (ind == 0) {
             invoiceType = InvoiceType.CHANNEL;
         }
         channelPojo.setInvoiceType(invoiceType);
-        channelPojo.setName(getRandomString().toUpperCase());
+        channelPojo.setName(RandomUtil.getRandomString().toUpperCase());
         return channelDao.add(channelPojo);
     }
 
     public ChannelForm getChannelForm() {
         ChannelForm channelForm = new ChannelForm();
-        int ind = getRandomNumber() % 2;
+        int ind = RandomUtil.getRandomNumber() % 2;
         InvoiceType invoiceType = InvoiceType.SELF;
         if (ind == 0) {
             invoiceType = InvoiceType.CHANNEL;
         }
         channelForm.setInvoiceType(invoiceType);
-        channelForm.setName(getRandomString().toUpperCase());
+        channelForm.setName(RandomUtil.getRandomString().toUpperCase());
         return channelForm;
     }
 
     public ChannelPojo getChannel() {
         ChannelPojo channelPojo = new ChannelPojo();
-        int ind = getRandomNumber() % 2;
+        int ind = RandomUtil.getRandomNumber() % 2;
         InvoiceType invoiceType = InvoiceType.SELF;
         if (ind == 0) {
             invoiceType = InvoiceType.CHANNEL;
         }
         channelPojo.setInvoiceType(invoiceType);
-        channelPojo.setName(getRandomString());
+        channelPojo.setName(RandomUtil.getRandomString());
         return channelPojo;
     }
 
@@ -226,10 +237,10 @@ public class TestData {
 
     public InventoryPojo invAdd() {
         InventoryPojo inventoryPojo = new InventoryPojo();
-        inventoryPojo.setFulfilledQuantity(getRandomNumberLong());
-        inventoryPojo.setAvailableQuantity(getRandomNumberLong());
-        inventoryPojo.setAllocatedQuantity(getRandomNumberLong());
-        inventoryPojo.setGlobalSkuId(getRandomNumberLong());
+        inventoryPojo.setFulfilledQuantity(RandomUtil.getRandomNumberLong());
+        inventoryPojo.setAvailableQuantity(RandomUtil.getRandomNumberLong());
+        inventoryPojo.setAllocatedQuantity(RandomUtil.getRandomNumberLong());
+        inventoryPojo.setGlobalSkuId(RandomUtil.getRandomNumberLong());
 
         return inventoryDao.add(inventoryPojo);
 
@@ -237,10 +248,10 @@ public class TestData {
 
     public InventoryPojo getInv() {
         InventoryPojo inventoryPojo = new InventoryPojo();
-        inventoryPojo.setFulfilledQuantity(getRandomNumberLong());
-        inventoryPojo.setAvailableQuantity(getRandomNumberLong());
-        inventoryPojo.setAllocatedQuantity(getRandomNumberLong());
-        inventoryPojo.setGlobalSkuId(getRandomNumberLong());
+        inventoryPojo.setFulfilledQuantity(RandomUtil.getRandomNumberLong());
+        inventoryPojo.setAvailableQuantity(RandomUtil.getRandomNumberLong());
+        inventoryPojo.setAllocatedQuantity(RandomUtil.getRandomNumberLong());
+        inventoryPojo.setGlobalSkuId(RandomUtil.getRandomNumberLong());
 
         return inventoryPojo;
 
@@ -253,10 +264,10 @@ public class TestData {
     public ChannelListingPojo channelListAdd() {
         ChannelListingPojo channelListingPojo = new ChannelListingPojo();
 
-        channelListingPojo.setChannelId(getRandomNumberLong());
-        channelListingPojo.setChannelSkuId(getRandomString().toLowerCase());
-        channelListingPojo.setClientId(getRandomNumberLong());
-        channelListingPojo.setGlobalSkuId(getRandomNumberLong());
+        channelListingPojo.setChannelId(RandomUtil.getRandomNumberLong());
+        channelListingPojo.setChannelSkuId(RandomUtil.getRandomString().toLowerCase());
+        channelListingPojo.setClientId(RandomUtil.getRandomNumberLong());
+        channelListingPojo.setGlobalSkuId(RandomUtil.getRandomNumberLong());
 
         return channelListingDao.add(channelListingPojo);
     }
@@ -264,9 +275,9 @@ public class TestData {
         ChannelListingPojo channelListingPojo = new ChannelListingPojo();
 
         channelListingPojo.setChannelId(channelId);
-        channelListingPojo.setChannelSkuId(getRandomString().toLowerCase());
+        channelListingPojo.setChannelSkuId(RandomUtil.getRandomString().toLowerCase());
         channelListingPojo.setClientId(clientId);
-        channelListingPojo.setGlobalSkuId(getRandomNumberLong());
+        channelListingPojo.setGlobalSkuId(RandomUtil.getRandomNumberLong());
 
         return channelListingDao.add(channelListingPojo);
     }
@@ -275,10 +286,10 @@ public class TestData {
     public ChannelListingPojo getChannelList() {
         ChannelListingPojo channelListingPojo = new ChannelListingPojo();
 
-        channelListingPojo.setChannelId(getRandomNumberLong());
-        channelListingPojo.setChannelSkuId(getRandomString());
-        channelListingPojo.setClientId(getRandomNumberLong());
-        channelListingPojo.setGlobalSkuId(getRandomNumberLong());
+        channelListingPojo.setChannelId(RandomUtil.getRandomNumberLong());
+        channelListingPojo.setChannelSkuId(RandomUtil.getRandomString());
+        channelListingPojo.setClientId(RandomUtil.getRandomNumberLong());
+        channelListingPojo.setGlobalSkuId(RandomUtil.getRandomNumberLong());
 
         return channelListingPojo;
     }
@@ -289,7 +300,7 @@ public class TestData {
 
     public OrderPojo orderAdd() {
         OrderPojo orderPojo = new OrderPojo();
-        int ind = getRandomNumber() % 3;
+        int ind = RandomUtil.getRandomNumber() % 3;
         OrderStatus orderStatus = OrderStatus.CREATED;
         switch (ind) {
             case 1:
@@ -298,22 +309,41 @@ public class TestData {
                 orderStatus = OrderStatus.FULFILLED;
         }
         orderPojo.setStatus(orderStatus);
-        orderPojo.setChannelOrderId(getRandomString());
-        orderPojo.setInvoiceUrl(getRandomString());
-        orderPojo.setChannelId(getRandomNumberLong());
-        orderPojo.setClientId(getRandomNumberLong());
-        orderPojo.setCustomerId(getRandomNumberLong());
+        orderPojo.setChannelOrderId(RandomUtil.getRandomString());
+        orderPojo.setInvoiceUrl(RandomUtil.getRandomString());
+        orderPojo.setChannelId(RandomUtil.getRandomNumberLong());
+        orderPojo.setClientId(RandomUtil.getRandomNumberLong());
+        orderPojo.setCustomerId(RandomUtil.getRandomNumberLong());
+
+        return orderDao.add(orderPojo);
+    }
+ public OrderPojo orderAdd(Long clientId, Long channelId) {
+        OrderPojo orderPojo = new OrderPojo();
+        int ind = RandomUtil.getRandomNumber() % 3;
+        OrderStatus orderStatus = OrderStatus.CREATED;
+        switch (ind) {
+            case 1:
+                orderStatus = OrderStatus.ALLOCATED;
+            case 2:
+                orderStatus = OrderStatus.FULFILLED;
+        }
+        orderPojo.setStatus(orderStatus);
+        orderPojo.setChannelOrderId(RandomUtil.getRandomString());
+        orderPojo.setInvoiceUrl(RandomUtil.getRandomString());
+        orderPojo.setChannelId(channelId);
+        orderPojo.setClientId(clientId);
+        orderPojo.setCustomerId(RandomUtil.getRandomNumberLong());
 
         return orderDao.add(orderPojo);
     }
 
     public OrderPojo getOrder() {
         OrderPojo orderPojo = new OrderPojo();
-        orderPojo.setChannelOrderId(getRandomString());
-        orderPojo.setInvoiceUrl(getRandomString());
-        orderPojo.setChannelId(getRandomNumberLong());
-        orderPojo.setClientId(getRandomNumberLong());
-        orderPojo.setCustomerId(getRandomNumberLong());
+        orderPojo.setChannelOrderId(RandomUtil.getRandomString());
+        orderPojo.setInvoiceUrl(RandomUtil.getRandomString());
+        orderPojo.setChannelId(RandomUtil.getRandomNumberLong());
+        orderPojo.setClientId(RandomUtil.getRandomNumberLong());
+        orderPojo.setCustomerId(RandomUtil.getRandomNumberLong());
 
         return orderDao.add(orderPojo);
     }
@@ -326,12 +356,12 @@ public class TestData {
         OrderItemPojo orderItemPojo = new OrderItemPojo();
 
         orderItemPojo.setOrderId(orderId);
-        orderItemPojo.setOrderedQuantity(getRandomNumberLong());
-        orderItemPojo.setAllocatedQuantity(getRandomNumberLong());
-        orderItemPojo.setFulfilledQuantity(getRandomNumberLong());
-        orderItemPojo.setSellingPricePerUnit(getRandomNumberDouble());
-        orderItemPojo.setSellingPricePerUnit(getRandomNumberDouble());
-        orderItemPojo.setGlobalSkuId(getRandomNumberLong());
+        orderItemPojo.setOrderedQuantity(RandomUtil.getRandomNumberLong());
+        orderItemPojo.setAllocatedQuantity(RandomUtil.getRandomNumberLong());
+        orderItemPojo.setFulfilledQuantity(RandomUtil.getRandomNumberLong());
+        orderItemPojo.setSellingPricePerUnit(RandomUtil.getRandomNumberDouble());
+        orderItemPojo.setSellingPricePerUnit(RandomUtil.getRandomNumberDouble());
+        orderItemPojo.setGlobalSkuId(RandomUtil.getRandomNumberLong());
 
         return orderItemDao.add(orderItemPojo);
     }
@@ -340,23 +370,61 @@ public class TestData {
         OrderItemPojo orderItemPojo = new OrderItemPojo();
 
         orderItemPojo.setOrderId(orderId);
-        orderItemPojo.setOrderedQuantity(getRandomNumberLong());
-        orderItemPojo.setAllocatedQuantity(getRandomNumberLong());
-        orderItemPojo.setFulfilledQuantity(getRandomNumberLong());
-        orderItemPojo.setSellingPricePerUnit(getRandomNumberDouble());
-        orderItemPojo.setSellingPricePerUnit(getRandomNumberDouble());
-        orderItemPojo.setGlobalSkuId(getRandomNumberLong());
+        orderItemPojo.setOrderedQuantity(RandomUtil.getRandomNumberLong());
+        orderItemPojo.setAllocatedQuantity(RandomUtil.getRandomNumberLong());
+        orderItemPojo.setFulfilledQuantity(RandomUtil.getRandomNumberLong());
+        orderItemPojo.setSellingPricePerUnit(RandomUtil.getRandomNumberDouble());
+        orderItemPojo.setSellingPricePerUnit(RandomUtil.getRandomNumberDouble());
+        orderItemPojo.setGlobalSkuId(RandomUtil.getRandomNumberLong());
 
         return orderItemPojo;
     }
 
     public OrderItemForm getOrderItemForm() {
         OrderItemForm orderItemForm = new OrderItemForm();
-        orderItemForm.setQuantity(getRandomNumberLong());
-        orderItemForm.setClientSkuId(getRandomString());
-        orderItemForm.setSellingPricePerUnit(getRandomNumberDouble());
+        orderItemForm.setQuantity(RandomUtil.getRandomNumberLong());
+        orderItemForm.setClientSkuId(RandomUtil.getRandomString());
+        orderItemForm.setSellingPricePerUnit(RandomUtil.getRandomNumberDouble());
         return orderItemForm;
     }
 
+    public OrderForm getOrderForm(String channelOrderId, Long clientId, Long customerId, List<OrderItemForm> orderItemFormList){
+        OrderForm orderForm = new OrderForm();
+        orderForm.setChannelOrderId(channelOrderId);
+        orderForm.setClientId(clientId);
+        orderForm.setCustomerId(customerId);
+        orderForm.setOrderItemFormList(orderItemFormList);
+        return orderForm;
+    }
+
+    public ChannelOrderForm getChannelOrderForm(Long channelId, Long clientId, Long customerId, String channelOrderId, List<OrderItemFormChannel> orderItemFormChannelList){
+        ChannelOrderForm channelOrderForm = new ChannelOrderForm();
+
+        channelOrderForm.setChannelId(channelId);
+        channelOrderForm.setClientId(clientId);
+        channelOrderForm.setCustomerId(customerId);
+        channelOrderForm.setChannelOrderId(channelOrderId);
+        channelOrderForm.setOrderItemFormChannelList(orderItemFormChannelList);
+        return channelOrderForm;
+    }
+
+    public OrderItemFormChannel getOrderItemFormChannel(String ChannelSkuId, Long qty, Double sellingPrice){
+        OrderItemFormChannel orderItemFormChannel = new OrderItemFormChannel();
+        orderItemFormChannel.setChannelSkuId(ChannelSkuId);
+        orderItemFormChannel.setQuantity(qty);
+        orderItemFormChannel.setSellingPricePerUnit(sellingPrice);
+
+        return orderItemFormChannel;
+    }
+
+    public InventoryPojo invAdd(Long gsku, Long availQty, Long allocatedQty, Long fulfilledQty){
+        InventoryPojo inventoryPojo = new InventoryPojo();
+        inventoryPojo.setGlobalSkuId(gsku);
+        inventoryPojo.setAvailableQuantity(availQty);
+        inventoryPojo.setAllocatedQuantity(allocatedQty);
+        inventoryPojo.setFulfilledQuantity(fulfilledQty);
+
+        return inventoryDao.add(inventoryPojo);
+    }
 
 }

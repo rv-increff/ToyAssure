@@ -4,6 +4,7 @@ import assure.config.BaseTest;
 import assure.util.TestData;
 import assure.pojo.PartyPojo;
 import assure.spring.ApiException;
+import assure.util.RandomUtil;
 import commons.util.PartyType;
 import commons.model.ErrorData;
 import org.junit.Assert;
@@ -69,7 +70,7 @@ public class PartyServiceTest extends BaseTest {
 
     @Test
     public void checkByIdAndTypeWrongTypeTest() throws ApiException {
-        PartyPojo partyPojo = testData.partyAdd(getRandomString(), PartyType.CLIENT);
+        PartyPojo partyPojo = testData.partyAdd(RandomUtil.getRandomString(), PartyType.CLIENT);
         try{
             partyService.checkByIdAndType(partyPojo.getId(), PartyType.CUSTOMER);
             fail("error not thrown");

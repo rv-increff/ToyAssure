@@ -17,13 +17,13 @@ public class PostConstructConfig {
     private ChannelService channelService;
 
     @PostConstruct
-    private void postConstruct() {
+    private void postConstruct() throws ApiException {
         checkAndCreateInternalChannel();
     }
 
-    private void checkAndCreateInternalChannel() {
+    private void checkAndCreateInternalChannel() throws ApiException {
         ChannelPojo channelPojo = channelService.selectByName(INTERNAL_CHANNEL_NAME);
-        if(!isNull(channelPojo))           //TODO cyclomatic complexity
+        if(!isNull(channelPojo))
             return ;
 
         channelPojo = new ChannelPojo();

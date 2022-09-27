@@ -1,13 +1,9 @@
 package assure.service;
 
 import assure.dao.BinSkuDao;
-import assure.model.BinSkuItemForm;
 import assure.pojo.BinSkuPojo;
 import assure.spring.ApiException;
-import commons.model.ErrorData;
-import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +12,6 @@ import java.util.stream.Collectors;
 
 import static assure.util.DataUtil.getKey;
 import static assure.util.ValidationUtil.checkDuplicateGlobalSkuAndBinIdPair;
-import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
 import static java.lang.Math.min;
 import static java.util.Objects.isNull;
 
@@ -26,14 +21,12 @@ public class BinSkuService {
     @Autowired
     private BinSkuDao binSkuDao;
 
-    public List<BinSkuPojo>add(List<BinSkuPojo> binSkuPojoList) throws ApiException {
-
-        checkBinIdExists(binSkuPojoList);
+    public List<BinSkuPojo> add(List<BinSkuPojo> binSkuPojoList) throws ApiException {
         checkDuplicateGlobalSkuAndBinIdPair(binSkuPojoList);
 
         Map<String, BinSkuPojo> globalSkuIdAndBinIdToBinSKuPojo = getGlobalSkuIdAndBinIdToBinSKuPojo(binSkuPojoList);
         for (BinSkuPojo binSkuPojo : binSkuPojoList) {
-            String key = getKey(Arrays.asList(binSkuPojo.getGlobalSkuId(),binSkuPojo.getBinId()));
+            String key = getKey(Arrays.asList(binSkuPojo.getGlobalSkuId(), binSkuPojo.getBinId()));
             BinSkuPojo exists = globalSkuIdAndBinIdToBinSKuPojo.get(key);
             if (isNull(exists)) {
                 binSkuDao.add(binSkuPojo);
@@ -45,12 +38,12 @@ public class BinSkuService {
         return binSkuPojoList;
     }
 
-    public List<BinSkuPojo> selectForBinIds(List<Long> binIdList){
+    public List<BinSkuPojo> selectForBinIds(List<Long> binIdList) {
         return binSkuDao.selectForBinIds(binIdList);
     }
 
     public void update(BinSkuPojo binSkuPojo) throws ApiException {
-        if(binSkuPojo.getQuantity()<0L)
+        if (binSkuPojo.getQuantity() < 0L)
             throw new ApiException("Quantity must be greater than 0.");
         BinSkuPojo exists = getCheck(binSkuPojo.getId());
         exists.setQuantity(binSkuPojo.getQuantity());
@@ -82,22 +75,10 @@ public class BinSkuService {
             if (allocateQty == 0) break;
         }
     }
-    private Map<String, BinSkuPojo> getGlobalSkuIdAndBinIdToBinSKuPojo(List<BinSkuPojo> binSkuPojoList){
+
+    private Map<String, BinSkuPojo> getGlobalSkuIdAndBinIdToBinSKuPojo(List<BinSkuPojo> binSkuPojoList) {
         List<BinSkuPojo> exists = binSkuDao.selectForGlobalSkuIdAndBinId(binSkuPojoList);
         return exists.stream().collect(Collectors.
-                toMap(binSkuPojo -> getKey(Arrays.asList(binSkuPojo.getGlobalSkuId(), binSkuPojo.getBinId())),binSkuPojo->binSkuPojo));
+                toMap(binSkuPojo -> getKey(Arrays.asList(binSkuPojo.getGlobalSkuId(), binSkuPojo.getBinId())), binSkuPojo -> binSkuPojo));
     }
-
-    private void checkBinIdExists(List<BinSkuPojo> binSkuPojoList) throws ApiException {
-        List<Long> binIds = binSkuPojoList.stream().map(BinSkuPojo::getBinId).distinct().collect(Collectors.toList());
-        Set<Long> existingBinIds = selectForBinIds(binIds).stream().map(BinSkuPojo::getBinId)
-                .collect(Collectors.toSet());
-
-        for (BinSkuPojo binSkuPojo : binSkuPojoList) {
-            if (!existingBinIds.contains(binSkuPojo.getBinId())) {
-                throw new ApiException( "Bin id doesn't exist, binId : " + binSkuPojo.getBinId());
-            }
-        }
-    }
-
 }

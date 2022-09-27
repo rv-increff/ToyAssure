@@ -1,49 +1,19 @@
 package assure.util;
 
-import assure.model.*;
-import assure.pojo.BinSkuPojo;
 import assure.spring.ApiException;
-import commons.model.ErrorData;
-import org.apache.fop.apps.*;
 import org.springframework.util.CollectionUtils;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.transform.*;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.stream.StreamSource;
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
-import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
-
 public class DataUtil {
+    private static final String INVOICE_STORAGE_LOCATION = "src/invoice";
+    private static final String STRING_JOIN_DELIMITER = "_@!#$(!";
 
-    public static Map<String, Long> checkClientSkuIdExist(Map<String, Long> clientToGlobalSkuIdMap,
-                                                              List<BinSkuItemForm> binSkuItemForms)
-            throws ApiException {
-
-        Integer row = 0;
-        List<ErrorData> errorFormList = new ArrayList<>();
-        for (BinSkuItemForm binSkuItemForm : binSkuItemForms) {
-            if (!clientToGlobalSkuIdMap.containsKey(binSkuItemForm.getClientSkuId())) {
-                errorFormList.add(new ErrorData(row, "clientSkuId does not exist, clientSkuId : "
-                        + binSkuItemForm.getClientSkuId()));
-            }
-            row++;
-        }
-        throwErrorIfNotEmpty(errorFormList);
-        return clientToGlobalSkuIdMap;
-    }
-
-    public static byte[] returnFileStream(String url) throws URISyntaxException {
+    public static byte[] returnFileStream(String url) throws ApiException {
         String fileName = url.split("/")[url.split("/").length-1];
-        File file = new File( "src",fileName);
+        File file = new File( INVOICE_STORAGE_LOCATION,fileName);
         if (file.exists()) {
             try {
                 byte[] pdf = Files.readAllBytes(file.toPath());
@@ -52,7 +22,7 @@ public class DataUtil {
                 throw new RuntimeException(e);
             }
         }
-        return null;
+        throw new ApiException("Invoice not found at path");
     }
 
     public static <T> String getKey(List<Object> list) {
@@ -63,7 +33,9 @@ public class DataUtil {
         for (Object o : list) {
             strings.add(o.toString());
         }
-        return String.join("_@!#$(!", strings);
+        return String.join(STRING_JOIN_DELIMITER, strings);
     }
+
+
 }
 

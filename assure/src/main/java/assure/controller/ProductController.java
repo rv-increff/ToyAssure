@@ -34,7 +34,6 @@ public class ProductController {
     @ApiOperation(value = "Add products")
     @RequestMapping(path = "/products", method = RequestMethod.POST)
     public Integer addProducts(@RequestParam Long clientId, @RequestBody List<ProductForm> productFormList)
-        //TODO requestParams and path variable first done
             throws ApiException {
         return productDto.add(productFormList, clientId);
     }
@@ -42,7 +41,6 @@ public class ProductController {
     @ApiOperation(value = "Update product")
     @RequestMapping(path = "/products/{globalSkuId}", method = RequestMethod.PUT)
     public ProductUpdateForm updateProduct( @PathVariable Long globalSkuId, @RequestBody ProductUpdateForm productUpdateForm)
-        //TODO clientSkuId not editable in UI als done
             throws ApiException {
         return productDto.update(productUpdateForm, globalSkuId);
     }
@@ -52,6 +50,5 @@ public class ProductController {
     public List<ProductData> getProductByClientId(@RequestParam Long clientId) throws ApiException {
         return productDto.selectByClientId(clientId);
     }
-//TODO path variable on table ID and other columns as request params
 
 }

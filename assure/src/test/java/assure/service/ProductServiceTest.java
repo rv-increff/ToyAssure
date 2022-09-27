@@ -5,6 +5,7 @@ import assure.config.BaseTest;
 import assure.util.TestData;
 import assure.pojo.ProductPojo;
 import assure.spring.ApiException;
+import assure.util.RandomUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-import static assure.util.RandomUtil.getRandomNumberDouble;
-import static assure.util.RandomUtil.getRandomNumberLong;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -28,7 +27,7 @@ public class ProductServiceTest extends BaseTest {
     @Test
     public void addTest() throws ApiException {
         List<ProductPojo> productPojoList = new ArrayList<>();
-        Long clientId = getRandomNumberLong();
+        Long clientId = RandomUtil.getRandomNumberLong();
         for (int i = 0; i < 5; i++) {
             productPojoList.add(testData.getProduct(clientId, i + ""));
         }
@@ -88,7 +87,7 @@ public class ProductServiceTest extends BaseTest {
     @Test
     public void updateTest() throws ApiException {
         ProductPojo productPojo = testData.productAdd();
-        Double mrp = getRandomNumberDouble();
+        Double mrp = RandomUtil.getRandomNumberDouble();
         productPojo.setMrp(mrp);
         productService.update(productPojo);
     }
@@ -97,7 +96,7 @@ public class ProductServiceTest extends BaseTest {
     public void updateErrorTest() {
         ProductPojo productPojo1 = testData.productAdd();
         ProductPojo productPojo = testData.productAdd();
-        Double mrp = getRandomNumberDouble();
+        Double mrp = RandomUtil.getRandomNumberDouble();
         ProductPojo newProductPojo = testData.getProduct(productPojo1.getClientId(),productPojo1.getClientSkuId());
         newProductPojo.setGlobalSkuId(productPojo.getGlobalSkuId());
         try {

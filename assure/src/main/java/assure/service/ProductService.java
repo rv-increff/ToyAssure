@@ -92,8 +92,8 @@ public class ProductService {
         return productDao.selectByGlobalSkuId(globalSkuId);
     }
 
-    public Map<Long, ProductPojo> getGlobalSkuIdToPojo(Set<Long> globalSkuIdSet) {
-        List<ProductPojo> productPojoList = productDao.selectForGlobalSkuIdList(new ArrayList<>(globalSkuIdSet));
+    public Map<Long, ProductPojo> getGlobalSkuIdToPojo(List<Long> globalSkuIdList) {
+        List<ProductPojo> productPojoList = productDao.selectForGlobalSkuIdList(globalSkuIdList);
         return productPojoList.stream().collect(Collectors.toMap(ProductPojo::getGlobalSkuId, pojo -> pojo));
     }
 

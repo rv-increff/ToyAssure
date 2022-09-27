@@ -8,6 +8,7 @@ import assure.pojo.ChannelPojo;
 import assure.pojo.PartyPojo;
 import assure.pojo.ProductPojo;
 import assure.spring.ApiException;
+import assure.util.RandomUtil;
 import commons.util.PartyType;
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-import static assure.util.RandomUtil.getRandomNumberLong;
 import static assure.util.RandomUtil.getRandomString;
 import static org.junit.Assert.fail;
 
@@ -42,14 +42,14 @@ public class ChannelListingDtoTest extends BaseTest {
         List<ChannelListingForm> channelListingFormList = new ArrayList<>();
         for (int i = 0; i < 1001; i++) {
             ChannelListingForm channelListingForm = new ChannelListingForm();
-            channelListingForm.setChannelSkuId(getRandomString());
-            channelListingForm.setClientSkuId(getRandomString());
+            channelListingForm.setChannelSkuId(RandomUtil.getRandomString());
+            channelListingForm.setClientSkuId(RandomUtil.getRandomString());
             channelListingFormList.add(channelListingForm);
         }
 
         channelListingUploadForm.setChannelListingFormList(channelListingFormList);
-        channelListingUploadForm.setChannelId(getRandomNumberLong());
-        channelListingUploadForm.setClientId(getRandomNumberLong());
+        channelListingUploadForm.setChannelId(RandomUtil.getRandomNumberLong());
+        channelListingUploadForm.setClientId(RandomUtil.getRandomNumberLong());
 
         try{
             channelListingDto.add(channelListingUploadForm);
@@ -63,8 +63,8 @@ public class ChannelListingDtoTest extends BaseTest {
 
         ChannelListingUploadForm channelListingUploadForm = new ChannelListingUploadForm();
         List<ChannelListingForm> channelListingFormList = new ArrayList<>();
-        String channelSkuId = getRandomString();
-        String clientSkuId = getRandomString();
+        String channelSkuId = RandomUtil.getRandomString();
+        String clientSkuId = RandomUtil.getRandomString();
         for (int i = 0; i < 10; i++) {
             ChannelListingForm channelListingForm = new ChannelListingForm();
             channelListingForm.setChannelSkuId(channelSkuId);
@@ -90,7 +90,7 @@ public class ChannelListingDtoTest extends BaseTest {
             ChannelListingForm channelListingForm = new ChannelListingForm();
             ProductPojo productPojo = testData.productAdd(partyPojo.getId() + 1);
             //add products
-            channelListingForm.setChannelSkuId(getRandomString());
+            channelListingForm.setChannelSkuId(RandomUtil.getRandomString());
             channelListingForm.setClientSkuId(productPojo.getClientSkuId());
             channelListingFormList.add(channelListingForm);
         }
@@ -111,7 +111,7 @@ public class ChannelListingDtoTest extends BaseTest {
             ChannelListingForm channelListingForm = new ChannelListingForm();
             ProductPojo productPojo = testData.productAdd(partyPojo.getId());
             //add products
-            channelListingForm.setChannelSkuId(getRandomString());
+            channelListingForm.setChannelSkuId(RandomUtil.getRandomString());
             channelListingForm.setClientSkuId(productPojo.getClientSkuId());
             channelListingFormList.add(channelListingForm);
         }
@@ -123,7 +123,7 @@ public class ChannelListingDtoTest extends BaseTest {
     public void selectTest() throws ApiException {
         int n = 5;
         ChannelPojo channelPojo = testData.channelAdd();
-        PartyPojo partyPojo = testData.partyAdd(getRandomString(), PartyType.CUSTOMER);
+        PartyPojo partyPojo = testData.partyAdd(RandomUtil.getRandomString(), PartyType.CUSTOMER);
         for (int i = 0; i < n; i++) {
             testData.channelListAdd(channelPojo.getId(), partyPojo.getId());
         }

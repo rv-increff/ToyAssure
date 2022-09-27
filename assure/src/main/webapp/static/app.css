@@ -131,12 +131,15 @@ button,
 [type="submit"] {
   -webkit-appearance: none;
 }
+
 td {
     text-align: center;
+    word-wrap: break-word;
   }
 
 th {
     text-align: center;
+    word-wrap: break-word;
   }
 
 .material-icons{

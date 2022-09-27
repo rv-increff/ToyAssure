@@ -46,11 +46,8 @@ public class AssureClient {
 
     public void checkNotException(String json) throws IOException, ApiException {
         try {
-            System.out.println(json);
-            System.out.println("error check");
             HashMap map = new ObjectMapper().readValue(json, HashMap.class);
-            System.out.println("code " + map.get("code"));
-            if ((Integer) map.get("code") != 200)
+            if ((Integer) map.get("code") != 200) //TODO private static HTTP status ok
                 throw new ApiException((String) map.get("description"));
         } catch (MismatchedInputException m) {
 

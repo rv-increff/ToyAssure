@@ -3,13 +3,11 @@ package assure.service;
 import assure.dao.ChannelListingDao;
 import assure.pojo.ChannelListingPojo;
 import assure.spring.ApiException;
-import commons.model.ErrorData;
 import commons.model.OrderItemFormChannel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +15,6 @@ import java.util.stream.Collectors;
 
 import static assure.util.DataUtil.getKey;
 import static assure.util.NormalizeUtil.normalizeChannelListingPojo;
-import static assure.util.ValidationUtil.throwErrorIfNotEmpty;
 import static java.util.Objects.isNull;
 
 @Service
@@ -72,7 +69,7 @@ public class ChannelListingService {
                 selectForChannelSkuIdAndChannelIdAndClientId(channelSkuIdList, channelId, clientId);
 
         Map<String, Long> channelSkuIdToGlobalSkuId = channelListingPojoList.stream().collect(Collectors.toMap(
-                pojo -> pojo.getChannelSkuId(), pojo -> pojo.getGlobalSkuId()));
+                ChannelListingPojo::getChannelSkuId, ChannelListingPojo::getGlobalSkuId));
 
         for (OrderItemFormChannel orderItemFormChannel : orderItemFormChannelList) {
             if (isNull(channelSkuIdToGlobalSkuId.get(orderItemFormChannel.getChannelSkuId())))
@@ -80,7 +77,11 @@ public class ChannelListingService {
         }
         return channelSkuIdToGlobalSkuId;
     }
+    public Map<Long, ChannelListingPojo> getGlobalSkuIdToPojo(List<Long>globalSkuIdList){
+        List<ChannelListingPojo> channelListingPojoList = channelListingDao.selectForGlobalSkuId(globalSkuIdList);
+        return channelListingPojoList.stream().collect(Collectors.toMap(ChannelListingPojo::getGlobalSkuId, pojo -> pojo));
 
+    }
     private void checkDataNotExist(List<ChannelListingPojo> channelListingPojoList) throws ApiException {
 
         for (ChannelListingPojo channelListing : channelListingPojoList) {

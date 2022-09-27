@@ -49,7 +49,7 @@ public class ChannelServiceTest extends BaseTest {
     }
 
     @Test
-    public void selectByNameTest() {
+    public void selectByNameTest() throws ApiException {
         ChannelPojo channelPojo = testData.channelAdd();
         Assert.assertEquals(channelPojo, channelService.selectByName(channelPojo.getName()));
     }

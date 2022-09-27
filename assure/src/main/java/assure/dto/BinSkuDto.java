@@ -1,9 +1,11 @@
 package assure.dto;
 
+import assure.dao.BinDao;
 import assure.model.BinSkuData;
 import assure.model.BinSkuForm;
 import assure.model.BinSkuItemForm;
 import assure.model.BinSkuUpdateForm;
+import assure.pojo.BinPojo;
 import assure.pojo.BinSkuPojo;
 import assure.pojo.ProductPojo;
 import assure.service.*;
@@ -12,12 +14,13 @@ import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static assure.util.ConversionUtil.*;
-import static assure.util.DataUtil.checkClientSkuIdExist;
+import static assure.util.DataUtil.getKey;
 import static assure.util.ValidationUtil.validateList;
 
 @Service
@@ -35,20 +38,24 @@ public class BinSkuDto {
     private InventoryService inventoryService;
     @Autowired
     private PartyService partyService;
+    @Autowired
+    private BinDao binDao;
 
     @Transactional(rollbackFor = ApiException.class)
     public Integer add(BinSkuForm binSkuForm) throws ApiException {
-        List<BinSkuItemForm> binSkuFormList = binSkuForm.getBinSkuItemFormList();
-        validateList("BinSku", binSkuFormList, MAX_LIMIT);
+        List<BinSkuItemForm> binSkuItemFormList = binSkuForm.getBinSkuItemFormList();
+        validateList("BinSku", binSkuItemFormList, MAX_LIMIT);
+        checkDuplicateBinSkuAndBinId(binSkuItemFormList);
 
         Long clientId = binSkuForm.getClientId();
         partyService.getCheck(clientId);
+        checkBinIdExists(binSkuItemFormList);
 
-        List<String> clientSkuIdList = binSkuFormList.stream().map(BinSkuItemForm::getClientSkuId)
+        List<String> clientSkuIdList = binSkuItemFormList.stream().map(BinSkuItemForm::getClientSkuId)
                 .collect(Collectors.toList());
         Map<String, Long> clientToGlobalSkuIdMap = productService.getCheckClientSkuId(clientSkuIdList, clientId);
 
-        List<BinSkuPojo> binSkuPojoList = binSkuService.add(convertListBinSkuFormToPojo(binSkuFormList, clientToGlobalSkuIdMap));
+        List<BinSkuPojo> binSkuPojoList = binSkuService.add(convertListBinSkuFormToPojo(binSkuItemFormList, clientToGlobalSkuIdMap));
         inventoryService.add(convertListBinSkuFormToInventoryPojo(binSkuPojoList));
         return binSkuPojoList.size();
     }
@@ -92,11 +99,39 @@ public class BinSkuDto {
             return binSkuDataList;
 
         Map<Long, ProductPojo> globalSkuIdToPojo = productService.getGlobalSkuIdToPojo(binSkuPojoList.stream().
-                map(BinSkuPojo::getGlobalSkuId).collect(Collectors.toSet()));
+                map(BinSkuPojo::getGlobalSkuId).distinct().collect(Collectors.toList()));
         for (BinSkuPojo binSkuPojo : binSkuPojoList) {
             binSkuDataList.add(convertBinSkuPojoToData(binSkuPojo,
                     globalSkuIdToPojo.get(binSkuPojo.getGlobalSkuId()).getClientSkuId()));
         }
         return binSkuDataList;
     }
+    private void checkBinIdExists(List<BinSkuItemForm> binSkuItemFormList) throws ApiException {
+        List<Long> binIds = binSkuItemFormList.stream().map(BinSkuItemForm::getBinId).distinct().collect(Collectors.toList());
+        Set<Long> existingBinIds = binDao.selectForBinIds(binIds).stream().map(BinPojo::getBinId)
+                .collect(Collectors.toSet());
+
+        for (BinSkuItemForm binSkuItemForm : binSkuItemFormList) {
+            if (!existingBinIds.contains(binSkuItemForm.getBinId())) {
+                throw new ApiException( "Bin id doesn't exist, binId : " + binSkuItemForm.getBinId());
+            }
+        }
+    }
+
+    private void checkDuplicateBinSkuAndBinId(List<BinSkuItemForm> binSkuItemFormList) throws ApiException {
+        if (CollectionUtils.isEmpty(binSkuItemFormList))
+            throw new ApiException("Empty form list");
+
+        Set<String> clientSkuIdAndBinId = new HashSet<>();
+
+        for (BinSkuItemForm binSkuItemForm : binSkuItemFormList) {
+            String key = getKey(Collections.singletonList(binSkuItemForm.getClientSkuId() + binSkuItemForm.getBinId()));
+            if(clientSkuIdAndBinId.contains(key))
+                throw new ApiException("Duplicate bin SKU - bin ID pair : " +
+                        binSkuItemForm.getClientSkuId()+ " - "  +binSkuItemForm.getBinId());
+            clientSkuIdAndBinId.add(key);
+        }
+
+    }
+
 }

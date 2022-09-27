@@ -5,6 +5,7 @@ import assure.util.TestData;
 import assure.pojo.OrderItemPojo;
 import assure.pojo.OrderPojo;
 import assure.spring.ApiException;
+import assure.util.RandomUtil;
 import commons.util.OrderStatus;
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import static assure.util.RandomUtil.*;
 import static java.lang.Math.min;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -67,7 +67,7 @@ public class OrderServiceTest extends BaseTest {
 
     @Test
     public void updateStatusTest() throws ApiException {
-        int ind = getRandomNumber() % 3;
+        int ind = RandomUtil.getRandomNumber() % 3;
         OrderStatus orderStatus = OrderStatus.CREATED;
         switch (ind) {
             case 1:
@@ -83,7 +83,7 @@ public class OrderServiceTest extends BaseTest {
     @Test
     public void getCheckTest() throws ApiException {
         try {
-            orderService.getCheck(getRandomNumberLong());
+            orderService.getCheck(RandomUtil.getRandomNumberLong());
             fail("error should be thrown");
         } catch (ApiException e) {
             Assert.assertEquals("order does not exist", e.getMessage());
@@ -95,7 +95,7 @@ public class OrderServiceTest extends BaseTest {
 
     @Test
     public void fulfillQtyTest() {
-        OrderItemPojo orderItemPojo = testData.orderItemAdd(getRandomNumberLong());
+        OrderItemPojo orderItemPojo = testData.orderItemAdd(RandomUtil.getRandomNumberLong());
         Long allocatedQty = orderItemPojo.getAllocatedQuantity();
         orderService.fulfillQty(orderItemPojo);
         Assert.assertEquals(allocatedQty, orderItemPojo.getFulfilledQuantity());
@@ -105,7 +105,7 @@ public class OrderServiceTest extends BaseTest {
     @Test
     public void setUrl() throws ApiException {
         OrderPojo orderPojo = testData.orderAdd();
-        String url = getRandomString();
+        String url = RandomUtil.getRandomString();
         orderService.updateUrl(orderPojo.getId(), url);
         assertEquals(url, orderPojo.getInvoiceUrl());
     }

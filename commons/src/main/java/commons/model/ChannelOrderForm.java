@@ -11,16 +11,16 @@ import java.util.List;
 @Getter
 @Setter
 public class ChannelOrderForm {
-    @PositiveOrZero
+    @NotNull
     Long clientId;
 
     @NotBlank
     String channelOrderId;
 
-    @PositiveOrZero
+    @NotNull
     Long customerId;
 
-    @PositiveOrZero
+    @NotNull
     Long channelId;
 
     @NotEmpty

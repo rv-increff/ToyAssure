@@ -15,12 +15,17 @@ public class InvoiceDataChannel {
     private String channelOrderId;
     private List<OrderItemChannelData> orderItemChannelDataList;
     private Double total;
+    private String clientName;
+    private String customerName;
 
     public InvoiceDataChannel(){}
-    public InvoiceDataChannel(ZonedDateTime invoiceGenerationTime, String channelOrderId, List<OrderItemChannelData> orderItemChannelDataList, Double total){
+    public InvoiceDataChannel(ZonedDateTime invoiceGenerationTime, String channelOrderId,
+                              List<OrderItemChannelData> orderItemChannelDataList, Double total, String clientName, String customerName){
         this.invoiceGenerationTime = invoiceGenerationTime.toLocalDate().toString() + " " + invoiceGenerationTime.toLocalTime().toString();
         this.channelOrderId = channelOrderId;
         this.orderItemChannelDataList = orderItemChannelDataList;
         this.total = total;
+        this.clientName = clientName;
+        this.customerName = customerName;
     }
 }

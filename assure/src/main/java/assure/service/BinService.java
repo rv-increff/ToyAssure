@@ -2,6 +2,7 @@ package assure.service;
 
 import assure.dao.BinDao;
 import assure.pojo.BinPojo;
+import assure.pojo.BinSkuPojo;
 import assure.spring.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,9 @@ public class BinService {
         BinPojo binPojo = new BinPojo();
         binDao.add(binPojo);
         return binPojo;
+    }
+    public List<BinPojo> selectForBinIds(List<Long> binIdList){
+        return binDao.selectForBinIds(binIdList);
     }
 
 }

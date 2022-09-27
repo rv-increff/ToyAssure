@@ -11,7 +11,7 @@ import static assure.pojo.TableConstants.*;
 @Setter
 @Entity
 @Table(indexes = {@Index(name = INDEX_BIN_ID_GLOBAL_SKU_ID, columnList = "binId, globalSkuId")})
-public class BinSkuPojo extends AbstractPojo {
+public class BinSkuPojo extends AbstractPojo { //TODO change idx name check stanard
     @Id
     @TableGenerator(name = SEQ_BIN_SKU, initialValue = SEQ_INITIAL_VALUE)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = SEQ_BIN_SKU)

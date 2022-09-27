@@ -16,7 +16,7 @@ public class ChannelListingDaoTest extends BaseTest {
     @Autowired
     private TestData testData;
     @Autowired
-    private ChannelListingDao  channelListingDao;
+    private ChannelListingDao channelListingDao;
 
     @Test
     public void addTest() {

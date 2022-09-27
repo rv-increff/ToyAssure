@@ -3,6 +3,7 @@ package assure.dao;
 import assure.pojo.OrderItemPojo;
 import assure.config.BaseTest;
 import assure.util.TestData;
+import assure.util.RandomUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
-import static assure.util.RandomUtil.getRandomNumberLong;
 
 public class OrderItemTest extends BaseTest {
 
@@ -22,13 +21,13 @@ public class OrderItemTest extends BaseTest {
 
     @Test
     public void addTest() {
-        testData.orderItemAdd(getRandomNumberLong());
+        testData.orderItemAdd(RandomUtil.getRandomNumberLong());
     }
 
     @Test
     public void selectByIdTest() {
         List<OrderItemPojo> orderItemPojoList = new ArrayList<>();
-        Long orderId = getRandomNumberLong();
+        Long orderId = RandomUtil.getRandomNumberLong();
         for (int i = 0; i < 5; i++) orderItemPojoList.add(testData.orderItemAdd(orderId));
         List<OrderItemPojo> orderItemPojoById = orderItemDao.selectByOrderId(orderId);
         Assert.assertEquals(new HashSet<>(orderItemPojoList), new HashSet<>(orderItemPojoById));

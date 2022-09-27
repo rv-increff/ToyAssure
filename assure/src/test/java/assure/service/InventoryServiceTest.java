@@ -5,6 +5,7 @@ import assure.pojo.InventoryPojo;
 import assure.spring.ApiException;
 import assure.config.BaseTest;
 import assure.util.TestData;
+import assure.util.RandomUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-import static assure.util.RandomUtil.getRandomNumber;
-import static assure.util.RandomUtil.getRandomNumberLong;
 import static org.junit.Assert.fail;
 
 
@@ -50,7 +49,7 @@ public class InventoryServiceTest extends BaseTest {
     public void allocateQtyTest() throws ApiException {
         InventoryPojo addedPojo = testData.invAdd();
         Long prevAllocatedQty = addedPojo.getAllocatedQuantity();
-        Long allocateQty = addedPojo.getAvailableQuantity() - getRandomNumber() % addedPojo.getAvailableQuantity();
+        Long allocateQty = addedPojo.getAvailableQuantity() - RandomUtil.getRandomNumber() % addedPojo.getAvailableQuantity();
         inventoryService.allocateQty(allocateQty, addedPojo.getGlobalSkuId());
         InventoryPojo updatedPojo = inventoryDao.selectByGlobalSkuId(addedPojo.getGlobalSkuId());
         Assert.assertEquals((long) updatedPojo.getAllocatedQuantity(), allocateQty + prevAllocatedQty);
@@ -61,7 +60,7 @@ public class InventoryServiceTest extends BaseTest {
     public void fulfillQtyTest() throws ApiException {
         InventoryPojo addedPojo = testData.invAdd();
         Long previousFulfilledQty = addedPojo.getFulfilledQuantity();
-        Long fulfilledQty = addedPojo.getAllocatedQuantity() - getRandomNumber() % addedPojo.getAllocatedQuantity();
+        Long fulfilledQty = addedPojo.getAllocatedQuantity() - RandomUtil.getRandomNumber() % addedPojo.getAllocatedQuantity();
         inventoryService.fulfillQty(fulfilledQty, addedPojo.getGlobalSkuId());
         InventoryPojo updatedPojo = inventoryDao.selectByGlobalSkuId(addedPojo.getGlobalSkuId());
         Assert.assertEquals(fulfilledQty + previousFulfilledQty, (long) updatedPojo.getFulfilledQuantity());
@@ -70,7 +69,7 @@ public class InventoryServiceTest extends BaseTest {
     @Test
     public void getCheckByGlobalSkuIdTest() {
         try {
-            inventoryService.getCheckByGlobalSkuId(getRandomNumberLong());
+            inventoryService.getCheckByGlobalSkuId(RandomUtil.getRandomNumberLong());
             fail("error should be thrown");
         } catch (ApiException e) {
             Assert.assertEquals(e.getMessage(), "Inventory with global sku Id doesn't exists ");

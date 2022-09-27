@@ -18,14 +18,21 @@
                     <fo:block font-size="25pt" text-align="center" font-family="Helvetica" font-weight="bold" space-after="2mm">
                         Invoice
                     </fo:block>
-                    <fo:block font-size="12pt" text-align="center" font-family="Helvetica" font-weight="bold" space-after="5mm">
-                        Invoice generation time - <xsl:value-of select="invoiceGenerationTime"/>
+                    <fo:block font-size="12pt" text-align="left" font-family="Helvetica" font-weight="bold" space-after="5mm">
+                        Generation time - <xsl:value-of select="invoiceGenerationTime"/>
                     </fo:block>
-                    <fo:block font-size="12pt" text-align="center" font-family="Helvetica" font-weight="bold" space-after="5mm">
-                        Order Id-<xsl:value-of select="channelOrderId"/>
+                    <fo:block font-size="12pt" text-align="left" font-family="Helvetica" font-weight="bold" space-after="5mm">
+                        Order Id - <xsl:value-of select="channelOrderId"/>
                     </fo:block>
-                    <fo:block font-size="10pt">
-                        <fo:table table-layout="fixed" width="100%" border-collapse="separate">
+                     <fo:block font-size="12pt" text-align="left" font-family="Helvetica" font-weight="bold" space-after="5mm">
+                        Customer name - <xsl:value-of select="customerName"/>
+                    </fo:block>
+                     <fo:block font-size="12pt" text-align="left" font-family="Helvetica" font-weight="bold" space-after="5mm">
+                        Client name - <xsl:value-of select="clientName"/>
+                    </fo:block>
+
+                    <fo:block font-size="10pt" >
+                        <fo:table table-layout="fixed" width="100%" border-collapse="separate" display-align="center">
                             <fo:table-column column-width="2cm"/>
                             <fo:table-column column-width="5cm"/>
                             <fo:table-column column-width="5cm"/>

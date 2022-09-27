@@ -31,7 +31,7 @@ public class Requests {
                 .get()
                 .build();
         Response response = client.newCall(request).execute();
-        return response.body().string();
+        return response.body().string(); //TODO full response not body
     }
 
     public static <T> String objectToJsonString(T obj) throws JsonProcessingException {

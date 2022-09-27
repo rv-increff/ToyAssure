@@ -34,7 +34,7 @@ public class ChannelService {
         channelDao.add(channelPojo);
     }
 
-    public ChannelPojo selectByName(String name) {
+    public ChannelPojo selectByName(String name) throws ApiException {
         return channelDao.selectByName(normalizeString(name));
     }
 

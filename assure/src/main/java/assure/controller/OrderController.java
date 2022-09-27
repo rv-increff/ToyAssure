@@ -2,7 +2,7 @@ package assure.controller;
 
 import assure.dto.OrderDto;
 import commons.model.OrderData;
-import assure.model.OrderForm;
+import commons.model.OrderForm;
 import commons.model.OrderItemData;
 import assure.spring.ApiException;
 import commons.util.InvoiceType;

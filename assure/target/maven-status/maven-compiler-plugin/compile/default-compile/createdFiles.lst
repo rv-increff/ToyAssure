@@ -25,7 +25,6 @@ assure/spring/ControllerConfig.class
 assure/util/ConversionUtil.class
 assure/controller/ProductController.class
 assure/model/ProductData.class
-assure/model/OrderForm.class
 assure/pojo/ChannelPojo.class
 assure/dao/OrderItemDao.class
 assure/model/ProductForm.class

@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static java.util.Objects.isNull;
-
 @Api
 @RestController
 public class AssureProxyController {
@@ -35,9 +33,10 @@ public class AssureProxyController {
     public List<OrderData> getOrders(@RequestParam Integer pageNumber) throws Exception {
         return assureProxyDto.selectOrder(pageNumber);
     }
+
     @ApiOperation(value = "Get orders items")
     @RequestMapping(path = "/orders/{orderId}/order-items", method = RequestMethod.GET)
-    public List<OrderItemData>getOrderItems(@PathVariable Long orderId) throws Exception {
+    public List<OrderItemData> getOrderItems(@PathVariable Long orderId) throws Exception {
         return assureProxyDto.selectOrderItems(orderId);
     }
 

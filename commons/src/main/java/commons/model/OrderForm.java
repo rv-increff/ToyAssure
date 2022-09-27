@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @Getter
 public class OrderForm {
-    @PositiveOrZero
+    @NotNull
     Long clientId;
 
     @NotBlank
@@ -20,9 +20,6 @@ public class OrderForm {
 
     @NotNull
     Long customerId;
-
-    @NotNull
-    Long channelId;
 
     @NotEmpty
     List< @NotNull OrderItemForm> orderItemFormList;

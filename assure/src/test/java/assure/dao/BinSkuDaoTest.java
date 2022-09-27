@@ -1,5 +1,6 @@
 package assure.dao;
 
+import assure.pojo.BinPojo;
 import assure.pojo.BinSkuPojo;
 import assure.config.BaseTest;
 import assure.util.TestData;
@@ -19,7 +20,8 @@ public class BinSkuDaoTest extends BaseTest {
 
     @Test
     public void addTest() {
-        testData.binAdd();
+        BinPojo binPojo = testData.binAdd();
+        testData.binSkuAddByBinId(binPojo.getBinId());
     }
 
     @Test
