@@ -19,13 +19,15 @@ public class InventoryService {
     @Autowired
     private InventoryDao inventoryDao;
 
-    public static Map<Long, InventoryPojo> getGskuToInventory(List<InventoryPojo> inventoryPojoList) { //TODO ask if right layer
-        return inventoryPojoList.stream().collect(Collectors.toMap(InventoryPojo::getGlobalSkuId, inventoryPojo -> inventoryPojo));
+    public static Map<Long, InventoryPojo> getGskuToInventory(List<InventoryPojo> inventoryPojoList) {
+        return inventoryPojoList.stream().collect(Collectors.toMap(InventoryPojo::getGlobalSkuId,
+                inventoryPojo -> inventoryPojo));
     }
 
     public void add(List<InventoryPojo> inventoryPojoList) throws ApiException {
+        Map<Long, InventoryPojo> gskuToPojo = getGskuToPojo(inventoryPojoList);
         for (InventoryPojo inventoryPojo : inventoryPojoList) {
-            InventoryPojo exists = inventoryDao.selectByGlobalSkuId(inventoryPojo.getGlobalSkuId());
+            InventoryPojo exists = gskuToPojo.get(inventoryPojo.getGlobalSkuId());
             if (inventoryPojo.getAvailableQuantity() < 0)
                 throw new ApiException("Available quantity should be greater than 0");
 
@@ -84,9 +86,15 @@ public class InventoryService {
 
         InventoryPojo exists = getCheckByGlobalSkuId(globalSkuId);
         if (exists.getAvailableQuantity() < qty)
-            throw new ApiException("Inventory decrease quantity should be less than avalilable quantity");
+            throw new ApiException("Inventory decrease quantity should be less than available quantity");
 
         exists.setAvailableQuantity(exists.getAvailableQuantity() - qty);
         inventoryDao.update();
+    }
+    public Map<Long, InventoryPojo> getGskuToPojo(List<InventoryPojo> inventoryPojoList){
+        List<InventoryPojo> existsInvPojo = inventoryDao.selectForGlobalSkus(inventoryPojoList.stream().
+                map(InventoryPojo::getGlobalSkuId).distinct().collect(Collectors.toList()));
+        return existsInvPojo.stream().collect(Collectors.toMap(InventoryPojo::getGlobalSkuId,
+                inventoryPojo -> inventoryPojo));
     }
 }

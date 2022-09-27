@@ -40,8 +40,4 @@ public class BinService {
         binDao.add(binPojo);
         return binPojo;
     }
-    public List<BinPojo> selectForBinIds(List<Long> binIdList){
-        return binDao.selectForBinIds(binIdList);
-    }
-
 }

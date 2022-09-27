@@ -78,9 +78,6 @@ public class BinSkuDto {
             inventoryService.decreaseInventory(globalSkuId, existsQty - binSkuUpdateForm.getQuantity());
 
         return binSkuUpdateForm;
-        //TODO change to negative and positive increase and decrease and not pair get pojo first
-        //doing same id call in one transaction is same wont cause extra
-        //TODO make 2 inventory update increase and decrease;
     }
 
     private BinSkuData convertBinSkuPojoToData(BinSkuPojo binSkuPojo, String clientSkuId) {

@@ -12,6 +12,7 @@ import java.util.List;
 
 @Repository
 public class PartyDao extends AbstractDao<PartyPojo> {
+
     public PartyPojo selectById(Long id) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery criteriaQuery = criteriaQuery();
@@ -21,16 +22,26 @@ public class PartyDao extends AbstractDao<PartyPojo> {
         TypedQuery<PartyPojo> query = em.createQuery(criteriaQuery);
         return getSingle(query);
     }
- public List<PartyPojo> selectByPartyType(PartyType type) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery criteriaQuery = criteriaQuery();
-        Root<PartyPojo> root = criteriaQuery.from(this.clazz);
-        criteriaQuery = criteriaQuery.select(root);
-        criteriaQuery.where(cb.equal(root.get("type"), type));
-        TypedQuery<PartyPojo> query = em.createQuery(criteriaQuery);
-        return query.getResultList();
-    }
-
+     public List<PartyPojo> selectByPartyType(PartyType type) {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery criteriaQuery = criteriaQuery();
+            Root<PartyPojo> root = criteriaQuery.from(this.clazz);
+            criteriaQuery = criteriaQuery.select(root);
+            criteriaQuery.where(cb.equal(root.get("type"), type));
+            TypedQuery<PartyPojo> query = em.createQuery(criteriaQuery);
+            return query.getResultList();
+        }
+    public List<PartyPojo> selectByPartyType(PartyType type, Integer pageNumber, Integer pageSize) {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery criteriaQuery = criteriaQuery();
+            Root<PartyPojo> root = criteriaQuery.from(this.clazz);
+            criteriaQuery = criteriaQuery.select(root);
+            criteriaQuery.where(cb.equal(root.get("type"), type));
+            TypedQuery<PartyPojo> query = em.createQuery(criteriaQuery);
+            query.setFirstResult(pageNumber * pageSize);
+            query.setMaxResults(pageSize);
+            return query.getResultList();
+        }
 
     public PartyPojo selectByNameAndPartyType(String name, PartyType type) {
         CriteriaBuilder cb = em.getCriteriaBuilder();

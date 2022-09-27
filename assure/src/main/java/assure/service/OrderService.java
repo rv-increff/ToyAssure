@@ -97,8 +97,6 @@ public class OrderService {
                 return;
         }
         updateStatus(id, ALLOCATED);
-        //move to service as b logic
-        //return order data if single and list then list size
     }
 
     public void markStatusFulfilled(Long id) throws ApiException {

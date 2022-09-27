@@ -97,8 +97,6 @@ public class ProductService {
         return productPojoList.stream().collect(Collectors.toMap(ProductPojo::getGlobalSkuId, pojo -> pojo));
     }
 
-
-    //TODO DEV_REVIEW:this could be handled by static method in ProductService.
     public Map<String, Long> getCheckClientSkuId(List<String> clientSkuIdList, Long clientId) throws ApiException {
         List<ProductPojo> productPojoList = productDao.selectForClientSkuIdAndClientId(clientSkuIdList, clientId);
         Map<String, ProductPojo> clientSkuIdToPojoMap = productPojoList.stream().collect(Collectors.toMap

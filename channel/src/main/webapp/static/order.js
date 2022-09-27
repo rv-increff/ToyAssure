@@ -406,8 +406,7 @@ function viewOrder(orderId) {
             str = ""
             for (var i = 0; i < obj.length; i++) {
                 str += `<tr>
-                                          <td>${obj[i]['id']}</td>
-                                          <td>${obj[i]['clientSkuId']}</td>
+                                          <td>${obj[i]['channelSkuId']}</td>
                                           <td>${obj[i]['orderedQuantity']}</td>
                                           <td>${obj[i]['allocatedQuantity']}</td>
                                           <td>${obj[i]['fulfilledQuantity']}</td>
@@ -440,7 +439,6 @@ function getOrderItemModalBody() {
     <table class="table">
       <thead class="thead-dark">
         <tr>
-          <th scope="col">ID</th>
           <th scope="col">Channel SKU ID</th>
           <th scope="col">Ordered Quantity</th>
           <th scope="col">Allocated Quantity</th>

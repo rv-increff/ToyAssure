@@ -24,7 +24,7 @@ public class PartyPojo extends AbstractPojo {
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    private PartyType type; //TODO change to party types
+    private PartyType type;
 
 
 }

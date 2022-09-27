@@ -30,12 +30,13 @@ public class PartyDto {
     }
 
     public List<PartyData> partySearch(PartySearchForm partySearchForm){
-        if(!isNull(partySearchForm.getPageNumber()))
+        if(!isNull(partySearchForm.getPageNumber()) && isNull(partySearchForm.getType())  )
             return select(partySearchForm.getPageNumber());
-        if(!isNull(partySearchForm.getType()))
+
+        if(!isNull(partySearchForm.getType()) && isNull(partySearchForm.getPageNumber()))
             return selectByPartyType(partySearchForm.getType());
 
-        return new ArrayList<>();
+        return selectByPartyType(partySearchForm.getType(), partySearchForm.getPageNumber());
     }
 
     public List<PartyData> select(Integer pageNumber) {
@@ -48,6 +49,9 @@ public class PartyDto {
 
     public List<PartyData> selectByPartyType(PartyType partyType){
         return convertListPartyPojoToData(partyService.selectByPartyType(partyType));
+    }
+    public List<PartyData> selectByPartyType(PartyType partyType, Integer pageNumber){
+        return convertListPartyPojoToData(partyService.selectByPartyType(partyType, pageNumber, PAGE_SIZE));
     }
 
 }

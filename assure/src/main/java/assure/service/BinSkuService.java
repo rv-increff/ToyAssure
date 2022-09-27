@@ -38,10 +38,6 @@ public class BinSkuService {
         return binSkuPojoList;
     }
 
-    public List<BinSkuPojo> selectForBinIds(List<Long> binIdList) {
-        return binSkuDao.selectForBinIds(binIdList);
-    }
-
     public void update(BinSkuPojo binSkuPojo) throws ApiException {
         if (binSkuPojo.getQuantity() < 0L)
             throw new ApiException("Quantity must be greater than 0.");
@@ -57,14 +53,13 @@ public class BinSkuService {
         return binSkuPojo;
     }
 
-
     public List<BinSkuPojo> select(Integer pageNumber, Integer pageSize) {
         return binSkuDao.select(pageNumber, pageSize);
     }
 
     public void allocateQty(Long allocateQty, Long globalSkuId) {
         List<BinSkuPojo> binSkuPojoList = binSkuDao.selectByGlobalSkuId(globalSkuId);
-        Collections.sort(binSkuPojoList, Comparator.comparing(BinSkuPojo::getQuantity));
+        binSkuPojoList.sort(Comparator.comparing(BinSkuPojo::getQuantity));
         Collections.reverse(binSkuPojoList);
 
         for (BinSkuPojo binSkuPojo : binSkuPojoList) {

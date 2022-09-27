@@ -42,7 +42,6 @@ public class ProductDao extends AbstractDao<ProductPojo> {
         return getSingle(query);
     }
     public List<ProductPojo> selectForGlobalSkuIdList(List<Long>globalSkuIdList){
-        CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery criteriaQuery = criteriaQuery();
         Root<ProductPojo> root = criteriaQuery.from(this.clazz);
         criteriaQuery = criteriaQuery.select(root);

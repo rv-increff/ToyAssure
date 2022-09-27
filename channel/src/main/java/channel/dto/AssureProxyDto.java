@@ -35,6 +35,7 @@ public class AssureProxyDto {
         convertToPDF(invoiceDataChannel, xsltFile, pdfFile, xml);
         return returnFileStream();
     }
+
     public List<OrderData> selectOrder(Integer pageNumber) throws Exception {
         String url =  ASSURE_SELECT_ORDER_URL + pageNumber; //TODO move all the url to new Class rest path done
         return assureClient.getList(url,OrderData.class);

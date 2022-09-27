@@ -10,7 +10,7 @@ public class TableConstants {
     public final static String SEQ_ORDER = "seq_order";
     public final static String SEQ_ORDER_ITEM = "seq_order_item";
     public final static String SEQ_INVENTORY = "seq_order_item";
-    public final static String INDEX_BIN_ID_GLOBAL_SKU_ID = "index_bin_id_global_sku_id";
+    public final static String IDX_BIN_ID_GLOBAL_SKU_ID = "index_bin_id_global_sku_id";
     public final static String UK_CHANNEL_LISTING = "uk_channel_listing";
     public final static String UK_PRODUCT = "uk_product";
     public final static String UK_PARTY = "uk_party";

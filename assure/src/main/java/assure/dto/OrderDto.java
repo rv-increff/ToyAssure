@@ -111,7 +111,9 @@ public class OrderDto {
         String channelOrderId = channelOrderForm.getChannelOrderId();
         checkChannelIdAndChannelOrderIdPairNotExist(channelId, channelOrderId);
 
-        Map<String, Long> channelSkuIdToGlobalSkuIdMap = channelListingService.getCheckChannelSkuId(orderItemFormChannelList,
+        List<String> channelSkuIdList = orderItemFormChannelList.stream().map(OrderItemFormChannel::getChannelSkuId).
+                distinct().collect(Collectors.toList());
+        Map<String, Long> channelSkuIdToGlobalSkuIdMap = channelListingService.getCheckChannelSkuId(channelSkuIdList,
                 channelOrderForm.getClientId(), channelOrderForm.getChannelId());
         OrderPojo orderPojo = convertOrderFormChannelToOrderPojo(channelOrderForm, channelId);
         List<OrderItemPojo> orderItemPojoList = convertOrderItemListChannelToOrderItemPojo(

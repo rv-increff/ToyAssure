@@ -17,7 +17,7 @@ import static assure.util.NormalizeUtil.normalizeString;
 import static java.util.Objects.isNull;
 
 @Service
-@Transactional(rollbackFor = ApiException.class) //TODO add transaction in dto where required
+@Transactional(rollbackFor = ApiException.class)
 public class ChannelService {
     @Autowired
     private ChannelDao channelDao;

@@ -1,3 +1,4 @@
+channel/controller/RestPath.class
 channel/controller/AssureProxyController.class
 channel/dto/AssureProxyDto.class
 channel/controller/UIController.class

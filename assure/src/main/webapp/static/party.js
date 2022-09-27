@@ -1,12 +1,18 @@
 var pageNumber = 0
 function loadParty() {
+    let data = {
+        pageNumber: pageNumber
+    }
+    let type = $('#type').val();
+    if(type !== "all"){
+        data["type"] = type;
+    }
+    
     $.ajax({
         type: "POST",
         contentType: 'application/json',
         url: `http://localhost:9000/assure/parties/search`,
-        data: JSON.stringify({
-            pageNumber: pageNumber
-        }),
+        data: JSON.stringify(data),
         processData: false,
         dataType: 'json',
         success: function (result) {
@@ -17,15 +23,12 @@ function loadParty() {
             let body = document.getElementById("partyTbody");
 
             str = ""
-            let type = $('#type').val();
-
+            
             for (var i = 0; i < obj.length; i++) {
-                if(obj[i]['type']==type || type=="all"){
                 str += `<tr>
                                       <td>${obj[i]['name']}</td>
                                       <td>${obj[i]['type']}</td>
                                     </tr>`;}
-            }
             body.innerHTML = str;
             checkNextPageNotExist()
         },
@@ -59,13 +62,18 @@ function prevPage() {
 }
 
 function checkNextPageNotExist() {
+    let data = {
+        pageNumber: pageNumber+1
+    }
+    let type = $('#type').val();
+    if(type !== "all"){
+        data["type"] = type;
+    }
     $.ajax({
         type: "POST",
         contentType: 'application/json',
         url: `http://localhost:9000/assure/parties/search`,
-        data: JSON.stringify({
-            pageNumber: pageNumber+1
-        }),
+        data: JSON.stringify(data),
         processData: false,
         dataType: 'json',
         success: function (result) {

@@ -11,7 +11,7 @@ import static assure.pojo.TableConstants.*;
 @Setter
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"channelId", "channelSkuId", "clientId"}, name = UK_CHANNEL_LISTING)})
-public class ChannelListingPojo extends AbstractPojo { //TODO remove gsku from unique
+public class ChannelListingPojo extends AbstractPojo {
     @Id
     @TableGenerator(name = SEQ_CHANNEL_LISTING, initialValue = SEQ_INITIAL_VALUE)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = SEQ_CHANNEL_LISTING)

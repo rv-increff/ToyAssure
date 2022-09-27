@@ -70,6 +70,9 @@ public class PartyService {
     public List<PartyPojo> selectByPartyType(PartyType partyType){
         return partyDao.selectByPartyType(partyType);
     }
+    public List<PartyPojo> selectByPartyType(PartyType partyType, Integer pageNumber, Integer pageSize){
+        return partyDao.selectByPartyType(partyType, pageNumber, pageSize);
+    }
 
     public Map<Long, PartyPojo> getCheckPartyIdToPojo(List<Long> idList) throws ApiException {
         List<PartyPojo> partyPojoList = partyDao.selectForIdList(idList);

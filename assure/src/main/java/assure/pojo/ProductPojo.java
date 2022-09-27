@@ -11,7 +11,6 @@ import static assure.pojo.TableConstants.*;
 @Setter
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"clientSkuId", "clientId"}, name = UK_PRODUCT)})
-//TODO read and add uk name
 public class ProductPojo extends AbstractPojo {
 
     @Id

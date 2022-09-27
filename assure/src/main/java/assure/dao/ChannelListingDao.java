@@ -76,7 +76,8 @@ public class ChannelListingDao extends AbstractDao<ChannelListingPojo> {
         List<String> dataList = new ArrayList<>();
         int n = gSkuList.size();
         for (int i = 0; i < n; i++) {
-            List<String> list = Arrays.asList("'" + gSkuList.get(i) + "'", "'" + channelId.toString() + "'", "'" + clientId.toString() + "'");
+            List<String> list = Arrays.asList("'" + gSkuList.get(i) + "'", "'" + channelId.toString() + "'", "'"
+                    + clientId.toString() + "'");
             dataList.add("(" + String.join(",", list) + ")");
         }
         queryBuilder = queryBuilder + "(" + String.join(",", dataList) + ")";
@@ -91,7 +92,8 @@ public class ChannelListingDao extends AbstractDao<ChannelListingPojo> {
         List<String> dataList = new ArrayList<>();
         int n = channelSkuList.size();
         for (int i = 0; i < n; i++) {
-            List<String> list = Arrays.asList("'" + channelSkuList.get(i) + "'", "'" + channelId.toString() + "'", "'" + clientId.toString() + "'");
+            List<String> list = Arrays.asList("'" + channelSkuList.get(i) + "'", "'" + channelId.toString() + "'", "'"
+                    + clientId.toString() + "'");
             dataList.add("(" + String.join(",", list) + ")");
         }
         queryBuilder = queryBuilder + "(" + String.join(",", dataList) + ")";
@@ -100,7 +102,6 @@ public class ChannelListingDao extends AbstractDao<ChannelListingPojo> {
     }
 
     public List<ChannelListingPojo> selectForGlobalSkuId(List<Long> globalSkuIdList) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery criteriaQuery = criteriaQuery();
         Root<ChannelListingPojo> root = criteriaQuery.from(this.clazz);
         criteriaQuery = criteriaQuery.select(root);

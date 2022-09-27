@@ -13,8 +13,6 @@ import java.util.List;
 
 @Repository
 public class BinSkuDao extends AbstractDao<BinSkuPojo> {
-
-    //TODO check the number of calls in where
     public BinSkuPojo selectByGlobalSkuIdAndBinId(Long globalSkuId,Long binId) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery criteriaQuery = criteriaQuery();
@@ -34,21 +32,12 @@ public class BinSkuDao extends AbstractDao<BinSkuPojo> {
         TypedQuery<BinSkuPojo> query = em.createQuery(criteriaQuery);
         return getSingle(query);
     }
-    public List<BinSkuPojo> selectByGlobalSkuId(Long globalSkuId) { //Add index
+    public List<BinSkuPojo> selectByGlobalSkuId(Long globalSkuId) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery criteriaQuery = criteriaQuery();
         Root<BinSkuPojo> root = criteriaQuery.from(this.clazz);
         criteriaQuery = criteriaQuery.select(root);
         criteriaQuery.where(cb.equal(root.get("globalSkuId"), globalSkuId));
-        TypedQuery<BinSkuPojo> query = em.createQuery(criteriaQuery);
-        return query.getResultList();
-    }
-
-    public List<BinSkuPojo> selectForBinIds(List<Long> binIdList){
-        CriteriaQuery criteriaQuery = criteriaQuery();
-        Root<BinSkuPojo> root = criteriaQuery.from(this.clazz);
-        criteriaQuery = criteriaQuery.select(root);
-        criteriaQuery.where(root.get("binId").in(binIdList));
         TypedQuery<BinSkuPojo> query = em.createQuery(criteriaQuery);
         return query.getResultList();
     }
