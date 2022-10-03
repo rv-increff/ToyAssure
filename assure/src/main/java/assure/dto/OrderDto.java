@@ -172,8 +172,8 @@ public class OrderDto {
         return convertOrderPojoListToData(orderService.selectOrderByInvoiceType(pageNumber, PAGE_SIZE, type));
     }
 
-    public List<OrderItemData> selectOrderItems(Long orderId) {
-        return convertOrderItemPojoListToData(orderService.selectOrderItem(orderId));
+    public List<OrderItemData> selectOrderItems(Long orderId) throws ApiException {
+        return convertOrderItemPojoListToData(orderService.selectOrderItem(orderId), orderId);
     }
 
     public byte[] getInvoice(Long orderId) throws Exception {
@@ -189,18 +189,22 @@ public class OrderDto {
         return returnFileStream(url);
     }
 
-    public List<OrderItemData> convertOrderItemPojoListToData(List<OrderItemPojo> orderItemPojoList) {
+    public List<OrderItemData> convertOrderItemPojoListToData(List<OrderItemPojo> orderItemPojoList, Long orderId) throws ApiException {
+        OrderPojo orderPojo = orderService.getCheck(orderId);
         List<OrderItemData> orderItemInvoiceDataList = new ArrayList<>();
+
         List<Long> gskuList = orderItemPojoList.stream().map(OrderItemPojo::getGlobalSkuId).distinct().
                 collect(Collectors.toList());
         Map<Long, ProductPojo> globalSkuIdToPojo = productService.getGlobalSkuIdToPojo(gskuList);
-        Map<Long, ChannelListingPojo> gskuToChannelListPojo = channelListingService.getGlobalSkuIdToPojo(gskuList);
+        Map<Long, ChannelListingPojo> gskuToChannelListPojo = channelListingService.
+                getGlobalSkuToPojo(gskuList, orderPojo.getClientId(), orderPojo.getChannelId());
+
         for (OrderItemPojo orderItemPojo : orderItemPojoList) {
             orderItemInvoiceDataList.add(convertOrderItemPojToData(orderItemPojo,
                     globalSkuIdToPojo.getOrDefault(orderItemPojo.getGlobalSkuId(), new ProductPojo()).getClientSkuId(),
                     gskuToChannelListPojo.getOrDefault(orderItemPojo.getGlobalSkuId(), new ChannelListingPojo()).getChannelSkuId()));
         }
-        return orderItemInvoiceDataList; //TODO populate channelSKuID in channel Order and add channelSkuId in OrderItemDat and null if no listing
+        return orderItemInvoiceDataList;
     }
 
     private String getInvoiceUrl(OrderPojo orderPojo) throws Exception {

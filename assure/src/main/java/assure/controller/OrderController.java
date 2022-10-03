@@ -55,7 +55,7 @@ public class OrderController {
 
     @ApiOperation(value = "Get orders items")
     @RequestMapping(path = "/orders/{orderId}/order-items", method = RequestMethod.GET)
-    public List<OrderItemData> getOrderItems(@PathVariable Long orderId) {
+    public List<OrderItemData> getOrderItems(@PathVariable Long orderId) throws ApiException {
         return orderDto.selectOrderItems(orderId);
     }
 

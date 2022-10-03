@@ -58,7 +58,6 @@ public class DbConfig {
 	@Bean(name = "entityManagerFactory")
 	@Autowired
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
-		//logger.info("hibernateDialect: " + jdbcDriver + ", hibernateHbm2ddl: " + hibernateHbm2ddl);
 		LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
 		bean.setDataSource(dataSource);
 		bean.setPackagesToScan(PACKAGE_POJO);

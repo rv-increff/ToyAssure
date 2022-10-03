@@ -71,7 +71,7 @@ public class ConversionUtil {
         return productPojoList;
     }
 
-    public static ProductData convertProductPojoToData(ProductPojo productPojo) {
+    public static ProductData convertProductPojoToData(ProductPojo productPojo, String clientName) {
         if (isNull(productPojo))
             return new ProductData();
 
@@ -82,21 +82,12 @@ public class ConversionUtil {
         productData.setMrp(productPojo.getMrp());
         productData.setName(productPojo.getName());
         productData.setClientId(productPojo.getClientId());
+        productData.setClientName(clientName);
         productData.setClientSkuId(productPojo.getClientSkuId());
 
         return productData;
     }
 
-    public static List<ProductData> convertListProductPojoToData(List<ProductPojo> productPojoList) {
-        if (CollectionUtils.isEmpty(productPojoList))
-            return new ArrayList<>();
-
-        List<ProductData> productDataList = new ArrayList<>();
-        for (ProductPojo productPojo : productPojoList) {
-            productDataList.add(convertProductPojoToData(productPojo));
-        }
-        return productDataList;
-    }
 
     public static ProductPojo convertProductFormToPojo(ProductForm productForm, Long clientId) {
         if (isNull(productForm))

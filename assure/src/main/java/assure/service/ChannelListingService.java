@@ -3,7 +3,6 @@ package assure.service;
 import assure.dao.ChannelListingDao;
 import assure.pojo.ChannelListingPojo;
 import assure.spring.ApiException;
-import commons.model.OrderItemFormChannel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,8 +71,8 @@ public class ChannelListingService {
 
         return channelSkuIdToGlobalSkuId;
     }
-    public Map<Long, ChannelListingPojo> getGlobalSkuIdToPojo(List<Long>globalSkuIdList){
-        List<ChannelListingPojo> channelListingPojoList = channelListingDao.selectForGlobalSkuId(globalSkuIdList);
+    public Map<Long, ChannelListingPojo> getGlobalSkuToPojo(List<Long>globalSkuIdList, Long clientId, Long channelId){
+        List<ChannelListingPojo> channelListingPojoList = channelListingDao.selectForGlobalSkuId(globalSkuIdList, clientId, channelId);
         return channelListingPojoList.stream().collect(Collectors.toMap(ChannelListingPojo::getGlobalSkuId, pojo -> pojo));
 
     }

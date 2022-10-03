@@ -39,7 +39,18 @@ function loadParty() {
 }
 
 function onChangeType(){
-    loadParty()
+
+    pageNumber = 1 ;
+    prevPage();
+    
+    loadParty();
+    let type = $('#type').val();
+    if(type == "all"){
+        if (pageNumber == 0) {
+            document.getElementById("prevLi").className = "page-item disabled";
+            document.getElementById("nextLi").className = "page-item";
+        }
+    }
 }
 
 function nextPage() {
@@ -59,6 +70,7 @@ function prevPage() {
         document.getElementById("prevLi").className = "page-item disabled";
         document.getElementById("nextLi").className = "page-item";
     }
+    return pageNumber;
 }
 
 function checkNextPageNotExist() {

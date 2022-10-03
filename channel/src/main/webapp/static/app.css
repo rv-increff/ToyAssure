@@ -34,14 +34,15 @@ table {
 }
 
 .jumbotron {
-width:90vw;
-margin:auto;
-padding-top: 20px;
-max-height:800px;
-overflow:hidden;
-margin-bottom: 20px;
-margin-top: 20px;
-}
+  width:90vw;
+  margin:auto;
+  padding-top: 20px;
+  max-height:515px;
+  overflow:hidden;
+  margin-bottom: 10px;
+  margin-top: 20px;
+  }
+  
 .buttonBottom{
 width:max-content;
 margin-top:20px;
@@ -206,3 +207,8 @@ label{
   width: 65%;
   text-align: center;
 }
+#binSkuTbody, #channelTbody, #binSkuTbody, #orderTbody, #partyTbody, #productTbody {
+  overflow:scroll;
+  display: block;
+  height:305px;
+  }

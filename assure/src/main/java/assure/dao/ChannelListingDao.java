@@ -101,11 +101,15 @@ public class ChannelListingDao extends AbstractDao<ChannelListingPojo> {
         return query.getResultList();
     }
 
-    public List<ChannelListingPojo> selectForGlobalSkuId(List<Long> globalSkuIdList) {
+    public List<ChannelListingPojo> selectForGlobalSkuId(List<Long> globalSkuIdList, Long clientId, Long channelId) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery criteriaQuery = criteriaQuery();
         Root<ChannelListingPojo> root = criteriaQuery.from(this.clazz);
         criteriaQuery = criteriaQuery.select(root);
-        criteriaQuery.where(root.get("globalSkuId").in(globalSkuIdList));
+        criteriaQuery.where(cb.and(
+                cb.equal(root.get("clientId"), clientId),
+                cb.equal(root.get("channelId"), channelId),
+                root.get("globalSkuId").in(globalSkuIdList)));
         TypedQuery<ChannelListingPojo> query = em.createQuery(criteriaQuery);
         return query.getResultList();
     }

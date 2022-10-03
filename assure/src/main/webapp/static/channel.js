@@ -38,6 +38,7 @@ function nextPage() {
     pageNumber += 1;
     console.log(document.getElementById("page"))
     document.getElementById("page").innerText = pageNumber + 1;
+    document.getElementById("prevLi").className = "page-item";
     loadChannel()
 
 }
@@ -48,8 +49,8 @@ function prevPage() {
     loadChannel();
     if (pageNumber == 0) {
         document.getElementById("prevLi").className = "page-item disabled";
-        document.getElementById("nextLi").className = "page-item";
     }
+    document.getElementById("nextLi").className = "page-item";
 }
 
 function checkNextPageNotExist() {

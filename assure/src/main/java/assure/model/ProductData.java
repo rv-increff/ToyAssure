@@ -9,6 +9,7 @@ public class ProductData {
     private Long globalSkuId;
     private String clientSkuId;
     private Long clientId;
+    private String clientName;
     private String name;
     private String brandId;
     private Double mrp;

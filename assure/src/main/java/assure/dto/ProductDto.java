@@ -3,14 +3,19 @@ package assure.dto;
 import assure.model.ProductData;
 import assure.model.ProductForm;
 import assure.model.ProductUpdateForm;
+import assure.pojo.PartyPojo;
 import assure.pojo.ProductPojo;
 import assure.service.PartyService;
 import assure.service.ProductService;
 import assure.spring.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static assure.util.ConversionUtil.*;
 import static assure.util.ValidationUtil.*;
@@ -34,14 +39,15 @@ public class ProductDto {
         return productFormList.size();
     }
 
-    public List<ProductData> select(Integer pageNumber) {
+    public List<ProductData> select(Integer pageNumber) throws ApiException {
         List<ProductPojo> productPojoList = productService.select(pageNumber, PAGE_SIZE);
         return convertListProductPojoToData(productPojoList);
     }
 
     public ProductData selectById(Long globalSkuId) throws ApiException {
         ProductPojo productPojo = productService.selectById(globalSkuId);
-        return convertProductPojoToData(productPojo);
+        String clientName = partyService.getCheck(productPojo.getClientId()).getName();
+        return convertProductPojoToData(productPojo, clientName);
     }
 
     public List<ProductData> selectByClientId(Long clientId) throws ApiException {
@@ -55,4 +61,19 @@ public class ProductDto {
         productService.update(convertProductUpdateFormToPojo(productUpdateForm, globalSkuId, clientId));
         return productUpdateForm;
     }
+
+    private List<ProductData> convertListProductPojoToData(List<ProductPojo> productPojoList) throws ApiException {
+        if (CollectionUtils.isEmpty(productPojoList))
+            return new ArrayList<>();
+        Map<Long, PartyPojo> idToPartyPojo = partyService.getCheckPartyIdToPojo(productPojoList.stream().
+                map(ProductPojo::getClientId).distinct().collect(Collectors.toList()));
+        List<ProductData> productDataList = new ArrayList<>();
+
+        for (ProductPojo productPojo : productPojoList) {
+            productDataList.add(convertProductPojoToData(productPojo, idToPartyPojo.get(productPojo.getClientId())
+                    .getName()));
+        }
+        return productDataList;
+    }
+
 }

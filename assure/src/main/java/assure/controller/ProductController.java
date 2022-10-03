@@ -21,7 +21,7 @@ public class ProductController {
 
     @ApiOperation(value = "Get products")
     @RequestMapping(path = "/products", method = RequestMethod.GET)
-    public List<ProductData> getProducts(@RequestParam Integer pageNumber) {
+    public List<ProductData> getProducts(@RequestParam Integer pageNumber) throws ApiException {
         return productDto.select(pageNumber);
     }
 

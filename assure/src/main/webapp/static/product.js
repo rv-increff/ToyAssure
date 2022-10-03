@@ -18,7 +18,7 @@ function loadProduct() {
             for (var i = 0; i < obj.length; i++) {
                 str += `<tr>
                                       <td id="${obj[i]['globalSkuId']}_clientSkuId">${obj[i]['clientSkuId']}</td>
-                                      <td>${obj[i]['clientId']}</td>
+                                      <td>${obj[i]['clientName']}</td>
                                       <td>${obj[i]['name']}</td>
                                       <td>${obj[i]['brandId']}</td>
                                       <td>${obj[i]['mrp'].toFixed(2)}</td>
@@ -42,6 +42,7 @@ function nextPage() {
     pageNumber += 1;
     console.log(document.getElementById("page"))
     document.getElementById("page").innerText = pageNumber + 1;
+    document.getElementById("prevLi").className = "page-item";
     loadProduct()
 
 }
@@ -52,8 +53,8 @@ function prevPage() {
     loadProduct();
     if (pageNumber == 0) {
         document.getElementById("prevLi").className = "page-item disabled";
-        document.getElementById("nextLi").className = "page-item";
     }
+    document.getElementById("nextLi").className = "page-item";
 }
 
 function checkNextPageNotExist() {

@@ -1,12 +1,14 @@
 package assure.dto;
 
 import assure.config.BaseTest;
+import assure.pojo.PartyPojo;
 import assure.util.TestData;
 import assure.model.ProductForm;
 import assure.model.ProductUpdateForm;
 import assure.pojo.ProductPojo;
 import assure.spring.ApiException;
 import assure.util.RandomUtil;
+import commons.util.PartyType;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,17 +89,17 @@ public class ProductDtoTest extends BaseTest {
     }
 
     @Test
-    public void selectTest() {
+    public void selectTest() throws ApiException {
         int n = 5;
         for (int i = 0; i < n; i++) {
-            testData.productAdd();
+            testData.productAdd(testData.partyAdd(RandomUtil.getRandomString(), PartyType.CLIENT).getId());
         }
         Assert.assertEquals(n, productDto.select(0).size());
     }
 
     @Test
     public void selectByIdTest() throws ApiException {
-        ProductPojo productPojo = testData.productAdd();
+        ProductPojo productPojo = testData.productAdd(testData.partyAdd(RandomUtil.getRandomString(), PartyType.CLIENT).getId());
         Assert.assertEquals(productPojo.getGlobalSkuId(), productDto.selectById(productPojo.getGlobalSkuId()).getGlobalSkuId());
     }
 

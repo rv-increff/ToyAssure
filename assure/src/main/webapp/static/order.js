@@ -65,8 +65,8 @@ function prevPage() {
     loadOrder();
     if (pageNumber == 0) {
         document.getElementById("prevLi").className = "page-item disabled";
-        document.getElementById("nextLi").className = "page-item";
     }
+    document.getElementById("nextLi").className = "page-item";
 }
 
 function checkNextPageNotExist() {

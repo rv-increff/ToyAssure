@@ -83,4 +83,5 @@ public class PartyService {
         }
         return partyPojoList.stream().collect(Collectors.toMap(PartyPojo::getId, pojo->pojo));
     }
+
 }
